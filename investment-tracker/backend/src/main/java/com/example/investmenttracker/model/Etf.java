@@ -13,7 +13,6 @@ public class Etf {
     private String domicile; // Ireland, Luxembourg
     private String risk; // Low, Moderate, High, Very High
     private String ticker; // unique
-    private String dividend; // Accumulating or Distributing
     private BigDecimal ter; // Total Expense Ratio
     private String notes; // Free text
     private BigDecimal currentValue;
@@ -23,6 +22,13 @@ public class Etf {
     public Etf() {
     }
 
+/*************  ✨ Windsurf Command ⭐  *************/
+    /**
+     * Gets the unique identifier of the ETF.
+     *
+     * @return the ETF's identifier
+     */
+/*******  863ad30c-971c-4e0f-b35d-14fae25f6d00  *******/
     public Long getId() {
         return id;
     }
@@ -32,7 +38,7 @@ public class Etf {
     }
 
     public Etf(String name, ETFPriority priority, ETFType type, String globalCoverage, String domicile, String risk,
-            String ticker, String dividend, BigDecimal ter, String notes, BigDecimal currentValue,
+            String ticker,  BigDecimal ter, String notes, BigDecimal currentValue,
             BigDecimal investedAmount) {
         this.name = name;
         this.priority = priority;
@@ -41,7 +47,6 @@ public class Etf {
         this.domicile = domicile;
         this.risk = risk;
         this.ticker = ticker;
-        this.dividend = dividend;
         this.ter = ter;
         this.notes = notes;
         this.currentValue = currentValue;
@@ -102,14 +107,6 @@ public class Etf {
 
     public void setTicker(String ticker) {
         this.ticker = ticker;
-    }
-
-    public String getDividend() {
-        return dividend;
-    }
-
-    public void setDividend(String dividend) {
-        this.dividend = dividend;
     }
 
     public BigDecimal getTer() {
