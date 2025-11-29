@@ -18,11 +18,6 @@ public interface JpaEtfRepository extends JpaRepository<Etf, Long>, EtfRepositor
      * JpaRepository.
      */
     @Override
-    default Etf save(Etf etf) {
-        return saveAndFlush(etf);
-    }
-
-    @Override
     default void delete(Long id) {
         deleteById(id);
     }

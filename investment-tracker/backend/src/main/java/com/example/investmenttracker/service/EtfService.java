@@ -1,37 +1,33 @@
 package com.example.investmenttracker.service;
 
 import com.example.investmenttracker.model.Etf;
-import com.example.investmenttracker.storage.FileStorage;
+import com.example.investmenttracker.persistence.EtfRepository;
 import com.example.investmenttracker.exception.ResourceConflictException;
 import com.example.investmenttracker.exception.ValidationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 @Service
 public class EtfService {
-    private final FileStorage fileStorage;
+    private final EtfRepository etfRepository;
 
-    public EtfService(FileStorage fileStorage) {
-        this.fileStorage = fileStorage;
+    public EtfService(EtfRepository etfRepository) {
+        this.etfRepository = etfRepository;
     }
 
     public List<Etf> getAllEtfs() {
-        return fileStorage.readEtfs();
+        return etfRepository.findAll();
     }
 
     public Etf getEtfById(Long id) {
-        return fileStorage.readEtfs().stream()
-                .filter(etf -> Objects.equals(etf.getId(), id))
-                .findFirst()
-                .orElse(null);
+        return etfRepository.findById(id).orElse(null);
     }
 
     public void addEtf(Etf etf) {
-        List<Etf> etfs = fileStorage.readEtfs();
-        etfs.add(etf);
-        fileStorage.writeEtfs(etfs);
+        etfRepository.save(etf);
     }
 
     /**
@@ -39,7 +35,7 @@ public class EtfService {
      * Keeps backward compatibility if callers expect a returned Etf.
      */
     public Etf createEtf(Etf etf) {
-        List<Etf> etfs = fileStorage.readEtfs();
+        List<Etf> etfs = etfRepository.findAll();
         // Validate mandatory fields
         if (etf.getTicker() == null || etf.getTicker().trim().isEmpty()) {
             throw new ValidationException("etf.missing.ticker");
@@ -55,29 +51,32 @@ public class EtfService {
             throw new ResourceConflictException("etf.duplicate.ticker", etf.getTicker());
         }
 
-        // If no id provided, assign a new unique id (max existing id + 1)
-        if (etf.getId() == null) {
-            Long maxId = etfs.stream()
-                    .map(Etf::getId)
-                    .filter(Objects::nonNull)
-                    .max(Long::compareTo)
-                    .orElse(0L);
-            etf.setId(maxId + 1);
-        } else {
-            // Ensure provided id is unique — if it already exists, throw
-            boolean exists = etfs.stream().anyMatch(e -> Objects.equals(e.getId(), etf.getId()));
+        // If caller provided an ID, ensure it doesn't already exist. Do NOT
+        // assign IDs here — JPA repositories expect the database to generate
+        // identity values and the file-based repository will assign IDs inside
+        // its own `save` implementation when needed.
+        if (etf.getId() != null) {
+            boolean exists = etfRepository.existsById(etf.getId());
             if (exists) {
                 throw new ResourceConflictException("etf.duplicate.id", etf.getId());
             }
         }
 
-        etfs.add(etf);
-        fileStorage.writeEtfs(etfs);
-        return etf;
+        // If we're using a JPA-backed repository, ensure new entities do not
+        // carry a client-supplied id. Spring Data JPA will call `merge` when
+        // an id is present which can produce merge/identity issues; clearing
+        // the id ensures the entity is `persist`ed and the DB assigns an id.
+        if (etfRepository instanceof JpaRepository) {
+            if (etf.getId() != null) {
+                etf.setId(null);
+            }
+        }
+
+        return etfRepository.save(etf);
     }
 
     public void updateEtf(Long id, Etf updatedEtf) {
-        List<Etf> etfs = fileStorage.readEtfs();
+        List<Etf> etfs = etfRepository.findAll();
         // Validate mandatory fields
         if (updatedEtf.getTicker() == null || updatedEtf.getTicker().trim().isEmpty()) {
             throw new ValidationException("etf.missing.ticker");
@@ -95,20 +94,13 @@ public class EtfService {
         if (tickerConflict) {
             throw new ResourceConflictException("etf.duplicate.ticker", updatedEtf.getTicker());
         }
-        for (int i = 0; i < etfs.size(); i++) {
-            if (Objects.equals(etfs.get(i).getId(), id)) {
-                // preserve id on updated object
-                updatedEtf.setId(id);
-                etfs.set(i, updatedEtf);
-                break;
-            }
-        }
-        fileStorage.writeEtfs(etfs);
+
+        // Set the id to the one being updated
+        updatedEtf.setId(id);
+        etfRepository.save(updatedEtf);
     }
 
     public void deleteEtf(Long id) {
-        List<Etf> etfs = fileStorage.readEtfs();
-        etfs.removeIf(etf -> Objects.equals(etf.getId(), id));
-        fileStorage.writeEtfs(etfs);
+        etfRepository.delete(id);
     }
 }
