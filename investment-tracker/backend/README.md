@@ -1,66 +1,100 @@
 # Investment Tracker Backend
 
 ## Overview
-The Investment Tracker is a self-hosted application designed to manage investments in various ETFs and assets. This backend component is built using Java 21 and Spring Boot, allowing for CRUD operations without the need for a database.
+The Investment Tracker backend is a Java 21 Spring Boot application that provides REST endpoints to manage ETFs and assets. Data is persisted to files (no external database required).
 
 ## Features
-- Manage investments in different ETFs and assets.
-- Perform CRUD operations for both ETFs and assets.
-- Track changes over time.
-- Data is stored in files for persistence.
+- Manage ETFs and assets (CRUD).
+- Simple file-based persistence.
+- OpenAPI/Swagger UI available for interactive API exploration.
 
-## Project Structure
+## Project Structure (important files)
 ```
-investment-tracker
-├── backend
-│   ├── src
-│   │   ├── main
-│   │   │   ├── java
-│   │   │   │   └── com
-│   │   │   │       └── example
-│   │   │   │           └── investmenttracker
-│   │   │   │               ├── InvestmentTrackerApplication.java
-│   │   │   │               ├── controller
-│   │   │   │               │   ├── AssetController.java
-│   │   │   │               │   └── EtfController.java
-│   │   │   │               ├── model
-│   │   │   │               │   ├── Asset.java
-│   │   │   │               │   └── Etf.java
-│   │   │   │               ├── service
-│   │   │   │               │   ├── AssetService.java
-│   │   │   │               │   └── EtfService.java
-│   │   │   │               └── storage
-│   │   │   │                   └── FileStorage.java
-│   │   │   └── resources
-│   │   │       └── application.properties
-│   ├── build.gradle
-│   └── README.md
+backend/
+├─ pom.xml
+├─ src/main/java/com/example/investmenttracker
+│  ├─ InvestmentTrackerApplication.java
+  ├─ controller/AssetController.java
+  ├─ controller/EtfController.java
+  ├─ service/
+  └─ storage/
+└─ src/main/resources/application.properties
 ```
 
-## Setup Instructions
-1. **Clone the repository**:
-   ```
-   git clone <repository-url>
-   cd investment-tracker/backend
-   ```
+## Prerequisites
+- Java 21 (or a compatible JDK)
+- Maven 3.8+
 
-2. **Build the project**:
-   Ensure you have Gradle installed, then run:
-   ```
-   ./gradlew build
-   ```
+## Build & Run (Maven)
+From the `backend` directory run:
 
-3. **Run the application**:
-   ```
-   ./gradlew bootRun
-   ```
+```cmd
+mvn -U clean package
+```
 
-4. **Access the API**:
-   The backend will be available at `http://localhost:8080/api`.
+Run the application from the Maven plugin:
 
-## Usage
-- Use the provided REST API endpoints to manage your investments.
-- Refer to the individual controller files for specific API endpoints and their usage.
+```cmd
+mvn spring-boot:run
+```
+
+Or run the packaged jar:
+
+```cmd
+java -jar target\investment-tracker-backend-1.0.0-SNAPSHOT.jar
+```
+
+Run tests:
+
+```cmd
+mvn -U test
+```
+
+## Base URLs
+- API base: `http://localhost:8080/api`
+- OpenAPI JSON: `http://localhost:8080/v3/api-docs`
+- Swagger UI: `http://localhost:8080/swagger-ui.html` or `http://localhost:8080/swagger-ui/index.html`
+
+Note: The project includes `springdoc-openapi-starter-webmvc-ui` which serves Swagger UI and the OpenAPI spec.
+
+## REST Endpoints (summary)
+
+Assets
+- GET    /api/assets           — List all assets
+- GET    /api/assets/{id}      — Get asset by id
+- POST   /api/assets           — Create a new asset (JSON body)
+- PUT    /api/assets/{id}      — Update an asset (JSON body)
+- DELETE /api/assets/{id}      — Delete an asset
+
+ETFs
+- GET    /api/etfs             — List all ETFs
+- GET    /api/etfs/{id}        — Get ETF by id
+- POST   /api/etfs             — Create a new ETF (JSON body)
+- PUT    /api/etfs/{id}        — Update an ETF (JSON body)
+- DELETE /api/etfs/{id}        — Delete an ETF
+
+Example curl commands
+
+```cmd
+curl -v http://localhost:8080/api/etfs
+
+curl -X POST -H "Content-Type: application/json" -d "{\"name\":\"Example ETF\", \"ticker\":\"EXMPL\"}" http://localhost:8080/api/etfs
+
+curl http://localhost:8080/api/assets
+```
+
+## Swagger / OpenAPI
+After starting the application, open the Swagger UI in your browser:
+
+- `http://localhost:8080/swagger-ui.html`
+- or `http://localhost:8080/swagger-ui/index.html` (some environments redirect here)
+
+The raw OpenAPI JSON is served at `http://localhost:8080/v3/api-docs` which tools like `swagger-ui` and Postman can consume.
 
 ## Contributing
-Feel free to submit issues or pull requests for improvements and features.
+- Open a branch and submit a PR. Example branch name: `chore/ignore-target`, `feat/add-some-feature`.
+- Ensure tests pass: `mvn test`.
+
+## Notes
+- The application stores data to files under the project directory; backup any important files before cleaning the workspace.
+- If you run into dependency resolution issues, run `mvn -U clean package` to force updates.
