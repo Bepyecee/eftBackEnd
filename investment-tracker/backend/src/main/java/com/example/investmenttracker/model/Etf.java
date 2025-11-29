@@ -22,6 +22,13 @@ public class Etf {
     public Etf() {
     }
 
+/*************  ✨ Windsurf Command ⭐  *************/
+    /**
+     * Gets the unique identifier of the ETF.
+     *
+     * @return the ETF's identifier
+     */
+/*******  863ad30c-971c-4e0f-b35d-14fae25f6d00  *******/
     public Long getId() {
         return id;
     }

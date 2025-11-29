@@ -5853,6 +5853,7 @@ java.nio.file.FileSystemNotFoundException: Provider "class" not installed
 	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
 	at java.base/java.lang.Thread.run(Thread.java:1575)
 
+<<<<<<< HEAD
 2025.11.17 20:37:39 INFO  Created report: Optional.empty
 2025.11.17 20:37:39 INFO  No project associated with Uri(file:/C:/Gav/workspaces/itr/investment-tracker/backend/?id=investment... (full report at: "C:\Gav\workspaces\itr\investment-tracker\backend\.metals\.reports\bloop\2025-11-17\r_No project associate..._20-37-39-271.md")
 2025.11.17 20:37:39 INFO  No project associated with Uri(file:/C:/Gav/workspaces/itr/investment-tracker/backend/?id=investment... (full report at: "C:\Gav\workspaces\itr\investment-tracker\backend\.metals\.reports\bloop\2025-11-17\r_No project associate..._20-37-39-271.md")
@@ -5908,3 +5909,5 @@ Caused by: bloop.rifle.FailedToStartServerExitCodeException: Server failed with 
 	at java.lang.Thread.run(Thread.java:1575)
 
 2025.11.18 15:36:44 INFO  Exiting server
+=======
+>>>>>>> ad3fe3366491ddf7b588a013946f6d0ba329caf5
