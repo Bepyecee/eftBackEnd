@@ -2,6 +2,7 @@ package com.example.investmenttracker.model;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,23 +12,36 @@ public class Etf {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
+
     @Enumerated(EnumType.STRING)
-    private ETFPriority priority; // 1,2,3,4 as Enum
+    private ETFPriority priority;
+
     @Enumerated(EnumType.STRING)
-    private ETFType type; // Bond, Equity as Enum
-    private String globalCoverage; // Ireland, EU, US, Global
-    private String domicile; // Ireland, Luxembourg
-    private String risk; // Low, Moderate, High, Very High
+    private ETFType type;
+
+    private String globalCoverage;
+    private String domicile;
+    private String risk;
+
     @Column(unique = true)
-    private String ticker; // unique
-    private BigDecimal ter; // Total Expense Ratio
-    private String notes; // Free text
+    private String ticker;
+
+    private BigDecimal ter;
+    private String notes;
     private BigDecimal currentValue;
     private BigDecimal investedAmount;
+
     @ElementCollection
     @CollectionTable(name = "etf_investments", joinColumns = @JoinColumn(name = "etf_id"))
     private List<Investment> investments = new ArrayList<>();
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
 
     public Etf() {
     }
@@ -164,6 +178,33 @@ public class Etf {
         investment.setAmount(amount);
         investment.setDate(date);
         this.investments.add(investment);
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
     }
 
     @Embeddable
