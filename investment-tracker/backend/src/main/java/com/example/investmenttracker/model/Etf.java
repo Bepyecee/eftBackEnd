@@ -1,22 +1,32 @@
 package com.example.investmenttracker.model;
 
+import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
+@Table(name = "etf")
 public class Etf {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    @Enumerated(EnumType.STRING)
     private ETFPriority priority; // 1,2,3,4 as Enum
+    @Enumerated(EnumType.STRING)
     private ETFType type; // Bond, Equity as Enum
     private String globalCoverage; // Ireland, EU, US, Global
     private String domicile; // Ireland, Luxembourg
     private String risk; // Low, Moderate, High, Very High
+    @Column(unique = true)
     private String ticker; // unique
     private BigDecimal ter; // Total Expense Ratio
     private String notes; // Free text
     private BigDecimal currentValue;
     private BigDecimal investedAmount;
+    @ElementCollection
+    @CollectionTable(name = "etf_investments", joinColumns = @JoinColumn(name = "etf_id"))
     private List<Investment> investments = new ArrayList<>();
 
     public Etf() {
@@ -156,6 +166,7 @@ public class Etf {
         this.investments.add(investment);
     }
 
+    @Embeddable
     public static class Investment {
         private BigDecimal amount;
         private String date; // ISO 8601 string, e.g. "2024-06-01"
