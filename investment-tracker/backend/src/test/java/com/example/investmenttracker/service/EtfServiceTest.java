@@ -3,6 +3,7 @@ package com.example.investmenttracker.service;
 import com.example.investmenttracker.exception.ResourceConflictException;
 import com.example.investmenttracker.model.Etf;
 import com.example.investmenttracker.model.ETFType;
+import com.example.investmenttracker.persistence.FileEtfRepository;
 import com.example.investmenttracker.storage.InMemoryFileStorage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,12 +16,14 @@ import static org.junit.jupiter.api.Assertions.*;
 public class EtfServiceTest {
 
     private InMemoryFileStorage storage;
+    private FileEtfRepository repository;
     private EtfService service;
 
     @BeforeEach
     public void setup() {
         storage = new InMemoryFileStorage();
-        service = new EtfService(storage);
+        repository = new FileEtfRepository(storage);
+        service = new EtfService(repository);
     }
 
     private Etf sampleEtf(String ticker, Long id) {
