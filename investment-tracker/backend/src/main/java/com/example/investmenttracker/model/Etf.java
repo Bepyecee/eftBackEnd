@@ -22,13 +22,13 @@ public class Etf {
     public Etf() {
     }
 
-/*************  ✨ Windsurf Command ⭐  *************/
+    /************* ✨ Windsurf Command ⭐ *************/
     /**
      * Gets the unique identifier of the ETF.
      *
      * @return the ETF's identifier
      */
-/*******  863ad30c-971c-4e0f-b35d-14fae25f6d00  *******/
+    /******* 863ad30c-971c-4e0f-b35d-14fae25f6d00 *******/
     public Long getId() {
         return id;
     }
@@ -38,7 +38,7 @@ public class Etf {
     }
 
     public Etf(String name, ETFPriority priority, ETFType type, String globalCoverage, String domicile, String risk,
-            String ticker,  BigDecimal ter, String notes, BigDecimal currentValue,
+            String ticker, BigDecimal ter, String notes, BigDecimal currentValue,
             BigDecimal investedAmount) {
         this.name = name;
         this.priority = priority;
@@ -175,13 +175,5 @@ public class Etf {
         public void setDate(String date) {
             this.date = date;
         }
-    }
-
-    public enum ETFPriority {
-        LOW, MEDIUM, HIGH, VERY_HIGH
-    }
-
-    public enum ETFType {
-        BOND, EQUITY
     }
 }

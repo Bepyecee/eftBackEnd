@@ -3,8 +3,6 @@ package com.example.investmenttracker.service;
 import com.example.investmenttracker.model.Asset;
 import com.example.investmenttracker.storage.FileStorage;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -18,7 +16,7 @@ public class AssetService {
         this.fileStorage = fileStorage;
     }
 
-    public List<Asset> getAllAssets() throws IOException {
+    public List<Asset> getAllAssets() {
         // FileStorage currently returns List<String>; cast through a raw wildcard to
         // satisfy the method signature.
         @SuppressWarnings("unchecked")

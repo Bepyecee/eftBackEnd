@@ -2,6 +2,7 @@ package com.example.investmenttracker.service;
 
 import com.example.investmenttracker.exception.ResourceConflictException;
 import com.example.investmenttracker.model.Etf;
+import com.example.investmenttracker.model.ETFType;
 import com.example.investmenttracker.storage.InMemoryFileStorage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,7 @@ public class EtfServiceTest {
         Etf e = new Etf();
         e.setTicker(ticker);
         e.setName("Sample");
+        e.setType(ETFType.EQUITY);
         e.setTer(new BigDecimal("0.10"));
         e.setInvestedAmount(new BigDecimal("1000"));
         e.setCurrentValue(new BigDecimal("1100"));
