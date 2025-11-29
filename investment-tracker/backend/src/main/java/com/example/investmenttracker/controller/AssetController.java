@@ -1,7 +1,6 @@
 package com.example.investmenttracker.controller;
 
 import java.util.List;
-import java.io.IOException;
 
 // constructor injection used; no @Autowired required
 import org.springframework.http.ResponseEntity;
@@ -22,35 +21,23 @@ public class AssetController {
 
     @GetMapping
     public ResponseEntity<List<Asset>> getAllAssets() {
-        try {
-            return ResponseEntity.ok(assetService.getAllAssets());
-        } catch (IOException e) {
-            return ResponseEntity.status(500).build();
-        }
+        return ResponseEntity.ok(assetService.getAllAssets());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Asset> getAssetById(@PathVariable Long id) {
-        try {
-            Asset asset = assetService.getAllAssets()
-                    .stream()
-                    .filter(a -> a.getId() != null && a.getId().equals(id))
-                    .findFirst()
-                    .orElse(null);
-            return asset != null ? ResponseEntity.ok(asset) : ResponseEntity.notFound().build();
-        } catch (IOException e) {
-            return ResponseEntity.status(500).build();
-        }
+        Asset asset = assetService.getAllAssets()
+                .stream()
+                .filter(a -> a.getId() != null && a.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+        return asset != null ? ResponseEntity.ok(asset) : ResponseEntity.notFound().build();
     }
 
     @PostMapping
     public ResponseEntity<Asset> createAsset(@RequestBody Asset asset) {
-        try {
-            assetService.addAsset(asset);
-            return ResponseEntity.status(201).body(asset);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).build();
-        }
+        assetService.addAsset(asset);
+        return ResponseEntity.status(201).body(asset);
     }
 
     @PutMapping("/{id}")

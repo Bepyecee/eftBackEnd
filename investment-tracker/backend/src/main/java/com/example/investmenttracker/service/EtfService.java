@@ -3,6 +3,7 @@ package com.example.investmenttracker.service;
 import com.example.investmenttracker.model.Etf;
 import com.example.investmenttracker.storage.FileStorage;
 import com.example.investmenttracker.exception.ResourceConflictException;
+import com.example.investmenttracker.exception.ValidationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -39,13 +40,19 @@ public class EtfService {
      */
     public Etf createEtf(Etf etf) {
         List<Etf> etfs = fileStorage.readEtfs();
+        // Validate mandatory fields
+        if (etf.getTicker() == null || etf.getTicker().trim().isEmpty()) {
+            throw new ValidationException("etf.missing.ticker");
+        }
+        if (etf.getType() == null) {
+            throw new ValidationException("etf.missing.type");
+        }
+
         // Check ticker uniqueness (case-insensitive) before assigning id
-        if (etf.getTicker() != null && !etf.getTicker().trim().isEmpty()) {
-            boolean tickerExists = etfs.stream()
-                    .anyMatch(e -> e.getTicker() != null && e.getTicker().equalsIgnoreCase(etf.getTicker()));
-            if (tickerExists) {
-                throw new ResourceConflictException("Etf with ticker already exists: " + etf.getTicker());
-            }
+        boolean tickerExists = etfs.stream()
+                .anyMatch(e -> e.getTicker() != null && e.getTicker().equalsIgnoreCase(etf.getTicker()));
+        if (tickerExists) {
+            throw new ResourceConflictException("etf.duplicate.ticker", etf.getTicker());
         }
 
         // If no id provided, assign a new unique id (max existing id + 1)
@@ -58,10 +65,9 @@ public class EtfService {
             etf.setId(maxId + 1);
         } else {
             // Ensure provided id is unique — if it already exists, throw
-            // ResourceConflictException
             boolean exists = etfs.stream().anyMatch(e -> Objects.equals(e.getId(), etf.getId()));
             if (exists) {
-                throw new ResourceConflictException("An Etf with id=" + etf.getId() + " already exists");
+                throw new ResourceConflictException("etf.duplicate.id", etf.getId());
             }
         }
 
@@ -72,17 +78,22 @@ public class EtfService {
 
     public void updateEtf(Long id, Etf updatedEtf) {
         List<Etf> etfs = fileStorage.readEtfs();
+        // Validate mandatory fields
+        if (updatedEtf.getTicker() == null || updatedEtf.getTicker().trim().isEmpty()) {
+            throw new ValidationException("etf.missing.ticker");
+        }
+        if (updatedEtf.getType() == null) {
+            throw new ValidationException("etf.missing.type");
+        }
+
         // Validate ticker uniqueness: another ETF (different id) must not have the same
         // ticker
-        if (updatedEtf.getTicker() != null && !updatedEtf.getTicker().trim().isEmpty()) {
-            boolean tickerConflict = etfs.stream()
-                    .anyMatch(e -> !Objects.equals(e.getId(), id)
-                            && e.getTicker() != null
-                            && e.getTicker().equalsIgnoreCase(updatedEtf.getTicker()));
-            if (tickerConflict) {
-                throw new ResourceConflictException(
-                        "Etf ticker conflicts with existing ETF: " + updatedEtf.getTicker());
-            }
+        boolean tickerConflict = etfs.stream()
+                .anyMatch(e -> !Objects.equals(e.getId(), id)
+                        && e.getTicker() != null
+                        && e.getTicker().equalsIgnoreCase(updatedEtf.getTicker()));
+        if (tickerConflict) {
+            throw new ResourceConflictException("etf.duplicate.ticker", updatedEtf.getTicker());
         }
         for (int i = 0; i < etfs.size(); i++) {
             if (Objects.equals(etfs.get(i).getId(), id)) {

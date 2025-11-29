@@ -1,1 +1,18 @@
-[ ]
+[ {
+  "id" : 1,
+  "name" : "VWCE",
+  "priority" : "LOW",
+  "type" : "EQUITY",
+  "globalCoverage" : "string",
+  "domicile" : "Ireland",
+  "risk" : "Low",
+  "ticker" : "WWCE",
+  "ter" : 0.7,
+  "notes" : "nonnotes",
+  "currentValue" : 0,
+  "investedAmount" : 0,
+  "investments" : [ {
+    "amount" : 10000,
+    "date" : "2025-11-11"
+  } ]
+} ]

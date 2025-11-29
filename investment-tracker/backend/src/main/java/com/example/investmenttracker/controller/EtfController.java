@@ -2,7 +2,6 @@ package com.example.investmenttracker.controller;
 
 import com.example.investmenttracker.model.Etf;
 import com.example.investmenttracker.service.EtfService;
-import com.example.investmenttracker.exception.ResourceConflictException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,23 +30,15 @@ public class EtfController {
 
     @PostMapping
     public ResponseEntity<Etf> createEtf(@RequestBody Etf etf) {
-        try {
-            Etf createdEtf = etfService.createEtf(etf);
-            return ResponseEntity.status(201).body(createdEtf);
-        } catch (ResourceConflictException e) {
-            return ResponseEntity.status(409).build();
-        }
+        Etf createdEtf = etfService.createEtf(etf);
+        return ResponseEntity.status(201).body(createdEtf);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Etf> updateEtf(@PathVariable Long id, @RequestBody Etf etf) {
-        try {
-            etfService.updateEtf(id, etf);
-            Etf updatedEtf = etfService.getEtfById(id);
-            return updatedEtf != null ? ResponseEntity.ok(updatedEtf) : ResponseEntity.notFound().build();
-        } catch (ResourceConflictException e) {
-            return ResponseEntity.status(409).build();
-        }
+        etfService.updateEtf(id, etf);
+        Etf updatedEtf = etfService.getEtfById(id);
+        return updatedEtf != null ? ResponseEntity.ok(updatedEtf) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
