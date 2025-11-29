@@ -1,66 +1,58 @@
 # Investment Tracker Backend
 
 ## Overview
-The Investment Tracker is a self-hosted application designed to manage investments in various ETFs and assets. This backend component is built using Java 21 and Spring Boot, allowing for CRUD operations without the need for a database.
+This is the backend for a simple self-hosted Investment Tracker written with Java 21 and Spring Boot.
+It exposes REST endpoints to manage ETFs and assets. Persistence is file-based by default (see `etfs.json`).
 
-## Features
-- Manage investments in different ETFs and assets.
-- Perform CRUD operations for both ETFs and assets.
-- Track changes over time.
-- Data is stored in files for persistence.
+## Key Behaviors
+- Validation: ETFs require `ticker` and `type` fields. Missing required fields return HTTP 400 with a structured `ApiError` JSON payload.
+- Conflicts: Attempts to create or update an ETF that violates uniqueness (duplicate ticker or id) return HTTP 409 with a helpful message.
+- Messages: Error text is externalized in `src/main/resources/messages.properties` and resolved by the application's `MessageSource`.
 
-## Project Structure
+## Storage
+- Default storage file: `etfs.json` in the backend working directory (`c:\Gav\workspaces\itr\investment-tracker\backend\etfs.json` when running from this repo).
+- The `FileStorage` component reads/writes this file as a JSON array. Consider switching to H2 or adding audit fields for production use.
+
+## Error format
+When an error occurs the API returns JSON like:
+
 ```
-investment-tracker
-├── backend
-│   ├── src
-│   │   ├── main
-│   │   │   ├── java
-│   │   │   │   └── com
-│   │   │   │       └── example
-│   │   │   │           └── investmenttracker
-│   │   │   │               ├── InvestmentTrackerApplication.java
-│   │   │   │               ├── controller
-│   │   │   │               │   ├── AssetController.java
-│   │   │   │               │   └── EtfController.java
-│   │   │   │               ├── model
-│   │   │   │               │   ├── Asset.java
-│   │   │   │               │   └── Etf.java
-│   │   │   │               ├── service
-│   │   │   │               │   ├── AssetService.java
-│   │   │   │               │   └── EtfService.java
-│   │   │   │               └── storage
-│   │   │   │                   └── FileStorage.java
-│   │   │   └── resources
-│   │   │       └── application.properties
-│   ├── build.gradle
-│   └── README.md
+{
+  "timestamp": "2025-11-29T15:00:00Z",
+  "status": 409,
+  "error": "Conflict",
+  "message": "An ETF with ticker ABC already exists.",
+  "path": "/api/etfs"
+}
 ```
 
-## Setup Instructions
-1. **Clone the repository**:
-   ```
-   git clone <repository-url>
-   cd investment-tracker/backend
-   ```
+## Running locally (Maven)
+1. Build:
 
-2. **Build the project**:
-   Ensure you have Gradle installed, then run:
-   ```
-   ./gradlew build
-   ```
+```bash
+cd backend
+mvn -U package
+```
 
-3. **Run the application**:
-   ```
-   ./gradlew bootRun
-   ```
+2. Run:
 
-4. **Access the API**:
-   The backend will be available at `http://localhost:8080/api`.
+```bash
+mvn spring-boot:run
+```
 
-## Usage
-- Use the provided REST API endpoints to manage your investments.
-- Refer to the individual controller files for specific API endpoints and their usage.
+3. Run tests:
 
-## Contributing
-Feel free to submit issues or pull requests for improvements and features.
+```bash
+mvn -U test
+```
+
+## Validation rules (ETFs)
+- `ticker` — required (non-empty string).
+- `type` — required (enum: `BOND` or `EQUITY`).
+- Duplicate `ticker` or `id` will produce a 409 Conflict and a human-readable message resolved from `messages.properties`.
+
+## Notes & Next steps
+- For a timeline/audit trail: add `createdAt`/`updatedAt` fields or migrate persistence to an embedded DB (H2) with JPA auditing.
+- Messages are externalized and ready for localization.
+
+Contributions welcome — open an issue or PR with suggested changes.
