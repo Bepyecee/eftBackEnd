@@ -59,11 +59,12 @@ const messages = {
 
   // ETF Messages
   ETF: {
-    TITLE: 'ETFs',
-    LIST_TITLE: 'ETF Portfolio',
-    CREATE_TITLE: 'Add new ETF Ticker',
+    TITLE: 'ETF Manager',
+    LIST_TITLE: 'ETF Manager',
+    CREATE_TITLE: 'Add New ETF',
     EDIT_TITLE: 'Edit ETF',
     ADD_NEW: 'Add New ETF',
+    MANAGE_TRANSACTIONS: 'Manage Transactions',
     NO_ETFS: 'No ETFs found. Add your first ETF to get started.',
     CONFIRM_DELETE: 'Are you sure you want to delete this ETF?',
     DELETED_SUCCESS: 'ETF deleted successfully',
@@ -90,17 +91,8 @@ const messages = {
     DIVIDEND_PLACEHOLDER: 'Accumulating or Distributing',
     TER: 'Total Expense Ratio (%)',
     TER_PLACEHOLDER: '0.00',
-    FEES: 'Transaction Fees',
-    FEES_PLACEHOLDER: '1.00',
-    PURCHASE_DATE: 'Date of Purchase',
-    UNITS_PURCHASED: 'Units Purchased',
-    UNITS_PURCHASED_PLACEHOLDER: '0.000',
     NOTES: 'Notes',
     NOTES_PLACEHOLDER: 'Additional information about this ETF',
-    CURRENT_VALUE: 'Current Value',
-    CURRENT_VALUE_PLACEHOLDER: '0.00',
-    INVESTED_AMOUNT: 'Transaction Cost',
-    INVESTED_AMOUNT_PLACEHOLDER: '0.00',
     
     // ETF Priority Options
     PRIORITY_LOW: 'Low',
@@ -175,6 +167,39 @@ const messages = {
       ALLOCATION_INVALID: 'Allocation must be a valid number',
       ALLOCATION_RANGE: 'Allocation must be between 0 and 100',
     },
+  },
+
+  // Transaction Messages
+  TRANSACTION: {
+    TITLE: 'Transactions',
+    LIST_TITLE: 'Transaction History',
+    CREATE_TITLE: 'Add New Transaction',
+    ADD_NEW: 'Add Transaction',
+    NO_TRANSACTIONS: 'No transactions found. Add your first transaction to get started.',
+    CONFIRM_DELETE: 'Are you sure you want to delete this transaction?',
+    DELETED_SUCCESS: 'Transaction deleted successfully',
+    CREATED_SUCCESS: 'Transaction created successfully',
+    DELETE_ERROR: 'Failed to delete transaction',
+    LOAD_ERROR: 'Failed to load transactions',
+    SAVE_ERROR: 'Failed to save transaction',
+    
+    // Transaction Fields
+    TRANSACTION_DATE: 'Transaction Date',
+    TRANSACTION_TYPE: 'Transaction Type',
+    TRANSACTION_COST: 'Transaction Cost',
+    TRANSACTION_COST_PLACEHOLDER: '0.00',
+    TRANSACTION_FEES: 'Transaction Fees',
+    TRANSACTION_FEES_PLACEHOLDER: '0.00',
+    UNITS_PURCHASED: 'Units',
+    UNITS_PURCHASED_PLACEHOLDER: '0.000',
+    
+    // Transaction Types
+    TYPE_BUY: 'Buy',
+    TYPE_SELL: 'Sell',
+    
+    // Summary Fields
+    TOTAL_UNITS: 'Total Units',
+    TOTAL_INVESTED: 'Total Invested',
   },
 
   // Error Messages

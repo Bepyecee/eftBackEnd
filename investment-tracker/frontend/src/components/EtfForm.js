@@ -17,12 +17,7 @@ function EtfForm() {
     risk: 'HIGH',
     ticker: '',
     ter: '',
-    fees: '1.00',
     notes: '',
-    currentValue: '',
-    investedAmount: '',
-    purchaseDate: new Date().toISOString().split('T')[0], // Default to today
-    unitsPurchased: '',
   });
 
   const [loading, setLoading] = useState(false);
@@ -46,12 +41,7 @@ function EtfForm() {
         risk: data.risk || 'HIGH',
         ticker: data.ticker || '',
         ter: data.ter || '',
-        fees: data.fees || '1.00',
         notes: data.notes || '',
-        currentValue: data.currentValue || '',
-        investedAmount: data.investedAmount || '',
-        purchaseDate: data.purchaseDate || new Date().toISOString().split('T')[0],
-        unitsPurchased: data.unitsPurchased || '',
       });
       setError('');
     } catch (err) {
@@ -81,9 +71,6 @@ function EtfForm() {
       const submitData = {
         ...formData,
         ter: formData.ter ? parseFloat(formData.ter) : 0,
-        currentValue: formData.currentValue ? parseFloat(formData.currentValue) : 0,
-        investedAmount: formData.investedAmount ? parseFloat(formData.investedAmount) : 0,
-        unitsPurchased: formData.unitsPurchased ? parseFloat(formData.unitsPurchased) : 0,
       };
 
       if (isEditMode) {
@@ -219,74 +206,6 @@ function EtfForm() {
               value={formData.ter}
               onChange={handleChange}
               placeholder={messages.ETF.TER_PLACEHOLDER}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="fees">{messages.ETF.FEES} *</label>
-            <input
-              type="number"
-              step="0.01"
-              id="fees"
-              name="fees"
-              value={formData.fees}
-              onChange={handleChange}
-              placeholder={messages.ETF.FEES_PLACEHOLDER}
-              required
-            />
-          </div>
-
-          {isEditMode && (
-            <div className="form-group">
-              <label htmlFor="currentValue">{messages.ETF.CURRENT_VALUE}</label>
-              <input
-                type="number"
-                step="0.01"
-                id="currentValue"
-                name="currentValue"
-                value={formData.currentValue}
-                onChange={handleChange}
-                placeholder={messages.ETF.CURRENT_VALUE_PLACEHOLDER}
-              />
-            </div>
-          )}
-
-          <div className="form-group">
-            <label htmlFor="investedAmount">{messages.ETF.INVESTED_AMOUNT}</label>
-            <input
-              type="number"
-              step="0.01"
-              id="investedAmount"
-              name="investedAmount"
-              value={formData.investedAmount}
-              onChange={handleChange}
-              placeholder={messages.ETF.INVESTED_AMOUNT_PLACEHOLDER}
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="purchaseDate">{messages.ETF.PURCHASE_DATE} *</label>
-            <input
-              type="date"
-              id="purchaseDate"
-              name="purchaseDate"
-              value={formData.purchaseDate}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="unitsPurchased">{messages.ETF.UNITS_PURCHASED} *</label>
-            <input
-              type="number"
-              step="0.001"
-              id="unitsPurchased"
-              name="unitsPurchased"
-              value={formData.unitsPurchased}
-              onChange={handleChange}
-              placeholder={messages.ETF.UNITS_PURCHASED_PLACEHOLDER}
               required
             />
           </div>
