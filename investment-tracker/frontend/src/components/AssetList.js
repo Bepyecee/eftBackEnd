@@ -10,8 +10,8 @@ function AssetList() {
       </div>
 
       <div className="not-implemented-banner">
-        <h3>Not Yet Implemented</h3>
-        <p>The Asset Portfolio feature is currently under development.</p>
+        <h3>{messages.ASSET.NOT_IMPLEMENTED_TITLE}</h3>
+        <p>{messages.ASSET.NOT_IMPLEMENTED_DESCRIPTION}</p>
       </div>
     </div>
   );
