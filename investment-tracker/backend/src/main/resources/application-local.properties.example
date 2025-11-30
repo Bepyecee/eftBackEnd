@@ -2,23 +2,56 @@
 # Copy this file to application-local.properties and customize for your local environment
 # application-local.properties is ignored by git
 
-# Example: Override active profiles
-# spring.profiles.active=local,h2,dev
+# ===== ACTIVE PROFILES =====
+# Override active profiles to use H2 file-based database
+spring.profiles.active=h2,dev
 
-# Example: Override database location for H2
-# spring.datasource.url=jdbc:h2:C:/MyCustomPath/mydb
+# Other profile options:
+# spring.profiles.active=file,dev          # JSON file-based storage
+# spring.profiles.active=postgres,dev      # PostgreSQL database
 
-# Example: Override server port
-# server.port=8081
+# ===== DATABASE CONFIGURATION =====
+# H2 File-based Database
+spring.datasource.url=jdbc:h2:C:/Gav/workspaces/itr/db for etf app/h2 db
+# spring.datasource.username=sa
+# spring.datasource.password=
 
-# Example: Override logging levels
+# PostgreSQL Database (uncomment if using postgres profile)
+# spring.datasource.url=jdbc:postgresql://localhost:5432/investment_tracker
+# spring.datasource.username=postgres
+# spring.datasource.password=yourpassword
+
+# ===== JPA/HIBERNATE CONFIGURATION =====
+# spring.jpa.hibernate.ddl-auto=update     # Options: create, update, validate, none
+# spring.jpa.show-sql=true
+# spring.jpa.properties.hibernate.format_sql=true
+
+# ===== FILE STORAGE CONFIGURATION =====
+# app.storage.etf-file=etfs.json           # Custom file path for JSON storage
+# app.persistence.type=file                # Force file-based persistence
+
+# ===== SERVER CONFIGURATION =====
+# server.port=8081                         # Override default port 8080
+
+# ===== LOGGING CONFIGURATION =====
 # logging.level.org.springframework=DEBUG
 # logging.level.com.example.investmenttracker=TRACE
+# logging.level.org.hibernate=DEBUG
+# logging.level.org.hibernate.SQL=DEBUG
+# logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
+# logging.level.root=INFO
 
-# Example: Override JWT settings
-# jwt.secret=my-local-secret-key
-# jwt.expiration=3600000
+# ===== JWT CONFIGURATION =====
+# jwt.secret=my-local-secret-key-change-this-minimum-256-bits-required
+# jwt.expiration=3600000                   # Token expiration in milliseconds (1 hour)
 
-# Example: Override dev credentials
+# ===== AUTHENTICATION CONFIGURATION =====
 # app.auth.dev.username=myuser
 # app.auth.dev.password=mypass
+
+# ===== H2 CONSOLE =====
+# spring.h2.console.enabled=true
+# spring.h2.console.path=/h2-console
+
+# ===== CORS CONFIGURATION (if needed) =====
+# cors.allowed-origins=http://localhost:3000,http://localhost:3001
