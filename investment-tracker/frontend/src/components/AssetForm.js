@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import assetService from '../services/assetService';
+import messages from '../constants/messages';
 import './AssetForm.css';
 
 function AssetForm() {
@@ -32,7 +33,7 @@ function AssetForm() {
       });
       setError('');
     } catch (err) {
-      setError('Failed to load asset');
+      setError(messages.ASSET.LOAD_ERROR);
       console.error('Error loading asset:', err);
     } finally {
       setLoading(false);
@@ -69,7 +70,7 @@ function AssetForm() {
 
       navigate('/assets');
     } catch (err) {
-      setError(isEditMode ? 'Failed to update asset' : 'Failed to create asset');
+      setError(messages.ASSET.SAVE_ERROR);
       console.error('Error saving asset:', err);
     } finally {
       setLoading(false);
@@ -81,20 +82,20 @@ function AssetForm() {
   };
 
   if (loading && isEditMode) {
-    return <div className="loading">Loading Asset...</div>;
+    return <div className="loading">{messages.GENERIC.LOADING}</div>;
   }
 
   return (
     <div className="asset-form-container">
       <div className="form-header">
-        <h2>{isEditMode ? 'Edit Asset' : 'Create New Asset'}</h2>
+        <h2>{isEditMode ? messages.ASSET.EDIT_TITLE : messages.ASSET.CREATE_TITLE}</h2>
       </div>
 
       {error && <div className="error-message">{error}</div>}
 
       <form onSubmit={handleSubmit} className="asset-form">
         <div className="form-group">
-          <label htmlFor="name">Asset Name *</label>
+          <label htmlFor="name">{messages.ASSET.NAME} *</label>
           <input
             type="text"
             id="name"
@@ -102,12 +103,12 @@ function AssetForm() {
             value={formData.name}
             onChange={handleChange}
             required
-            placeholder="e.g., Stocks, Bonds, Real Estate"
+            placeholder={messages.ASSET.NAME_PLACEHOLDER}
           />
         </div>
 
         <div className="form-group">
-          <label htmlFor="allocationPercentage">Allocation Percentage *</label>
+          <label htmlFor="allocationPercentage">{messages.ASSET.ALLOCATION} *</label>
           <input
             type="number"
             step="0.01"
@@ -118,17 +119,17 @@ function AssetForm() {
             value={formData.allocationPercentage}
             onChange={handleChange}
             required
-            placeholder="e.g., 25.50"
+            placeholder={messages.ASSET.ALLOCATION_PLACEHOLDER}
           />
           <small>Enter a value between 0 and 100</small>
         </div>
 
         <div className="form-actions">
           <button type="button" className="cancel-button" onClick={handleCancel}>
-            Cancel
+            {messages.GENERIC.CANCEL}
           </button>
           <button type="submit" className="submit-button" disabled={loading}>
-            {loading ? 'Saving...' : isEditMode ? 'Update Asset' : 'Create Asset'}
+            {loading ? messages.GENERIC.LOADING : messages.GENERIC.SAVE}
           </button>
         </div>
       </form>

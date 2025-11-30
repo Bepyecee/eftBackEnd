@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import etfService from '../services/etfService';
+import messages from '../constants/messages';
 import './EtfList.css';
 
 function EtfList() {
@@ -20,7 +21,7 @@ function EtfList() {
       setEtfs(data);
       setError('');
     } catch (err) {
-      setError('Failed to load ETFs');
+      setError(messages.ETF.LOAD_ERROR);
       console.error('Error loading ETFs:', err);
     } finally {
       setLoading(false);
@@ -28,12 +29,12 @@ function EtfList() {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this ETF?')) {
+    if (window.confirm(messages.ETF.CONFIRM_DELETE)) {
       try {
         await etfService.deleteEtf(id);
         loadEtfs();
       } catch (err) {
-        setError('Failed to delete ETF');
+        setError(messages.ETF.DELETE_ERROR);
         console.error('Error deleting ETF:', err);
       }
     }
@@ -44,15 +45,15 @@ function EtfList() {
   };
 
   if (loading) {
-    return <div className="loading">Loading ETFs...</div>;
+    return <div className="loading">{messages.GENERIC.LOADING}</div>;
   }
 
   return (
     <div className="etf-list-container">
       <div className="etf-list-header">
-        <h2>ETFs</h2>
+        <h2>{messages.ETF.LIST_TITLE}</h2>
         <button className="add-button" onClick={() => navigate('/etfs/new')}>
-          + Add ETF
+          {messages.ETF.ADD_NEW}
         </button>
       </div>
 
@@ -60,7 +61,7 @@ function EtfList() {
 
       {etfs.length === 0 ? (
         <div className="empty-state">
-          <p>No ETFs found. Click "Add ETF" to create one.</p>
+          <p>{messages.ETF.NO_ETFS}</p>
         </div>
       ) : (
         <div className="etf-grid">
@@ -96,10 +97,10 @@ function EtfList() {
               </div>
               <div className="etf-actions">
                 <button className="edit-button" onClick={() => handleEdit(etf.id)}>
-                  Edit
+                  {messages.GENERIC.EDIT}
                 </button>
                 <button className="delete-button" onClick={() => handleDelete(etf.id)}>
-                  Delete
+                  {messages.GENERIC.DELETE}
                 </button>
               </div>
             </div>

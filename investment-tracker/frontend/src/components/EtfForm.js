@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import etfService from '../services/etfService';
+import messages from '../constants/messages';
 import './EtfForm.css';
 
 function EtfForm() {
@@ -52,7 +53,7 @@ function EtfForm() {
       });
       setError('');
     } catch (err) {
-      setError('Failed to load ETF');
+      setError(messages.ETF.LOAD_ERROR);
       console.error('Error loading ETF:', err);
     } finally {
       setLoading(false);
@@ -90,7 +91,7 @@ function EtfForm() {
       
       navigate('/etfs');
     } catch (err) {
-      setError(isEditMode ? 'Failed to update ETF' : 'Failed to create ETF');
+      setError(messages.ETF.SAVE_ERROR);
       console.error('Error saving ETF:', err);
     } finally {
       setLoading(false);
@@ -102,13 +103,13 @@ function EtfForm() {
   };
 
   if (loading && isEditMode) {
-    return <div className="loading">Loading ETF...</div>;
+    return <div className="loading">{messages.GENERIC.LOADING}</div>;
   }
 
   return (
     <div className="etf-form-container">
       <div className="form-header">
-        <h2>{isEditMode ? 'Edit ETF' : 'Create New ETF'}</h2>
+        <h2>{isEditMode ? messages.ETF.EDIT_TITLE : messages.ETF.CREATE_TITLE}</h2>
       </div>
 
       {error && <div className="error-message">{error}</div>}
@@ -116,107 +117,109 @@ function EtfForm() {
       <form onSubmit={handleSubmit} className="etf-form">
         <div className="form-grid">
           <div className="form-group">
-            <label htmlFor="name">Name *</label>
+            <label htmlFor="name">{messages.ETF.NAME} *</label>
             <input
               type="text"
               id="name"
               name="name"
               value={formData.name}
               onChange={handleChange}
+              placeholder={messages.ETF.NAME_PLACEHOLDER}
               required
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="ticker">Ticker *</label>
+            <label htmlFor="ticker">{messages.ETF.TICKER} *</label>
             <input
               type="text"
               id="ticker"
               name="ticker"
               value={formData.ticker}
               onChange={handleChange}
+              placeholder={messages.ETF.TICKER_PLACEHOLDER}
               required
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="priority">Priority</label>
+            <label htmlFor="priority">{messages.ETF.PRIORITY}</label>
             <select
               id="priority"
               name="priority"
               value={formData.priority}
               onChange={handleChange}
             >
-              <option value="LOW">Low</option>
-              <option value="MEDIUM">Medium</option>
-              <option value="HIGH">High</option>
-              <option value="VERY_HIGH">Very High</option>
+              <option value="LOW">{messages.ETF.PRIORITY_LOW}</option>
+              <option value="MEDIUM">{messages.ETF.PRIORITY_MEDIUM}</option>
+              <option value="HIGH">{messages.ETF.PRIORITY_HIGH}</option>
+              <option value="VERY_HIGH">{messages.ETF.PRIORITY_VERY_HIGH}</option>
             </select>
           </div>
 
           <div className="form-group">
-            <label htmlFor="type">Type</label>
+            <label htmlFor="type">{messages.ETF.TYPE}</label>
             <select
               id="type"
               name="type"
               value={formData.type}
               onChange={handleChange}
             >
-              <option value="BOND">Bond</option>
-              <option value="EQUITY">Equity</option>
+              <option value="BOND">{messages.ETF.TYPE_BOND}</option>
+              <option value="EQUITY">{messages.ETF.TYPE_EQUITY}</option>
             </select>
           </div>
 
           <div className="form-group">
-            <label htmlFor="globalCoverage">Global Coverage</label>
+            <label htmlFor="globalCoverage">{messages.ETF.GLOBAL_COVERAGE}</label>
             <input
               type="text"
               id="globalCoverage"
               name="globalCoverage"
               value={formData.globalCoverage}
               onChange={handleChange}
-              placeholder="e.g., Ireland, EU, US, Global"
+              placeholder={messages.ETF.GLOBAL_COVERAGE_PLACEHOLDER}
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="domicile">Domicile</label>
+            <label htmlFor="domicile">{messages.ETF.DOMICILE}</label>
             <input
               type="text"
               id="domicile"
               name="domicile"
               value={formData.domicile}
               onChange={handleChange}
-              placeholder="e.g., Ireland, Luxembourg"
+              placeholder={messages.ETF.DOMICILE_PLACEHOLDER}
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="risk">Risk Level</label>
+            <label htmlFor="risk">{messages.ETF.RISK}</label>
             <input
               type="text"
               id="risk"
               name="risk"
               value={formData.risk}
               onChange={handleChange}
-              placeholder="e.g., Low, Moderate, High, Very High"
+              placeholder={messages.ETF.RISK_PLACEHOLDER}
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="dividend">Dividend</label>
+            <label htmlFor="dividend">{messages.ETF.DIVIDEND}</label>
             <input
               type="text"
               id="dividend"
               name="dividend"
               value={formData.dividend}
               onChange={handleChange}
-              placeholder="e.g., Accumulating, Distributing"
+              placeholder={messages.ETF.DIVIDEND_PLACEHOLDER}
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="ter">TER (Total Expense Ratio)</label>
+            <label htmlFor="ter">{messages.ETF.TER}</label>
             <input
               type="number"
               step="0.01"
@@ -224,12 +227,12 @@ function EtfForm() {
               name="ter"
               value={formData.ter}
               onChange={handleChange}
-              placeholder="e.g., 0.15"
+              placeholder={messages.ETF.TER_PLACEHOLDER}
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="currentValue">Current Value (€)</label>
+            <label htmlFor="currentValue">{messages.ETF.CURRENT_VALUE}</label>
             <input
               type="number"
               step="0.01"
@@ -237,12 +240,12 @@ function EtfForm() {
               name="currentValue"
               value={formData.currentValue}
               onChange={handleChange}
-              placeholder="e.g., 10000.00"
+              placeholder={messages.ETF.CURRENT_VALUE_PLACEHOLDER}
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="investedAmount">Invested Amount (€)</label>
+            <label htmlFor="investedAmount">{messages.ETF.INVESTED_AMOUNT}</label>
             <input
               type="number"
               step="0.01"
@@ -250,29 +253,29 @@ function EtfForm() {
               name="investedAmount"
               value={formData.investedAmount}
               onChange={handleChange}
-              placeholder="e.g., 9500.00"
+              placeholder={messages.ETF.INVESTED_AMOUNT_PLACEHOLDER}
             />
           </div>
         </div>
 
         <div className="form-group full-width">
-          <label htmlFor="notes">Notes</label>
+          <label htmlFor="notes">{messages.ETF.NOTES}</label>
           <textarea
             id="notes"
             name="notes"
             value={formData.notes}
             onChange={handleChange}
             rows="4"
-            placeholder="Add any additional notes about this ETF..."
+            placeholder={messages.ETF.NOTES_PLACEHOLDER}
           />
         </div>
 
         <div className="form-actions">
           <button type="button" className="cancel-button" onClick={handleCancel}>
-            Cancel
+            {messages.GENERIC.CANCEL}
           </button>
           <button type="submit" className="submit-button" disabled={loading}>
-            {loading ? 'Saving...' : (isEditMode ? 'Update ETF' : 'Create ETF')}
+            {loading ? messages.GENERIC.LOADING : messages.GENERIC.SAVE}
           </button>
         </div>
       </form>
