@@ -1,0 +1,24 @@
+# Local Configuration Override Example
+# Copy this file to application-local.properties and customize for your local environment
+# application-local.properties is ignored by git
+
+# Example: Override active profiles
+# spring.profiles.active=local,h2,dev
+
+# Example: Override database location for H2
+# spring.datasource.url=jdbc:h2:C:/MyCustomPath/mydb
+
+# Example: Override server port
+# server.port=8081
+
+# Example: Override logging levels
+# logging.level.org.springframework=DEBUG
+# logging.level.com.example.investmenttracker=TRACE
+
+# Example: Override JWT settings
+# jwt.secret=my-local-secret-key
+# jwt.expiration=3600000
+
+# Example: Override dev credentials
+# app.auth.dev.username=myuser
+# app.auth.dev.password=mypass
