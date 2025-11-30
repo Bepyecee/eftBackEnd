@@ -184,6 +184,28 @@ function EtfList() {
     return `€${parseFloat(value).toFixed(2)}`;
   };
 
+  const getTypeDisplay = (type) => {
+    const typeMap = {
+      'EQUITY': messages.ETF.TYPE_EQUITY,
+      'BOND': messages.ETF.TYPE_BOND,
+    };
+    return typeMap[type] || type;
+  };
+
+  const getMarketDisplay = (market) => {
+    const marketMap = {
+      'US': messages.ETF.MARKET_US,
+      'US_TECH': messages.ETF.MARKET_US_TECH,
+      'EUROPE': messages.ETF.MARKET_EUROPE,
+      'EUROPE_TECH': messages.ETF.MARKET_EUROPE_TECH,
+      'GLOBAL_DEVELOPED': messages.ETF.MARKET_GLOBAL_DEVELOPED,
+      'GLOBAL_DEVELOPED_TECH': messages.ETF.MARKET_GLOBAL_DEVELOPED_TECH,
+      'GLOBAL_INCL_EMERGING': messages.ETF.MARKET_GLOBAL_INCL_EMERGING,
+      'CORPORATE': messages.ETF.MARKET_CORPORATE,
+    };
+    return marketMap[market] || market;
+  };;
+
   if (loading) {
     return <div className="loading">{messages.GENERIC.LOADING}</div>;
   }
@@ -267,8 +289,8 @@ function EtfList() {
                       </a>
                     </td>
                     <td>{etf.name}</td>
-                    <td>{etf.type}</td>
-                    <td>{etf.marketConcentration}</td>
+                    <td>{getTypeDisplay(etf.type)}</td>
+                    <td>{getMarketDisplay(etf.marketConcentration)}</td>
                     <td>
                       <span className={`risk-badge risk-${etf.risk?.toLowerCase()}`}>
                         {etf.risk}
