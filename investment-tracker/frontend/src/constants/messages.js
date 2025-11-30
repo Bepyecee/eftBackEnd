@@ -61,7 +61,7 @@ const messages = {
   ETF: {
     TITLE: 'ETF Manager',
     LIST_TITLE: 'ETF Manager',
-    CREATE_TITLE: 'Add New ETF',
+    CREATE_TITLE: 'ETF ETF creator',
     EDIT_TITLE: 'Edit ETF',
     ADD_NEW: 'Add New ETF',
     MANAGE_TRANSACTIONS: 'Manage Transactions',

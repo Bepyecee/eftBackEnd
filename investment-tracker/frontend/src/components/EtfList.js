@@ -8,6 +8,7 @@ function EtfList() {
   const [etfs, setEtfs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [expandedRows, setExpandedRows] = useState(new Set());
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,23 +19,33 @@ function EtfList() {
     try {
       setLoading(true);
       const data = await etfService.getAllEtfs();
-      setEtfs(data);
+      // Ensure data is always an array
+      setEtfs(Array.isArray(data) ? data : []);
       setError('');
     } catch (err) {
       setError(messages.ETF.LOAD_ERROR);
       console.error('Error loading ETFs:', err);
+      setEtfs([]); // Set to empty array on error
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (id) => {
+    const etf = etfs.find(e => e.id === id);
+    if (etf && etf.transactions && etf.transactions.length > 0) {
+      setError(`Cannot delete ${etf.name}. Please delete all ${etf.transactions.length} transaction(s) first.`);
+      return;
+    }
+
     if (window.confirm(messages.ETF.CONFIRM_DELETE)) {
       try {
         await etfService.deleteEtf(id);
+        setError('');
         loadEtfs();
       } catch (err) {
-        setError(messages.ETF.DELETE_ERROR);
+        const errorMsg = err.response?.data?.message || messages.ETF.DELETE_ERROR;
+        setError(errorMsg);
         console.error('Error deleting ETF:', err);
       }
     }
@@ -44,8 +55,25 @@ function EtfList() {
     navigate(`/etfs/edit/${id}`);
   };
 
-  const handleManageTransactions = (id) => {
-    navigate(`/etfs/${id}/transactions`);
+  const toggleRow = (id) => {
+    const newExpanded = new Set(expandedRows);
+    if (newExpanded.has(id)) {
+      newExpanded.delete(id);
+    } else {
+      newExpanded.add(id);
+    }
+    setExpandedRows(newExpanded);
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return '-';
+    const date = new Date(dateString);
+    return date.toLocaleDateString();
+  };
+
+  const formatCurrency = (value) => {
+    if (value == null) return '-';
+    return `$${parseFloat(value).toFixed(2)}`;
   };
 
   if (loading) {
@@ -68,50 +96,118 @@ function EtfList() {
           <p>{messages.ETF.NO_ETFS}</p>
         </div>
       ) : (
-        <div className="etf-grid">
-          {etfs.map((etf) => (
-            <div key={etf.id} className="etf-card">
-              <div className="etf-header">
-                <h3>{etf.name}</h3>
-                <span className={`risk risk-${etf.risk?.toLowerCase()}`}>
-                  {etf.risk}
-                </span>
-              </div>
-              <div className="etf-details">
-                <div className="detail-row">
-                  <span className="label">{messages.ETF.TICKER}:</span>
-                  <span className="value">{etf.ticker}</span>
-                </div>
-                <div className="detail-row">
-                  <span className="label">{messages.ETF.TYPE}:</span>
-                  <span className="value">{etf.type}</span>
-                </div>
-                <div className="detail-row">
-                  <span className="label">{messages.ETF.MARKET_CONCENTRATION}:</span>
-                  <span className="value">{etf.marketConcentration}</span>
-                </div>
-                <div className="detail-row">
-                  <span className="label">{messages.ETF.DOMICILE}:</span>
-                  <span className="value">{etf.domicile}</span>
-                </div>
-                <div className="detail-row">
-                  <span className="label">{messages.ETF.TER}:</span>
-                  <span className="value">{etf.ter}%</span>
-                </div>
-              </div>
-              <div className="etf-actions">
-                <button className="manage-button" onClick={() => handleManageTransactions(etf.id)}>
-                  {messages.ETF.MANAGE_TRANSACTIONS}
-                </button>
-                <button className="edit-button" onClick={() => handleEdit(etf.id)}>
-                  {messages.GENERIC.EDIT}
-                </button>
-                <button className="delete-button" onClick={() => handleDelete(etf.id)}>
-                  {messages.GENERIC.DELETE}
-                </button>
-              </div>
-            </div>
-          ))}
+        <div className="etf-table-container">
+          <table className="etf-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Ticker</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Market</th>
+                <th>Risk</th>
+                <th>TER</th>
+                <th>Transactions</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {etfs.map((etf) => (
+                <React.Fragment key={etf.id}>
+                  <tr className="etf-row">
+                    <td>
+                      <button 
+                        className="expand-button"
+                        onClick={() => toggleRow(etf.id)}
+                        title={expandedRows.has(etf.id) ? 'Collapse' : 'Expand transactions'}
+                      >
+                        {expandedRows.has(etf.id) ? '−' : '+'}
+                      </button>
+                    </td>
+                    <td className="ticker-cell">{etf.ticker}</td>
+                    <td>{etf.name}</td>
+                    <td>{etf.type}</td>
+                    <td>{etf.marketConcentration}</td>
+                    <td>
+                      <span className={`risk-badge risk-${etf.risk?.toLowerCase()}`}>
+                        {etf.risk}
+                      </span>
+                    </td>
+                    <td>{etf.ter}%</td>
+                    <td>{etf.transactions?.length || 0}</td>
+                    <td>
+                      <div className="action-buttons">
+                        <button 
+                          className="edit-button-small" 
+                          onClick={() => handleEdit(etf.id)}
+                          title="Edit ETF"
+                        >
+                          Edit
+                        </button>
+                        <button 
+                          className="delete-button-small" 
+                          onClick={() => handleDelete(etf.id)}
+                          title="Delete ETF"
+                          disabled={etf.transactions && etf.transactions.length > 0}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  {expandedRows.has(etf.id) && (
+                    <tr className="transactions-row">
+                      <td colSpan="9">
+                        <div className="transactions-container">
+                          {!etf.transactions || etf.transactions.length === 0 ? (
+                            <div className="no-transactions">
+                              No transactions yet
+                            </div>
+                          ) : (
+                            <table className="transactions-table">
+                              <thead>
+                                <tr>
+                                  <th>Date</th>
+                                  <th>Type</th>
+                                  <th>Units</th>
+                                  <th>Cost</th>
+                                  <th>Fees</th>
+                                  <th>Total</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {etf.transactions
+                                  .sort((a, b) => new Date(b.transactionDate) - new Date(a.transactionDate))
+                                  .map((transaction) => (
+                                    <tr key={transaction.id}>
+                                      <td>{formatDate(transaction.transactionDate)}</td>
+                                      <td>
+                                        <span className={`transaction-type ${transaction.transactionType?.toLowerCase()}`}>
+                                          {transaction.transactionType}
+                                        </span>
+                                      </td>
+                                      <td>{transaction.unitsPurchased}</td>
+                                      <td>{formatCurrency(transaction.transactionCost)}</td>
+                                      <td>{formatCurrency(transaction.transactionFees)}</td>
+                                      <td className="total-cell">
+                                        {formatCurrency(
+                                          (parseFloat(transaction.transactionCost) || 0) + 
+                                          (parseFloat(transaction.transactionFees) || 0)
+                                        )}
+                                      </td>
+                                    </tr>
+                                  ))}
+                              </tbody>
+                            </table>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </React.Fragment>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>

@@ -95,12 +95,23 @@ public class EtfService {
             throw new ResourceConflictException("etf.duplicate.ticker", updatedEtf.getTicker());
         }
 
+        // Preserve existing transactions and investments when updating
+        Etf existingEtf = etfRepository.findById(id).orElse(null);
+        if (existingEtf != null) {
+            updatedEtf.setTransactions(existingEtf.getTransactions());
+            updatedEtf.setInvestments(existingEtf.getInvestments());
+        }
+
         // Set the id to the one being updated
         updatedEtf.setId(id);
         etfRepository.save(updatedEtf);
     }
 
     public void deleteEtf(Long id) {
+        Etf etf = etfRepository.findById(id).orElse(null);
+        if (etf != null && etf.getTransactions() != null && !etf.getTransactions().isEmpty()) {
+            throw new ValidationException("etf.delete.has.transactions");
+        }
         etfRepository.delete(id);
     }
 }
