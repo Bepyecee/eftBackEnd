@@ -67,6 +67,10 @@ function EtfList() {
     setExpandedRows(newExpanded);
   };
 
+  const collapseAll = () => {
+    setExpandedRows(new Set());
+  };
+
   const handleSort = (key) => {
     let direction = 'asc';
     if (sortConfig.key === key && sortConfig.direction === 'asc') {
@@ -190,9 +194,16 @@ function EtfList() {
     <div className="etf-list-container">
       <div className="etf-list-header">
         <h2>{messages.ETF.LIST_TITLE}</h2>
-        <button className="add-button" onClick={() => navigate('/etfs/new')}>
-          {messages.ETF.ADD_NEW}
-        </button>
+        <div className="header-actions">
+          {expandedRows.size > 0 && (
+            <button className="collapse-all-button" onClick={collapseAll}>
+              Collapse All
+            </button>
+          )}
+          <button className="add-button" onClick={() => navigate('/etfs/new')}>
+            {messages.ETF.ADD_NEW}
+          </button>
+        </div>
       </div>
 
       {error && <div className="error-message">{error}</div>}
