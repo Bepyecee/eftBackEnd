@@ -59,10 +59,10 @@ const messages = {
 
   // ETF Messages
   ETF: {
-    TITLE: 'ETF Manager',
-    LIST_TITLE: 'ETF Manager',
+    TITLE: 'Ticker Manager',
+    LIST_TITLE: 'Ticker Manager',
     CREATE_TITLE: 'ETF ETF creator',
-    EDIT_TITLE: 'Edit ETF',
+    EDIT_TITLE: 'Ticker Manager',
     ADD_NEW: 'Add New ETF',
     MANAGE_TRANSACTIONS: 'Manage Transactions',
     NO_ETFS: 'No ETFs found. Add your first ETF to get started.',

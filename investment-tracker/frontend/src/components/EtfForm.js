@@ -34,6 +34,7 @@ function EtfForm() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [transactionSortConfig, setTransactionSortConfig] = useState({ key: null, direction: 'asc' });
 
   useEffect(() => {
     if (isEditMode) {
@@ -187,6 +188,53 @@ function EtfForm() {
     setEditingTransactionIndex(null);
   };
 
+  const handleTransactionSort = (key) => {
+    let direction = 'asc';
+    if (transactionSortConfig.key === key && transactionSortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setTransactionSortConfig({ key, direction });
+  };
+
+  const getSortedTransactions = () => {
+    if (!transactionSortConfig.key) {
+      return [...transactions].sort((a, b) => 
+        new Date(b.transactionDate) - new Date(a.transactionDate)
+      );
+    }
+
+    const sorted = [...transactions].sort((a, b) => {
+      let aValue = a[transactionSortConfig.key];
+      let bValue = b[transactionSortConfig.key];
+
+      if (transactionSortConfig.key === 'transactionDate') {
+        aValue = new Date(aValue).getTime();
+        bValue = new Date(bValue).getTime();
+      }
+
+      if (typeof aValue === 'number' && typeof bValue === 'number') {
+        return transactionSortConfig.direction === 'asc' ? aValue - bValue : bValue - aValue;
+      }
+
+      if (aValue == null) aValue = '';
+      if (bValue == null) bValue = '';
+
+      if (typeof aValue === 'string') aValue = aValue.toLowerCase();
+      if (typeof bValue === 'string') bValue = bValue.toLowerCase();
+
+      if (aValue < bValue) return transactionSortConfig.direction === 'asc' ? -1 : 1;
+      if (aValue > bValue) return transactionSortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    return sorted;
+  };
+
+  const getTransactionSortIndicator = (columnKey) => {
+    if (transactionSortConfig.key !== columnKey) return ' ↕';
+    return transactionSortConfig.direction === 'asc' ? ' ↑' : ' ↓';
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -249,6 +297,32 @@ function EtfForm() {
 
       <form onSubmit={handleSubmit} className="etf-form">
         <div className="form-grid">
+          {/* Row 1: Ticker Symbol and Name */}
+          <div className="form-group">
+            <label htmlFor="ticker">{messages.ETF.TICKER} *</label>
+            {transactions.length > 0 ? (
+              <a 
+                href={`https://www.justetf.com/en/find-etf.html?query=${formData.ticker}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ticker-readonly-link"
+                title={`View ${formData.ticker} on JustETF`}
+              >
+                {formData.ticker}
+              </a>
+            ) : (
+              <input
+                type="text"
+                id="ticker"
+                name="ticker"
+                value={formData.ticker}
+                onChange={handleChange}
+                placeholder={messages.ETF.TICKER_PLACEHOLDER}
+                required
+              />
+            )}
+          </div>
+
           <div className="form-group">
             <label htmlFor="name">{messages.ETF.NAME} *</label>
             <input
@@ -262,19 +336,7 @@ function EtfForm() {
             />
           </div>
 
-          <div className="form-group">
-            <label htmlFor="ticker">{messages.ETF.TICKER} *</label>
-            <input
-              type="text"
-              id="ticker"
-              name="ticker"
-              value={formData.ticker}
-              onChange={handleChange}
-              placeholder={messages.ETF.TICKER_PLACEHOLDER}
-              required
-            />
-          </div>
-
+          {/* Row 2: Type, TER, and Risk Level */}
           <div className="form-group">
             <label htmlFor="type">{messages.ETF.TYPE}</label>
             <select
@@ -285,6 +347,52 @@ function EtfForm() {
             >
               <option value="BOND">{messages.ETF.TYPE_BOND}</option>
               <option value="EQUITY">{messages.ETF.TYPE_EQUITY}</option>
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="ter">{messages.ETF.TER} *</label>
+            <input
+              type="number"
+              step="0.01"
+              id="ter"
+              name="ter"
+              value={formData.ter}
+              onChange={handleChange}
+              placeholder={messages.ETF.TER_PLACEHOLDER}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="risk">{messages.ETF.RISK} *</label>
+            <select
+              id="risk"
+              name="risk"
+              value={formData.risk}
+              onChange={handleChange}
+              required
+            >
+              <option value="LOW">{messages.ETF.RISK_LOW}</option>
+              <option value="MEDIUM">{messages.ETF.RISK_MEDIUM}</option>
+              <option value="HIGH">{messages.ETF.RISK_HIGH}</option>
+              <option value="VERY_HIGH">{messages.ETF.RISK_VERY_HIGH}</option>
+            </select>
+          </div>
+
+          {/* Row 3: Domicile and Market Concentration */}
+          <div className="form-group">
+            <label htmlFor="domicile">{messages.ETF.DOMICILE} *</label>
+            <select
+              id="domicile"
+              name="domicile"
+              value={formData.domicile}
+              onChange={handleChange}
+              required
+            >
+              <option value="IRELAND">{messages.ETF.DOMICILE_IRELAND}</option>
+              <option value="EUROPE">{messages.ETF.DOMICILE_EUROPE}</option>
+              <option value="OTHER">{messages.ETF.DOMICILE_OTHER}</option>
             </select>
           </div>
 
@@ -306,51 +414,6 @@ function EtfForm() {
               <option value="GLOBAL_INCL_EMERGING">{messages.ETF.MARKET_GLOBAL_INCL_EMERGING}</option>
               <option value="CORPORATE">{messages.ETF.MARKET_CORPORATE}</option>
             </select>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="domicile">{messages.ETF.DOMICILE} *</label>
-            <select
-              id="domicile"
-              name="domicile"
-              value={formData.domicile}
-              onChange={handleChange}
-              required
-            >
-              <option value="IRELAND">{messages.ETF.DOMICILE_IRELAND}</option>
-              <option value="EUROPE">{messages.ETF.DOMICILE_EUROPE}</option>
-              <option value="OTHER">{messages.ETF.DOMICILE_OTHER}</option>
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="risk">{messages.ETF.RISK} *</label>
-            <select
-              id="risk"
-              name="risk"
-              value={formData.risk}
-              onChange={handleChange}
-              required
-            >
-              <option value="LOW">{messages.ETF.RISK_LOW}</option>
-              <option value="MEDIUM">{messages.ETF.RISK_MEDIUM}</option>
-              <option value="HIGH">{messages.ETF.RISK_HIGH}</option>
-              <option value="VERY_HIGH">{messages.ETF.RISK_VERY_HIGH}</option>
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="ter">{messages.ETF.TER} *</label>
-            <input
-              type="number"
-              step="0.01"
-              id="ter"
-              name="ter"
-              value={formData.ter}
-              onChange={handleChange}
-              placeholder={messages.ETF.TER_PLACEHOLDER}
-              required
-            />
           </div>
         </div>
 
@@ -477,16 +540,26 @@ function EtfForm() {
               <table className="transactions-table">
                 <thead>
                   <tr>
-                    <th>{messages.TRANSACTION.TRANSACTION_DATE}</th>
-                    <th>{messages.TRANSACTION.TRANSACTION_TYPE}</th>
-                    <th>{messages.TRANSACTION.UNITS_PURCHASED}</th>
-                    <th>{messages.TRANSACTION.TRANSACTION_COST}</th>
-                    <th>{messages.TRANSACTION.TRANSACTION_FEES}</th>
+                    <th className="sortable" onClick={() => handleTransactionSort('transactionDate')}>
+                      {messages.TRANSACTION.TRANSACTION_DATE}{getTransactionSortIndicator('transactionDate')}
+                    </th>
+                    <th className="sortable" onClick={() => handleTransactionSort('transactionType')}>
+                      {messages.TRANSACTION.TRANSACTION_TYPE}{getTransactionSortIndicator('transactionType')}
+                    </th>
+                    <th className="sortable" onClick={() => handleTransactionSort('unitsPurchased')}>
+                      {messages.TRANSACTION.UNITS_PURCHASED}{getTransactionSortIndicator('unitsPurchased')}
+                    </th>
+                    <th className="sortable" onClick={() => handleTransactionSort('transactionCost')}>
+                      {messages.TRANSACTION.TRANSACTION_COST}{getTransactionSortIndicator('transactionCost')}
+                    </th>
+                    <th className="sortable" onClick={() => handleTransactionSort('transactionFees')}>
+                      {messages.TRANSACTION.TRANSACTION_FEES}{getTransactionSortIndicator('transactionFees')}
+                    </th>
                     <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {transactions.map((transaction, index) => (
+                  {getSortedTransactions().map((transaction, index) => (
                     <tr key={index}>
                       <td>{new Date(transaction.transactionDate).toLocaleDateString()}</td>
                       <td>
@@ -519,6 +592,13 @@ function EtfForm() {
                       </td>
                     </tr>
                   ))}
+                  <tr className="total-row">
+                    <td colSpan="2"><strong>TOTAL</strong></td>
+                    <td><strong>{transactions.reduce((sum, t) => sum + (parseFloat(t.unitsPurchased) || 0), 0).toFixed(3)}</strong></td>
+                    <td><strong>€{transactions.reduce((sum, t) => sum + (parseFloat(t.transactionCost) || 0), 0).toFixed(2)}</strong></td>
+                    <td><strong>€{transactions.reduce((sum, t) => sum + (parseFloat(t.transactionFees) || 0), 0).toFixed(2)}</strong></td>
+                    <td></td>
+                  </tr>
                 </tbody>
               </table>
             </div>
