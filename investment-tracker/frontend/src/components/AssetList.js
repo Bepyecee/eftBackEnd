@@ -10,8 +10,7 @@ function AssetList() {
       </div>
 
       <div className="not-implemented-banner">
-        <h3>{messages.ASSET.NOT_IMPLEMENTED_TITLE}</h3>
-        <p>{messages.ASSET.NOT_IMPLEMENTED_DESCRIPTION}</p>
+        <p>Not yet implemented</p>
       </div>
     </div>
   );
