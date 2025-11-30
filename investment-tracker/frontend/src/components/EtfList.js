@@ -69,8 +69,8 @@ function EtfList() {
             <div key={etf.id} className="etf-card">
               <div className="etf-header">
                 <h3>{etf.name}</h3>
-                <span className={`priority priority-${etf.priority?.toLowerCase()}`}>
-                  {etf.priority}
+                <span className={`risk risk-${etf.risk?.toLowerCase()}`}>
+                  {etf.risk}
                 </span>
               </div>
               <div className="etf-details">

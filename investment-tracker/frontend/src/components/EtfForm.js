@@ -11,17 +11,18 @@ function EtfForm() {
 
   const [formData, setFormData] = useState({
     name: '',
-    priority: 'LOW',
     type: 'EQUITY',
-    globalCoverage: '',
-    domicile: '',
-    risk: '',
+    marketConcentration: 'GLOBAL_DEVELOPED',
+    domicile: 'IRELAND',
+    risk: 'HIGH',
     ticker: '',
-    dividend: '',
     ter: '',
+    fees: '1.00',
     notes: '',
     currentValue: '',
     investedAmount: '',
+    purchaseDate: new Date().toISOString().split('T')[0], // Default to today
+    unitsPurchased: '',
   });
 
   const [loading, setLoading] = useState(false);
@@ -39,17 +40,18 @@ function EtfForm() {
       const data = await etfService.getEtfById(id);
       setFormData({
         name: data.name || '',
-        priority: data.priority || 'LOW',
         type: data.type || 'EQUITY',
-        globalCoverage: data.globalCoverage || '',
-        domicile: data.domicile || '',
-        risk: data.risk || '',
+        marketConcentration: data.marketConcentration || 'GLOBAL_DEVELOPED',
+        domicile: data.domicile || 'IRELAND',
+        risk: data.risk || 'HIGH',
         ticker: data.ticker || '',
-        dividend: data.dividend || '',
         ter: data.ter || '',
+        fees: data.fees || '1.00',
         notes: data.notes || '',
         currentValue: data.currentValue || '',
         investedAmount: data.investedAmount || '',
+        purchaseDate: data.purchaseDate || new Date().toISOString().split('T')[0],
+        unitsPurchased: data.unitsPurchased || '',
       });
       setError('');
     } catch (err) {
@@ -81,6 +83,7 @@ function EtfForm() {
         ter: formData.ter ? parseFloat(formData.ter) : 0,
         currentValue: formData.currentValue ? parseFloat(formData.currentValue) : 0,
         investedAmount: formData.investedAmount ? parseFloat(formData.investedAmount) : 0,
+        unitsPurchased: formData.unitsPurchased ? parseFloat(formData.unitsPurchased) : 0,
       };
 
       if (isEditMode) {
@@ -143,21 +146,6 @@ function EtfForm() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="priority">{messages.ETF.PRIORITY}</label>
-            <select
-              id="priority"
-              name="priority"
-              value={formData.priority}
-              onChange={handleChange}
-            >
-              <option value="LOW">{messages.ETF.PRIORITY_LOW}</option>
-              <option value="MEDIUM">{messages.ETF.PRIORITY_MEDIUM}</option>
-              <option value="HIGH">{messages.ETF.PRIORITY_HIGH}</option>
-              <option value="VERY_HIGH">{messages.ETF.PRIORITY_VERY_HIGH}</option>
-            </select>
-          </div>
-
-          <div className="form-group">
             <label htmlFor="type">{messages.ETF.TYPE}</label>
             <select
               id="type"
@@ -171,55 +159,58 @@ function EtfForm() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="globalCoverage">{messages.ETF.GLOBAL_COVERAGE}</label>
-            <input
-              type="text"
-              id="globalCoverage"
-              name="globalCoverage"
-              value={formData.globalCoverage}
+            <label htmlFor="marketConcentration">{messages.ETF.MARKET_CONCENTRATION} *</label>
+            <select
+              id="marketConcentration"
+              name="marketConcentration"
+              value={formData.marketConcentration}
               onChange={handleChange}
-              placeholder={messages.ETF.GLOBAL_COVERAGE_PLACEHOLDER}
-            />
+              required
+            >
+              <option value="US">{messages.ETF.MARKET_US}</option>
+              <option value="US_TECH">{messages.ETF.MARKET_US_TECH}</option>
+              <option value="EUROPE">{messages.ETF.MARKET_EUROPE}</option>
+              <option value="EUROPE_TECH">{messages.ETF.MARKET_EUROPE_TECH}</option>
+              <option value="GLOBAL_DEVELOPED">{messages.ETF.MARKET_GLOBAL_DEVELOPED}</option>
+              <option value="GLOBAL_DEVELOPED_TECH">{messages.ETF.MARKET_GLOBAL_DEVELOPED_TECH}</option>
+              <option value="GLOBAL_INCL_EMERGING">{messages.ETF.MARKET_GLOBAL_INCL_EMERGING}</option>
+              <option value="CORPORATE">{messages.ETF.MARKET_CORPORATE}</option>
+            </select>
           </div>
 
           <div className="form-group">
-            <label htmlFor="domicile">{messages.ETF.DOMICILE}</label>
-            <input
-              type="text"
+            <label htmlFor="domicile">{messages.ETF.DOMICILE} *</label>
+            <select
               id="domicile"
               name="domicile"
               value={formData.domicile}
               onChange={handleChange}
-              placeholder={messages.ETF.DOMICILE_PLACEHOLDER}
-            />
+              required
+            >
+              <option value="IRELAND">{messages.ETF.DOMICILE_IRELAND}</option>
+              <option value="EUROPE">{messages.ETF.DOMICILE_EUROPE}</option>
+              <option value="OTHER">{messages.ETF.DOMICILE_OTHER}</option>
+            </select>
           </div>
 
           <div className="form-group">
-            <label htmlFor="risk">{messages.ETF.RISK}</label>
-            <input
-              type="text"
+            <label htmlFor="risk">{messages.ETF.RISK} *</label>
+            <select
               id="risk"
               name="risk"
               value={formData.risk}
               onChange={handleChange}
-              placeholder={messages.ETF.RISK_PLACEHOLDER}
-            />
+              required
+            >
+              <option value="LOW">{messages.ETF.RISK_LOW}</option>
+              <option value="MEDIUM">{messages.ETF.RISK_MEDIUM}</option>
+              <option value="HIGH">{messages.ETF.RISK_HIGH}</option>
+              <option value="VERY_HIGH">{messages.ETF.RISK_VERY_HIGH}</option>
+            </select>
           </div>
 
           <div className="form-group">
-            <label htmlFor="dividend">{messages.ETF.DIVIDEND}</label>
-            <input
-              type="text"
-              id="dividend"
-              name="dividend"
-              value={formData.dividend}
-              onChange={handleChange}
-              placeholder={messages.ETF.DIVIDEND_PLACEHOLDER}
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="ter">{messages.ETF.TER}</label>
+            <label htmlFor="ter">{messages.ETF.TER} *</label>
             <input
               type="number"
               step="0.01"
@@ -228,21 +219,38 @@ function EtfForm() {
               value={formData.ter}
               onChange={handleChange}
               placeholder={messages.ETF.TER_PLACEHOLDER}
+              required
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="currentValue">{messages.ETF.CURRENT_VALUE}</label>
+            <label htmlFor="fees">{messages.ETF.FEES} *</label>
             <input
               type="number"
               step="0.01"
-              id="currentValue"
-              name="currentValue"
-              value={formData.currentValue}
+              id="fees"
+              name="fees"
+              value={formData.fees}
               onChange={handleChange}
-              placeholder={messages.ETF.CURRENT_VALUE_PLACEHOLDER}
+              placeholder={messages.ETF.FEES_PLACEHOLDER}
+              required
             />
           </div>
+
+          {isEditMode && (
+            <div className="form-group">
+              <label htmlFor="currentValue">{messages.ETF.CURRENT_VALUE}</label>
+              <input
+                type="number"
+                step="0.01"
+                id="currentValue"
+                name="currentValue"
+                value={formData.currentValue}
+                onChange={handleChange}
+                placeholder={messages.ETF.CURRENT_VALUE_PLACEHOLDER}
+              />
+            </div>
+          )}
 
           <div className="form-group">
             <label htmlFor="investedAmount">{messages.ETF.INVESTED_AMOUNT}</label>
@@ -254,6 +262,32 @@ function EtfForm() {
               value={formData.investedAmount}
               onChange={handleChange}
               placeholder={messages.ETF.INVESTED_AMOUNT_PLACEHOLDER}
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="purchaseDate">{messages.ETF.PURCHASE_DATE} *</label>
+            <input
+              type="date"
+              id="purchaseDate"
+              name="purchaseDate"
+              value={formData.purchaseDate}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="unitsPurchased">{messages.ETF.UNITS_PURCHASED} *</label>
+            <input
+              type="number"
+              step="0.001"
+              id="unitsPurchased"
+              name="unitsPurchased"
+              value={formData.unitsPurchased}
+              onChange={handleChange}
+              placeholder={messages.ETF.UNITS_PURCHASED_PLACEHOLDER}
+              required
             />
           </div>
         </div>
