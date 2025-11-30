@@ -7,19 +7,19 @@ function Dashboard() {
   return (
     <div className="dashboard">
       <div className="dashboard-header">
-        <h2>{messages.DASHBOARD.WELCOME}</h2>
+        <h1>{messages.DASHBOARD.WELCOME}</h1>
         <p>{messages.DASHBOARD.OVERVIEW}</p>
       </div>
       <div className="dashboard-cards">
         <Link to="/etfs" className="dashboard-card">
-          <div className="card-icon">📊</div>
           <h3>{messages.DASHBOARD.ETF_CARD_TITLE}</h3>
           <p>{messages.DASHBOARD.ETF_CARD_DESCRIPTION}</p>
+          <span className="card-arrow">→</span>
         </Link>
-        <Link to="/assets" className="dashboard-card">
-          <div className="card-icon">💰</div>
+        <Link to="/assets" className="dashboard-card disabled">
           <h3>{messages.DASHBOARD.ASSET_CARD_TITLE}</h3>
           <p>{messages.DASHBOARD.ASSET_CARD_DESCRIPTION}</p>
+          <span className="card-badge">Coming Soon</span>
         </Link>
       </div>
     </div>
