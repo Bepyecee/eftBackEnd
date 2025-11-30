@@ -4,6 +4,8 @@ import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 import EtfList from './components/EtfList';
 import EtfForm from './components/EtfForm';
+import TransactionList from './components/TransactionList';
+import TransactionForm from './components/TransactionForm';
 import AssetList from './components/AssetList';
 import AssetForm from './components/AssetForm';
 import Navigation from './components/Navigation';
@@ -27,6 +29,8 @@ function App() {
                   <Route path="/etfs" element={<EtfList />} />
                   <Route path="/etfs/new" element={<EtfForm />} />
                   <Route path="/etfs/edit/:id" element={<EtfForm />} />
+                  <Route path="/etfs/:etfId/transactions" element={<TransactionList />} />
+                  <Route path="/etfs/:etfId/transactions/new" element={<TransactionForm />} />
                   <Route path="/assets" element={<AssetList />} />
                   <Route path="/assets/new" element={<AssetForm />} />
                   <Route path="/assets/edit/:id" element={<AssetForm />} />

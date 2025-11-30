@@ -32,8 +32,6 @@ public class EtfServiceTest {
         e.setName("Sample");
         e.setType(ETFType.EQUITY);
         e.setTer(new BigDecimal("0.10"));
-        e.setInvestedAmount(new BigDecimal("1000"));
-        e.setCurrentValue(new BigDecimal("1100"));
         e.setId(id);
         return e;
     }

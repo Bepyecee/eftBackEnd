@@ -2,7 +2,6 @@ package com.example.investmenttracker.model;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,22 +38,10 @@ public class Etf {
     @Column(nullable = false)
     private BigDecimal ter;
 
-    @Column(nullable = false)
-    private BigDecimal fees;
-
     private String notes;
 
-    @Column(nullable = false)
-    private BigDecimal currentValue;
-
-    @Column(nullable = false)
-    private BigDecimal investedAmount;
-
-    @Column(nullable = false)
-    private LocalDate purchaseDate;
-
-    @Column(nullable = false)
-    private BigDecimal unitsPurchased;
+    @OneToMany(mappedBy = "etf", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EtfTransaction> transactions = new ArrayList<>();
 
     @ElementCollection
     @CollectionTable(name = "etf_investments", joinColumns = @JoinColumn(name = "etf_id"))
@@ -78,9 +65,7 @@ public class Etf {
     }
 
     public Etf(String name, ETFType type, ETFMarketConcentration marketConcentration, ETFDomicile domicile,
-            ETFRisk risk,
-            String ticker, BigDecimal ter, BigDecimal fees, String notes, BigDecimal currentValue,
-            BigDecimal investedAmount, LocalDate purchaseDate, BigDecimal unitsPurchased) {
+            ETFRisk risk, String ticker, BigDecimal ter, String notes) {
         this.name = name;
         this.type = type;
         this.marketConcentration = marketConcentration;
@@ -88,12 +73,7 @@ public class Etf {
         this.risk = risk;
         this.ticker = ticker;
         this.ter = ter;
-        this.fees = fees;
         this.notes = notes;
-        this.currentValue = currentValue;
-        this.investedAmount = investedAmount;
-        this.purchaseDate = purchaseDate;
-        this.unitsPurchased = unitsPurchased;
     }
 
     public String getName() {
@@ -152,14 +132,6 @@ public class Etf {
         this.ter = ter;
     }
 
-    public BigDecimal getFees() {
-        return fees;
-    }
-
-    public void setFees(BigDecimal fees) {
-        this.fees = fees;
-    }
-
     public String getNotes() {
         return notes;
     }
@@ -168,36 +140,22 @@ public class Etf {
         this.notes = notes;
     }
 
-    public BigDecimal getCurrentValue() {
-        return currentValue;
+    public List<EtfTransaction> getTransactions() {
+        return transactions;
     }
 
-    public void setCurrentValue(BigDecimal currentValue) {
-        this.currentValue = currentValue;
+    public void setTransactions(List<EtfTransaction> transactions) {
+        this.transactions = transactions;
     }
 
-    public BigDecimal getInvestedAmount() {
-        return investedAmount;
+    public void addTransaction(EtfTransaction transaction) {
+        transactions.add(transaction);
+        transaction.setEtf(this);
     }
 
-    public void setInvestedAmount(BigDecimal investedAmount) {
-        this.investedAmount = investedAmount;
-    }
-
-    public LocalDate getPurchaseDate() {
-        return purchaseDate;
-    }
-
-    public void setPurchaseDate(LocalDate purchaseDate) {
-        this.purchaseDate = purchaseDate;
-    }
-
-    public BigDecimal getUnitsPurchased() {
-        return unitsPurchased;
-    }
-
-    public void setUnitsPurchased(BigDecimal unitsPurchased) {
-        this.unitsPurchased = unitsPurchased;
+    public void removeTransaction(EtfTransaction transaction) {
+        transactions.remove(transaction);
+        transaction.setEtf(null);
     }
 
     public List<Investment> getInvestments() {

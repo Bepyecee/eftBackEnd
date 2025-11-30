@@ -44,6 +44,10 @@ function EtfList() {
     navigate(`/etfs/edit/${id}`);
   };
 
+  const handleManageTransactions = (id) => {
+    navigate(`/etfs/${id}/transactions`);
+  };
+
   if (loading) {
     return <div className="loading">{messages.GENERIC.LOADING}</div>;
   }
@@ -75,27 +79,30 @@ function EtfList() {
               </div>
               <div className="etf-details">
                 <div className="detail-row">
-                  <span className="label">Ticker:</span>
+                  <span className="label">{messages.ETF.TICKER}:</span>
                   <span className="value">{etf.ticker}</span>
                 </div>
                 <div className="detail-row">
-                  <span className="label">Type:</span>
+                  <span className="label">{messages.ETF.TYPE}:</span>
                   <span className="value">{etf.type}</span>
                 </div>
                 <div className="detail-row">
-                  <span className="label">Risk:</span>
-                  <span className="value">{etf.risk}</span>
+                  <span className="label">{messages.ETF.MARKET_CONCENTRATION}:</span>
+                  <span className="value">{etf.marketConcentration}</span>
                 </div>
                 <div className="detail-row">
-                  <span className="label">Current Value:</span>
-                  <span className="value">€{etf.currentValue?.toLocaleString()}</span>
+                  <span className="label">{messages.ETF.DOMICILE}:</span>
+                  <span className="value">{etf.domicile}</span>
                 </div>
                 <div className="detail-row">
-                  <span className="label">Invested:</span>
-                  <span className="value">€{etf.investedAmount?.toLocaleString()}</span>
+                  <span className="label">{messages.ETF.TER}:</span>
+                  <span className="value">{etf.ter}%</span>
                 </div>
               </div>
               <div className="etf-actions">
+                <button className="manage-button" onClick={() => handleManageTransactions(etf.id)}>
+                  {messages.ETF.MANAGE_TRANSACTIONS}
+                </button>
                 <button className="edit-button" onClick={() => handleEdit(etf.id)}>
                   {messages.GENERIC.EDIT}
                 </button>
