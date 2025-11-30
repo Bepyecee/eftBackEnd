@@ -1,5 +1,6 @@
 package com.example.investmenttracker.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -41,6 +42,7 @@ public class Etf {
     private String notes;
 
     @OneToMany(mappedBy = "etf", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<EtfTransaction> transactions = new ArrayList<>();
 
     @ElementCollection

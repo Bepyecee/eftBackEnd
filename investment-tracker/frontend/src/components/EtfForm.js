@@ -563,7 +563,7 @@ function EtfForm() {
                     <tr key={index}>
                       <td>{new Date(transaction.transactionDate).toLocaleDateString()}</td>
                       <td>
-                        <span className={`transaction-type-badge ${transaction.transactionType.toLowerCase()}`}>
+                        <span className={`transaction-type-badge ${transaction.transactionType?.toLowerCase() || 'buy'}`}>
                           {transaction.transactionType === 'BUY'
                             ? messages.TRANSACTION.TYPE_BUY
                             : messages.TRANSACTION.TYPE_SELL}
