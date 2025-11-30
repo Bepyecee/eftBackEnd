@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import etfService from '../services/etfService';
+import transactionService from '../services/transactionService';
 import messages from '../constants/messages';
 import './EtfForm.css';
 
@@ -20,14 +21,36 @@ function EtfForm() {
     notes: '',
   });
 
+  const [transactions, setTransactions] = useState([]);
+  const [showTransactionForm, setShowTransactionForm] = useState(false);
+  const [editingTransactionIndex, setEditingTransactionIndex] = useState(null);
+  const [transactionFormData, setTransactionFormData] = useState({
+    transactionDate: new Date().toISOString().split('T')[0],
+    transactionType: 'BUY',
+    unitsPurchased: '',
+    transactionCost: '',
+    transactionFees: '',
+  });
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
     if (isEditMode) {
       loadEtf();
+      loadTransactions();
     }
   }, [id]);
+
+  const loadTransactions = async () => {
+    if (!id) return;
+    try {
+      const data = await transactionService.getTransactionsForEtf(id);
+      setTransactions(data);
+    } catch (err) {
+      console.error('Error loading transactions:', err);
+    }
+  };
 
   const loadEtf = async () => {
     try {
@@ -60,6 +83,110 @@ function EtfForm() {
     }));
   };
 
+  const handleTransactionChange = (e) => {
+    const { name, value } = e.target;
+    setTransactionFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleAddTransactionClick = () => {
+    setShowTransactionForm(true);
+    setEditingTransactionIndex(null);
+    setTransactionFormData({
+      transactionDate: new Date().toISOString().split('T')[0],
+      transactionType: 'BUY',
+      unitsPurchased: '',
+      transactionCost: '',
+      transactionFees: '',
+    });
+  };
+
+  const handleSaveTransaction = async () => {
+    if (!transactionFormData.unitsPurchased || !transactionFormData.transactionCost || !transactionFormData.transactionFees) {
+      setError(messages.TRANSACTION.SAVE_ERROR);
+      return;
+    }
+
+    const transaction = {
+      ...transactionFormData,
+      unitsPurchased: parseFloat(transactionFormData.unitsPurchased),
+      transactionCost: parseFloat(transactionFormData.transactionCost),
+      transactionFees: parseFloat(transactionFormData.transactionFees),
+    };
+
+    if (isEditMode) {
+      // Save to backend immediately if editing existing ETF
+      try {
+        if (editingTransactionIndex !== null) {
+          // Update existing transaction
+          const existingTransaction = transactions[editingTransactionIndex];
+          await transactionService.updateTransaction(id, existingTransaction.id, transaction);
+        } else {
+          // Create new transaction
+          await transactionService.createTransaction(id, transaction);
+        }
+        await loadTransactions();
+      } catch (err) {
+        setError(messages.TRANSACTION.SAVE_ERROR);
+        console.error('Error saving transaction:', err);
+        return;
+      }
+    } else {
+      // Store locally for new ETF
+      if (editingTransactionIndex !== null) {
+        const updatedTransactions = [...transactions];
+        updatedTransactions[editingTransactionIndex] = transaction;
+        setTransactions(updatedTransactions);
+      } else {
+        setTransactions([...transactions, transaction]);
+      }
+    }
+
+    setShowTransactionForm(false);
+    setEditingTransactionIndex(null);
+  };
+
+  const handleEditTransaction = (index) => {
+    const transaction = transactions[index];
+    setTransactionFormData({
+      transactionDate: transaction.transactionDate,
+      transactionType: transaction.transactionType,
+      unitsPurchased: transaction.unitsPurchased.toString(),
+      transactionCost: transaction.transactionCost.toString(),
+      transactionFees: transaction.transactionFees.toString(),
+    });
+    setEditingTransactionIndex(index);
+    setShowTransactionForm(true);
+  };
+
+  const handleDeleteTransaction = async (index) => {
+    if (!window.confirm(messages.TRANSACTION.CONFIRM_DELETE)) {
+      return;
+    }
+
+    if (isEditMode) {
+      // Delete from backend
+      try {
+        const transaction = transactions[index];
+        await transactionService.deleteTransaction(id, transaction.id);
+        await loadTransactions();
+      } catch (err) {
+        setError(messages.TRANSACTION.DELETE_ERROR);
+        console.error('Error deleting transaction:', err);
+      }
+    } else {
+      // Remove from local state
+      setTransactions(transactions.filter((_, i) => i !== index));
+    }
+  };
+
+  const handleCancelTransaction = () => {
+    setShowTransactionForm(false);
+    setEditingTransactionIndex(null);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -73,15 +200,31 @@ function EtfForm() {
         ter: formData.ter ? parseFloat(formData.ter) : 0,
       };
 
+      let etfId = id;
       if (isEditMode) {
         await etfService.updateEtf(id, submitData);
       } else {
-        await etfService.createEtf(submitData);
+        // Create ETF first, then save transactions
+        const createdEtf = await etfService.createEtf(submitData);
+        etfId = createdEtf.id;
+        
+        // Save all transactions for the new ETF
+        if (transactions.length > 0) {
+          for (const transaction of transactions) {
+            await transactionService.createTransaction(etfId, transaction);
+          }
+        }
       }
       
       navigate('/etfs');
     } catch (err) {
-      setError(messages.ETF.SAVE_ERROR);
+      if (err.response && err.response.status === 409) {
+        setError(`An ETF with ticker "${formData.ticker}" already exists. Please use a different ticker.`);
+      } else if (err.response && err.response.data && err.response.data.message) {
+        setError(err.response.data.message);
+      } else {
+        setError(messages.ETF.SAVE_ERROR);
+      }
       console.error('Error saving ETF:', err);
     } finally {
       setLoading(false);
@@ -221,6 +364,165 @@ function EtfForm() {
             rows="4"
             placeholder={messages.ETF.NOTES_PLACEHOLDER}
           />
+        </div>
+
+        {/* Transactions Section */}
+        <div className="transactions-section">
+          <div className="transactions-header">
+            <h3>{messages.TRANSACTION.TITLE}</h3>
+            <button
+              type="button"
+              className="add-transaction-button"
+              onClick={handleAddTransactionClick}
+            >
+              {messages.TRANSACTION.ADD_NEW}
+            </button>
+          </div>
+
+          {/* Transaction Form */}
+          {showTransactionForm && (
+            <div className="transaction-form">
+              <div className="form-grid">
+                <div className="form-group">
+                  <label htmlFor="transactionDate">{messages.TRANSACTION.TRANSACTION_DATE} *</label>
+                  <input
+                    type="date"
+                    id="transactionDate"
+                    name="transactionDate"
+                    value={transactionFormData.transactionDate}
+                    onChange={handleTransactionChange}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="transactionType">{messages.TRANSACTION.TRANSACTION_TYPE} *</label>
+                  <select
+                    id="transactionType"
+                    name="transactionType"
+                    value={transactionFormData.transactionType}
+                    onChange={handleTransactionChange}
+                    required
+                  >
+                    <option value="BUY">{messages.TRANSACTION.TYPE_BUY}</option>
+                    <option value="SELL">{messages.TRANSACTION.TYPE_SELL}</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="unitsPurchased">{messages.TRANSACTION.UNITS_PURCHASED} *</label>
+                  <input
+                    type="number"
+                    step="0.001"
+                    id="unitsPurchased"
+                    name="unitsPurchased"
+                    value={transactionFormData.unitsPurchased}
+                    onChange={handleTransactionChange}
+                    placeholder={messages.TRANSACTION.UNITS_PURCHASED_PLACEHOLDER}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="transactionCost">{messages.TRANSACTION.TRANSACTION_COST} *</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    id="transactionCost"
+                    name="transactionCost"
+                    value={transactionFormData.transactionCost}
+                    onChange={handleTransactionChange}
+                    placeholder={messages.TRANSACTION.TRANSACTION_COST_PLACEHOLDER}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="transactionFees">{messages.TRANSACTION.TRANSACTION_FEES} *</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    id="transactionFees"
+                    name="transactionFees"
+                    value={transactionFormData.transactionFees}
+                    onChange={handleTransactionChange}
+                    placeholder={messages.TRANSACTION.TRANSACTION_FEES_PLACEHOLDER}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="transaction-form-actions">
+                <button
+                  type="button"
+                  className="cancel-button"
+                  onClick={handleCancelTransaction}
+                >
+                  {messages.GENERIC.CANCEL}
+                </button>
+                <button
+                  type="button"
+                  className="save-transaction-button"
+                  onClick={handleSaveTransaction}
+                >
+                  {editingTransactionIndex !== null ? 'Update Transaction' : 'Save Transaction'}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Transactions List */}
+          {transactions.length > 0 && (
+            <div className="transactions-list">
+              <table className="transactions-table">
+                <thead>
+                  <tr>
+                    <th>{messages.TRANSACTION.TRANSACTION_DATE}</th>
+                    <th>{messages.TRANSACTION.TRANSACTION_TYPE}</th>
+                    <th>{messages.TRANSACTION.UNITS_PURCHASED}</th>
+                    <th>{messages.TRANSACTION.TRANSACTION_COST}</th>
+                    <th>{messages.TRANSACTION.TRANSACTION_FEES}</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {transactions.map((transaction, index) => (
+                    <tr key={index}>
+                      <td>{new Date(transaction.transactionDate).toLocaleDateString()}</td>
+                      <td>
+                        <span className={`transaction-type-badge ${transaction.transactionType.toLowerCase()}`}>
+                          {transaction.transactionType === 'BUY'
+                            ? messages.TRANSACTION.TYPE_BUY
+                            : messages.TRANSACTION.TYPE_SELL}
+                        </span>
+                      </td>
+                      <td>{transaction.unitsPurchased}</td>
+                      <td>€{transaction.transactionCost}</td>
+                      <td>€{transaction.transactionFees}</td>
+                      <td>
+                        <div className="transaction-actions">
+                          <button
+                            type="button"
+                            className="edit-transaction-button"
+                            onClick={() => handleEditTransaction(index)}
+                          >
+                            {messages.GENERIC.EDIT}
+                          </button>
+                          <button
+                            type="button"
+                            className="delete-transaction-button"
+                            onClick={() => handleDeleteTransaction(index)}
+                          >
+                            {messages.GENERIC.DELETE}
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
 
         <div className="form-actions">

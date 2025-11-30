@@ -3,6 +3,8 @@ package com.example.investmenttracker.storage;
 import com.example.investmenttracker.model.Etf;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -17,7 +19,13 @@ public class FileStorage {
     private static final String ASSET_FILE = "assets.json";
     private static final String ETF_FILE = "etfs.json";
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
+
+    public FileStorage() {
+        this.objectMapper = new ObjectMapper();
+        this.objectMapper.registerModule(new JavaTimeModule());
+        this.objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    }
 
     // Keep asset methods as simple string-list helpers for now
     public List<String> readAssets() {
