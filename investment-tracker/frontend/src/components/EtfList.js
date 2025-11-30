@@ -9,6 +9,8 @@ function EtfList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [expandedRows, setExpandedRows] = useState(new Set());
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+  const [transactionSortConfig, setTransactionSortConfig] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -65,6 +67,108 @@ function EtfList() {
     setExpandedRows(newExpanded);
   };
 
+  const handleSort = (key) => {
+    let direction = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const getSortedEtfs = () => {
+    if (!sortConfig.key) return etfs;
+
+    const sorted = [...etfs].sort((a, b) => {
+      let aValue = a[sortConfig.key];
+      let bValue = b[sortConfig.key];
+
+      // Handle transaction count
+      if (sortConfig.key === 'transactionCount') {
+        aValue = a.transactions?.length || 0;
+        bValue = b.transactions?.length || 0;
+      }
+
+      // Handle null/undefined values
+      if (aValue == null) aValue = '';
+      if (bValue == null) bValue = '';
+
+      // Convert to lowercase for string comparison
+      if (typeof aValue === 'string') aValue = aValue.toLowerCase();
+      if (typeof bValue === 'string') bValue = bValue.toLowerCase();
+
+      if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
+      if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    return sorted;
+  };
+
+  const getSortIndicator = (columnKey) => {
+    if (sortConfig.key !== columnKey) return ' ↕';
+    return sortConfig.direction === 'asc' ? ' ↑' : ' ↓';
+  };
+
+  const handleTransactionSort = (etfId, key) => {
+    const currentSort = transactionSortConfig[etfId];
+    let direction = 'asc';
+    if (currentSort?.key === key && currentSort?.direction === 'asc') {
+      direction = 'desc';
+    }
+    setTransactionSortConfig({
+      ...transactionSortConfig,
+      [etfId]: { key, direction }
+    });
+  };
+
+  const getSortedTransactions = (etfId, transactions) => {
+    if (!transactions || transactions.length === 0) return [];
+    
+    const sortConfig = transactionSortConfig[etfId];
+    if (!sortConfig?.key) {
+      // Default: sort by date descending
+      return [...transactions].sort((a, b) => 
+        new Date(b.transactionDate) - new Date(a.transactionDate)
+      );
+    }
+
+    const sorted = [...transactions].sort((a, b) => {
+      let aValue = a[sortConfig.key];
+      let bValue = b[sortConfig.key];
+
+      // Handle date comparison
+      if (sortConfig.key === 'transactionDate') {
+        aValue = new Date(aValue).getTime();
+        bValue = new Date(bValue).getTime();
+      }
+
+      // Handle numeric values
+      if (typeof aValue === 'number' && typeof bValue === 'number') {
+        return sortConfig.direction === 'asc' ? aValue - bValue : bValue - aValue;
+      }
+
+      // Handle null/undefined
+      if (aValue == null) aValue = '';
+      if (bValue == null) bValue = '';
+
+      // String comparison
+      if (typeof aValue === 'string') aValue = aValue.toLowerCase();
+      if (typeof bValue === 'string') bValue = bValue.toLowerCase();
+
+      if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
+      if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    return sorted;
+  };
+
+  const getTransactionSortIndicator = (etfId, columnKey) => {
+    const sortConfig = transactionSortConfig[etfId];
+    if (!sortConfig || sortConfig.key !== columnKey) return ' ↕';
+    return sortConfig.direction === 'asc' ? ' ↑' : ' ↓';
+  };
+
   const formatDate = (dateString) => {
     if (!dateString) return '-';
     const date = new Date(dateString);
@@ -73,12 +177,14 @@ function EtfList() {
 
   const formatCurrency = (value) => {
     if (value == null) return '-';
-    return `$${parseFloat(value).toFixed(2)}`;
+    return `€${parseFloat(value).toFixed(2)}`;
   };
 
   if (loading) {
     return <div className="loading">{messages.GENERIC.LOADING}</div>;
   }
+
+  const sortedEtfs = getSortedEtfs();
 
   return (
     <div className="etf-list-container">
@@ -101,18 +207,32 @@ function EtfList() {
             <thead>
               <tr>
                 <th></th>
-                <th>Ticker</th>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Market</th>
-                <th>Risk</th>
-                <th>TER</th>
-                <th>Transactions</th>
+                <th className="sortable" onClick={() => handleSort('ticker')}>
+                  Ticker{getSortIndicator('ticker')}
+                </th>
+                <th className="sortable" onClick={() => handleSort('name')}>
+                  Name{getSortIndicator('name')}
+                </th>
+                <th className="sortable" onClick={() => handleSort('type')}>
+                  Type{getSortIndicator('type')}
+                </th>
+                <th className="sortable" onClick={() => handleSort('marketConcentration')}>
+                  Market{getSortIndicator('marketConcentration')}
+                </th>
+                <th className="sortable" onClick={() => handleSort('risk')}>
+                  Risk{getSortIndicator('risk')}
+                </th>
+                <th className="sortable" onClick={() => handleSort('ter')}>
+                  TER{getSortIndicator('ter')}
+                </th>
+                <th className="sortable" onClick={() => handleSort('transactionCount')}>
+                  Transactions{getSortIndicator('transactionCount')}
+                </th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {etfs.map((etf) => (
+              {sortedEtfs.map((etf) => (
                 <React.Fragment key={etf.id}>
                   <tr className="etf-row">
                     <td>
@@ -124,7 +244,17 @@ function EtfList() {
                         {expandedRows.has(etf.id) ? '−' : '+'}
                       </button>
                     </td>
-                    <td className="ticker-cell">{etf.ticker}</td>
+                    <td className="ticker-cell">
+                      <a 
+                        href={`https://www.justetf.com/en/find-etf.html?query=${etf.ticker}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="ticker-link"
+                        title={`View ${etf.ticker} on JustETF`}
+                      >
+                        {etf.ticker}
+                      </a>
+                    </td>
                     <td>{etf.name}</td>
                     <td>{etf.type}</td>
                     <td>{etf.marketConcentration}</td>
@@ -167,17 +297,26 @@ function EtfList() {
                             <table className="transactions-table">
                               <thead>
                                 <tr>
-                                  <th>Date</th>
-                                  <th>Type</th>
-                                  <th>Units</th>
-                                  <th>Cost</th>
-                                  <th>Fees</th>
+                                  <th className="sortable" onClick={() => handleTransactionSort(etf.id, 'transactionDate')}>
+                                    Date{getTransactionSortIndicator(etf.id, 'transactionDate')}
+                                  </th>
+                                  <th className="sortable" onClick={() => handleTransactionSort(etf.id, 'transactionType')}>
+                                    Type{getTransactionSortIndicator(etf.id, 'transactionType')}
+                                  </th>
+                                  <th className="sortable" onClick={() => handleTransactionSort(etf.id, 'unitsPurchased')}>
+                                    Units{getTransactionSortIndicator(etf.id, 'unitsPurchased')}
+                                  </th>
+                                  <th className="sortable" onClick={() => handleTransactionSort(etf.id, 'transactionCost')}>
+                                    Cost{getTransactionSortIndicator(etf.id, 'transactionCost')}
+                                  </th>
+                                  <th className="sortable" onClick={() => handleTransactionSort(etf.id, 'transactionFees')}>
+                                    Fees{getTransactionSortIndicator(etf.id, 'transactionFees')}
+                                  </th>
                                   <th>Total</th>
                                 </tr>
                               </thead>
                               <tbody>
-                                {etf.transactions
-                                  .sort((a, b) => new Date(b.transactionDate) - new Date(a.transactionDate))
+                                {getSortedTransactions(etf.id, etf.transactions)
                                   .map((transaction) => (
                                     <tr key={transaction.id}>
                                       <td>{formatDate(transaction.transactionDate)}</td>
@@ -197,6 +336,13 @@ function EtfList() {
                                       </td>
                                     </tr>
                                   ))}
+                                <tr className="total-row">
+                                  <td colSpan="2"><strong>TOTAL</strong></td>
+                                  <td><strong>{etf.transactions.reduce((sum, t) => sum + (parseFloat(t.unitsPurchased) || 0), 0).toFixed(3)}</strong></td>
+                                  <td><strong>{formatCurrency(etf.transactions.reduce((sum, t) => sum + (parseFloat(t.transactionCost) || 0), 0))}</strong></td>
+                                  <td><strong>{formatCurrency(etf.transactions.reduce((sum, t) => sum + (parseFloat(t.transactionFees) || 0), 0))}</strong></td>
+                                  <td className="total-cell"><strong>{formatCurrency(etf.transactions.reduce((sum, t) => sum + (parseFloat(t.transactionCost) || 0) + (parseFloat(t.transactionFees) || 0), 0))}</strong></td>
+                                </tr>
                               </tbody>
                             </table>
                           )}

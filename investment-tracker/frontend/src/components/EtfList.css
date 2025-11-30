@@ -19,18 +19,19 @@
 }
 
 .add-button {
-  background: #000;
-  color: white;
-  border: none;
+  background: white;
+  border: 1px solid #ddd;
+  color: #666;
   padding: 0.6rem 1.2rem;
   font-size: 0.9rem;
   font-weight: 400;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s;
 }
 
 .add-button:hover {
-  background: #333;
+  border-color: #000;
+  color: #000;
 }
 
 .loading {
@@ -82,6 +83,16 @@
   letter-spacing: 0.5px;
 }
 
+.etf-table thead th.sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.15s;
+}
+
+.etf-table thead th.sortable:hover {
+  background-color: #ececec;
+}
+
 .etf-table thead th:first-child {
   width: 40px;
   text-align: center;
@@ -109,9 +120,21 @@
 
 .ticker-cell {
   font-weight: 600;
-  color: #000;
   font-family: monospace;
   font-size: 0.95rem;
+}
+
+.ticker-link {
+  color: #0066cc;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+  transition: color 0.2s;
+  cursor: pointer;
+}
+
+.ticker-link:hover {
+  color: #0052a3;
 }
 
 .risk-badge {
@@ -251,6 +274,16 @@
   letter-spacing: 0.3px;
 }
 
+.transactions-table thead th.sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.15s;
+}
+
+.transactions-table thead th.sortable:hover {
+  background-color: #e8e8e8;
+}
+
 .transactions-table tbody tr {
   border-bottom: 1px solid #f0f0f0;
 }
@@ -288,6 +321,17 @@
   background-color: #fef2f2;
   border-color: #ef4444;
   color: #dc2626;
+}
+
+.total-row {
+  background-color: #f8f9fa;
+  border-top: 2px solid #333;
+  font-weight: 600;
+}
+
+.total-row td {
+  padding: 0.85rem 1rem;
+  color: #000;
 }
 
 .total-cell {

@@ -3,82 +3,94 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #f5f7fa;
 }
 
 .login-box {
   background: white;
-  padding: 2rem;
-  border-radius: 10px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  padding: 2.5rem;
+  border: 1px solid #e0e0e0;
   width: 100%;
   max-width: 400px;
 }
 
 .login-box h2 {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
   color: #333;
   text-align: center;
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+.login-box p {
+  margin-bottom: 2rem;
+  color: #666;
+  text-align: center;
+  font-size: 0.9rem;
 }
 
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 }
 
 .form-group label {
   display: block;
   margin-bottom: 0.5rem;
-  color: #555;
+  color: #333;
   font-weight: 500;
+  font-size: 0.9rem;
 }
 
 .form-group input {
   width: 100%;
-  padding: 0.75rem;
+  padding: 0.6rem 0.75rem;
   border: 1px solid #ddd;
-  border-radius: 5px;
-  font-size: 1rem;
+  font-size: 0.95rem;
   box-sizing: border-box;
+  transition: border-color 0.15s;
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: #999;
 }
 
 .login-button {
   width: 100%;
-  padding: 0.75rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 1rem;
-  font-weight: 600;
+  padding: 0.6rem;
+  background: white;
+  border: 1px solid #ddd;
+  color: #666;
+  font-size: 0.9rem;
+  font-weight: 400;
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: all 0.2s;
+  margin-top: 0.5rem;
 }
 
 .login-button:hover {
-  transform: translateY(-2px);
+  border-color: #000;
+  color: #000;
 }
 
 .login-button:active {
-  transform: translateY(0);
+  transform: none;
 }
 
 .error-message {
-  background-color: #fee;
-  color: #c33;
-  padding: 0.75rem;
-  border-radius: 5px;
+  background-color: #fff5f5;
+  border: 1px solid #ff6b6b;
+  color: #c92a2a;
+  padding: 0.75rem 1rem;
   margin-bottom: 1rem;
-  text-align: center;
+  font-size: 0.9rem;
 }
 
 .dev-credentials {
-  margin-top: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e0e0e0;
   text-align: center;
   color: #999;
+  font-size: 0.85rem;
 }
