@@ -2,6 +2,7 @@ package com.example.investmenttracker.model;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,25 +14,47 @@ public class Etf {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
     @Enumerated(EnumType.STRING)
-    private ETFPriority priority;
-
-    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private ETFType type;
 
-    private String globalCoverage;
-    private String domicile;
-    private String risk;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ETFMarketConcentration marketConcentration;
 
-    @Column(unique = true)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ETFDomicile domicile;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ETFRisk risk;
+
+    @Column(unique = true, nullable = false)
     private String ticker;
 
+    @Column(nullable = false)
     private BigDecimal ter;
+
+    @Column(nullable = false)
+    private BigDecimal fees;
+
     private String notes;
+
+    @Column(nullable = false)
     private BigDecimal currentValue;
+
+    @Column(nullable = false)
     private BigDecimal investedAmount;
+
+    @Column(nullable = false)
+    private LocalDate purchaseDate;
+
+    @Column(nullable = false)
+    private BigDecimal unitsPurchased;
 
     @ElementCollection
     @CollectionTable(name = "etf_investments", joinColumns = @JoinColumn(name = "etf_id"))
@@ -46,13 +69,6 @@ public class Etf {
     public Etf() {
     }
 
-    /************* ✨ Windsurf Command ⭐ *************/
-    /**
-     * Gets the unique identifier of the ETF.
-     *
-     * @return the ETF's identifier
-     */
-    /******* 863ad30c-971c-4e0f-b35d-14fae25f6d00 *******/
     public Long getId() {
         return id;
     }
@@ -61,20 +77,23 @@ public class Etf {
         this.id = id;
     }
 
-    public Etf(String name, ETFPriority priority, ETFType type, String globalCoverage, String domicile, String risk,
-            String ticker, BigDecimal ter, String notes, BigDecimal currentValue,
-            BigDecimal investedAmount) {
+    public Etf(String name, ETFType type, ETFMarketConcentration marketConcentration, ETFDomicile domicile,
+            ETFRisk risk,
+            String ticker, BigDecimal ter, BigDecimal fees, String notes, BigDecimal currentValue,
+            BigDecimal investedAmount, LocalDate purchaseDate, BigDecimal unitsPurchased) {
         this.name = name;
-        this.priority = priority;
         this.type = type;
-        this.globalCoverage = globalCoverage;
+        this.marketConcentration = marketConcentration;
         this.domicile = domicile;
         this.risk = risk;
         this.ticker = ticker;
         this.ter = ter;
+        this.fees = fees;
         this.notes = notes;
         this.currentValue = currentValue;
         this.investedAmount = investedAmount;
+        this.purchaseDate = purchaseDate;
+        this.unitsPurchased = unitsPurchased;
     }
 
     public String getName() {
@@ -85,14 +104,6 @@ public class Etf {
         this.name = name;
     }
 
-    public ETFPriority getPriority() {
-        return priority;
-    }
-
-    public void setPriority(ETFPriority priority) {
-        this.priority = priority;
-    }
-
     public ETFType getType() {
         return type;
     }
@@ -101,27 +112,27 @@ public class Etf {
         this.type = type;
     }
 
-    public String getGlobalCoverage() {
-        return globalCoverage;
+    public ETFMarketConcentration getMarketConcentration() {
+        return marketConcentration;
     }
 
-    public void setGlobalCoverage(String globalCoverage) {
-        this.globalCoverage = globalCoverage;
+    public void setMarketConcentration(ETFMarketConcentration marketConcentration) {
+        this.marketConcentration = marketConcentration;
     }
 
-    public String getDomicile() {
+    public ETFDomicile getDomicile() {
         return domicile;
     }
 
-    public void setDomicile(String domicile) {
+    public void setDomicile(ETFDomicile domicile) {
         this.domicile = domicile;
     }
 
-    public String getRisk() {
+    public ETFRisk getRisk() {
         return risk;
     }
 
-    public void setRisk(String risk) {
+    public void setRisk(ETFRisk risk) {
         this.risk = risk;
     }
 
@@ -139,6 +150,14 @@ public class Etf {
 
     public void setTer(BigDecimal ter) {
         this.ter = ter;
+    }
+
+    public BigDecimal getFees() {
+        return fees;
+    }
+
+    public void setFees(BigDecimal fees) {
+        this.fees = fees;
     }
 
     public String getNotes() {
@@ -163,6 +182,22 @@ public class Etf {
 
     public void setInvestedAmount(BigDecimal investedAmount) {
         this.investedAmount = investedAmount;
+    }
+
+    public LocalDate getPurchaseDate() {
+        return purchaseDate;
+    }
+
+    public void setPurchaseDate(LocalDate purchaseDate) {
+        this.purchaseDate = purchaseDate;
+    }
+
+    public BigDecimal getUnitsPurchased() {
+        return unitsPurchased;
+    }
+
+    public void setUnitsPurchased(BigDecimal unitsPurchased) {
+        this.unitsPurchased = unitsPurchased;
     }
 
     public List<Investment> getInvestments() {

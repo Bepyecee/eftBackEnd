@@ -87,29 +87,29 @@
   color: #333;
 }
 
-.priority {
+.risk {
   padding: 0.25rem 0.75rem;
   border-radius: 20px;
   font-size: 0.85rem;
   font-weight: 600;
 }
 
-.priority-low {
+.risk-low {
   background-color: #e3f2fd;
   color: #1976d2;
 }
 
-.priority-medium {
+.risk-medium {
   background-color: #fff3e0;
   color: #f57c00;
 }
 
-.priority-high {
+.risk-high {
   background-color: #fce4ec;
   color: #c2185b;
 }
 
-.priority-very_high {
+.risk-very_high {
   background-color: #ffebee;
   color: #d32f2f;
 }

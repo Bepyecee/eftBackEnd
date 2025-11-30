@@ -39,8 +39,8 @@ const messages = {
 
   // Dashboard Messages
   DASHBOARD: {
-    TITLE: 'Dashboard',
-    WELCOME: 'Welcome to Investment Tracker',
+    TITLE: 'Pantaloons and Gav\s ETF Investment tracker ',
+    WELCOME: 'Welcome to Pantaloons and Gav\s ETF Investment tracker',
     OVERVIEW: 'Overview',
     ETF_CARD_TITLE: 'Exchange Traded Funds',
     ETF_CARD_DESCRIPTION: 'Manage your ETF portfolio',
@@ -61,7 +61,7 @@ const messages = {
   ETF: {
     TITLE: 'ETFs',
     LIST_TITLE: 'ETF Portfolio',
-    CREATE_TITLE: 'Create New ETF',
+    CREATE_TITLE: 'Add new ETF Ticker',
     EDIT_TITLE: 'Edit ETF',
     ADD_NEW: 'Add New ETF',
     NO_ETFS: 'No ETFs found. Add your first ETF to get started.',
@@ -80,21 +80,26 @@ const messages = {
     TICKER_PLACEHOLDER: 'e.g., VTI, SPY',
     PRIORITY: 'Priority',
     TYPE: 'Type',
-    GLOBAL_COVERAGE: 'Global Coverage',
-    GLOBAL_COVERAGE_PLACEHOLDER: 'e.g., US, Global, Emerging Markets',
+    MARKET_CONCENTRATION: 'Market Concentration',
+    MARKET_CONCENTRATION_PLACEHOLDER: 'Select market concentration',
     DOMICILE: 'Domicile',
-    DOMICILE_PLACEHOLDER: 'Country of domicile',
+    DOMICILE_PLACEHOLDER: 'Select domicile',
     RISK: 'Risk Level',
     RISK_PLACEHOLDER: 'Low, Medium, High',
     DIVIDEND: 'Dividend',
     DIVIDEND_PLACEHOLDER: 'Accumulating or Distributing',
     TER: 'Total Expense Ratio (%)',
     TER_PLACEHOLDER: '0.00',
+    FEES: 'Transaction Fees',
+    FEES_PLACEHOLDER: '1.00',
+    PURCHASE_DATE: 'Date of Purchase',
+    UNITS_PURCHASED: 'Units Purchased',
+    UNITS_PURCHASED_PLACEHOLDER: '0.000',
     NOTES: 'Notes',
     NOTES_PLACEHOLDER: 'Additional information about this ETF',
     CURRENT_VALUE: 'Current Value',
     CURRENT_VALUE_PLACEHOLDER: '0.00',
-    INVESTED_AMOUNT: 'Invested Amount',
+    INVESTED_AMOUNT: 'Transaction Cost',
     INVESTED_AMOUNT_PLACEHOLDER: '0.00',
     
     // ETF Priority Options
@@ -102,6 +107,27 @@ const messages = {
     PRIORITY_MEDIUM: 'Medium',
     PRIORITY_HIGH: 'High',
     PRIORITY_VERY_HIGH: 'Very High',
+    
+    // ETF Risk Options
+    RISK_LOW: 'Low',
+    RISK_MEDIUM: 'Medium',
+    RISK_HIGH: 'High',
+    RISK_VERY_HIGH: 'Very High',
+    
+    // ETF Domicile Options
+    DOMICILE_IRELAND: 'Ireland',
+    DOMICILE_EUROPE: 'Europe',
+    DOMICILE_OTHER: 'Other',
+    
+    // ETF Market Concentration Options
+    MARKET_US: 'US',
+    MARKET_US_TECH: 'US Tech',
+    MARKET_EUROPE: 'Europe',
+    MARKET_EUROPE_TECH: 'Europe Tech',
+    MARKET_GLOBAL_DEVELOPED: 'Global Developed',
+    MARKET_GLOBAL_DEVELOPED_TECH: 'Global Developed Tech',
+    MARKET_GLOBAL_INCL_EMERGING: 'Global incl Emerging',
+    MARKET_CORPORATE: 'Corporate',
     
     // ETF Type Options
     TYPE_BOND: 'Bond',
