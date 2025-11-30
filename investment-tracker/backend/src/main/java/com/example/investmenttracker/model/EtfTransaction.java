@@ -1,5 +1,6 @@
 package com.example.investmenttracker.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -14,6 +15,7 @@ public class EtfTransaction {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "etf_id", nullable = false)
+    @JsonBackReference
     private Etf etf;
 
     @Column(nullable = false)
