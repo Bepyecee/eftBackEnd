@@ -9,3 +9,7 @@
 /.classpath
 /.project
 /.settings/
+
+# Local configuration overrides (not committed to git)
+application-local.properties
+src/main/resources/application-local.properties
