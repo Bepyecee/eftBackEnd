@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import assetService from '../services/assetService';
+import messages from '../constants/messages';
 import './AssetList.css';
 
 function AssetList() {
@@ -20,7 +21,7 @@ function AssetList() {
       setAssets(data);
       setError('');
     } catch (err) {
-      setError('Failed to load assets');
+      setError(messages.ASSET.LOAD_ERROR);
       console.error('Error loading assets:', err);
     } finally {
       setLoading(false);
@@ -28,12 +29,12 @@ function AssetList() {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this asset?')) {
+    if (window.confirm(messages.ASSET.CONFIRM_DELETE)) {
       try {
         await assetService.deleteAsset(id);
         loadAssets();
       } catch (err) {
-        setError('Failed to delete asset');
+        setError(messages.ASSET.DELETE_ERROR);
         console.error('Error deleting asset:', err);
       }
     }
@@ -44,15 +45,15 @@ function AssetList() {
   };
 
   if (loading) {
-    return <div className="loading">Loading Assets...</div>;
+    return <div className="loading">{messages.GENERIC.LOADING}</div>;
   }
 
   return (
     <div className="asset-list-container">
       <div className="asset-list-header">
-        <h2>Assets</h2>
+        <h2>{messages.ASSET.LIST_TITLE}</h2>
         <button className="add-button" onClick={() => navigate('/assets/new')}>
-          + Add Asset
+          {messages.ASSET.ADD_NEW}
         </button>
       </div>
 
@@ -60,15 +61,15 @@ function AssetList() {
 
       {assets.length === 0 ? (
         <div className="empty-state">
-          <p>No assets found. Click "Add Asset" to create one.</p>
+          <p>{messages.ASSET.NO_ASSETS}</p>
         </div>
       ) : (
         <div className="asset-table">
           <table>
             <thead>
               <tr>
-                <th>Name</th>
-                <th>Allocation %</th>
+                <th>{messages.ASSET.NAME}</th>
+                <th>{messages.ASSET.ALLOCATION}</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -79,10 +80,10 @@ function AssetList() {
                   <td>{asset.allocationPercentage}%</td>
                   <td className="actions">
                     <button className="edit-button" onClick={() => handleEdit(asset.id)}>
-                      Edit
+                      {messages.GENERIC.EDIT}
                     </button>
                     <button className="delete-button" onClick={() => handleDelete(asset.id)}>
-                      Delete
+                      {messages.GENERIC.DELETE}
                     </button>
                   </td>
                 </tr>
