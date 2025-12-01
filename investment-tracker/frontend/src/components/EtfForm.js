@@ -62,7 +62,7 @@ function EtfForm() {
         type: data.type || 'EQUITY',
         marketConcentration: data.marketConcentration || 'GLOBAL_DEVELOPED',
         domicile: data.domicile || 'IRELAND',
-        risk: data.risk || 'HIGH',
+        volatility: data.volatility || 'HIGH',
         ticker: data.ticker || '',
         ter: data.ter || '',
         notes: data.notes || '',

@@ -5,12 +5,14 @@ import com.example.investmenttracker.persistence.EtfRepository;
 import com.example.investmenttracker.exception.ResourceConflictException;
 import com.example.investmenttracker.exception.ValidationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 @Service
+@Transactional
 public class EtfService {
     private final EtfRepository etfRepository;
 
@@ -75,7 +77,7 @@ public class EtfService {
         return etfRepository.save(etf);
     }
 
-    public void updateEtf(Long id, Etf updatedEtf) {
+    public Etf updateEtf(Long id, Etf updatedEtf) {
         List<Etf> etfs = etfRepository.findAll();
         // Validate mandatory fields
         if (updatedEtf.getTicker() == null || updatedEtf.getTicker().trim().isEmpty()) {
@@ -95,16 +97,21 @@ public class EtfService {
             throw new ResourceConflictException("etf.duplicate.ticker", updatedEtf.getTicker());
         }
 
-        // Preserve existing transactions and investments when updating
-        Etf existingEtf = etfRepository.findById(id).orElse(null);
-        if (existingEtf != null) {
-            updatedEtf.setTransactions(existingEtf.getTransactions());
-            updatedEtf.setInvestments(existingEtf.getInvestments());
-        }
+        // Update existing ETF in place to preserve transaction relationships
+        Etf existingEtf = etfRepository.findById(id)
+                .orElseThrow(() -> new ValidationException("etf.not.found"));
 
-        // Set the id to the one being updated
-        updatedEtf.setId(id);
-        etfRepository.save(updatedEtf);
+        // Update all fields except relationships
+        existingEtf.setName(updatedEtf.getName());
+        existingEtf.setType(updatedEtf.getType());
+        existingEtf.setMarketConcentration(updatedEtf.getMarketConcentration());
+        existingEtf.setDomicile(updatedEtf.getDomicile());
+        existingEtf.setVolatility(updatedEtf.getVolatility());
+        existingEtf.setTicker(updatedEtf.getTicker());
+        existingEtf.setTer(updatedEtf.getTer());
+        existingEtf.setNotes(updatedEtf.getNotes());
+
+        return etfRepository.save(existingEtf);
     }
 
     public void deleteEtf(Long id) {

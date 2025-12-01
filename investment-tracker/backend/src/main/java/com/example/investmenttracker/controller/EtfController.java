@@ -36,9 +36,8 @@ public class EtfController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Etf> updateEtf(@PathVariable Long id, @RequestBody Etf etf) {
-        etfService.updateEtf(id, etf);
-        Etf updatedEtf = etfService.getEtfById(id);
-        return updatedEtf != null ? ResponseEntity.ok(updatedEtf) : ResponseEntity.notFound().build();
+        Etf updatedEtf = etfService.updateEtf(id, etf);
+        return ResponseEntity.ok(updatedEtf);
     }
 
     @DeleteMapping("/{id}")
