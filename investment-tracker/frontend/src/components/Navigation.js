@@ -1,11 +1,12 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import authService from '../services/authService';
 import messages from '../constants/messages';
 import './Navigation.css';
 
 function Navigation() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     authService.logout();
@@ -19,13 +20,13 @@ function Navigation() {
       </div>
       <ul className="nav-links">
         <li>
-          <Link to="/">{messages.NAV.HOME}</Link>
+          <Link to="/" className={location.pathname === '/' ? 'active' : ''}>{messages.NAV.HOME}</Link>
         </li>
         <li>
-          <Link to="/etfs">{messages.NAV.ETFS}</Link>
+          <Link to="/etfs" className={location.pathname === '/etfs' ? 'active' : ''}>{messages.NAV.ETFS}</Link>
         </li>
         <li>
-          <Link to="/assets">{messages.NAV.ASSETS}</Link>
+          <Link to="/assets" className={location.pathname === '/assets' ? 'active' : ''}>{messages.NAV.ASSETS}</Link>
         </li>
         <li>
           <button onClick={handleLogout} className="logout-button">

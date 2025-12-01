@@ -54,6 +54,12 @@
   border-bottom-color: #000;
 }
 
+.nav-links a.active {
+  color: #000;
+  font-weight: 500;
+  border-bottom-color: #000;
+}
+
 .logout-button {
   background: none;
   color: #666;

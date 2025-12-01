@@ -21,6 +21,8 @@ function EtfList() {
   const [tickerDropdownOpen, setTickerDropdownOpen] = useState(false);
   const [prices, setPrices] = useState({});
   const [loadingPrices, setLoadingPrices] = useState(false);
+  const [performanceRankingMode, setPerformanceRankingMode] = useState('amount'); // 'amount' or 'percentage'
+  const [summarySortConfig, setSummarySortConfig] = useState({ key: null, direction: 'asc' });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -146,12 +148,25 @@ function EtfList() {
     setExpandedRows(new Set());
   };
 
+  const expandAll = () => {
+    const allIds = new Set(etfs.map(etf => etf.id));
+    setExpandedRows(allIds);
+  };
+
   const handleSort = (key) => {
     let direction = 'asc';
     if (sortConfig.key === key && sortConfig.direction === 'asc') {
       direction = 'desc';
     }
     setSortConfig({ key, direction });
+  };
+
+  const handleSummarySort = (key) => {
+    let direction = 'asc';
+    if (summarySortConfig.key === key && summarySortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSummarySortConfig({ key, direction });
   };
 
   const getSortedEtfs = () => {
@@ -186,6 +201,11 @@ function EtfList() {
   const getSortIndicator = (columnKey) => {
     if (sortConfig.key !== columnKey) return ' ↕';
     return sortConfig.direction === 'asc' ? ' ↑' : ' ↓';
+  };
+
+  const getSummarySortIndicator = (columnKey) => {
+    if (summarySortConfig.key !== columnKey) return ' ↕';
+    return summarySortConfig.direction === 'asc' ? ' ↑' : ' ↓';
   };
 
   const handleTransactionSort = (etfId, key) => {
@@ -464,7 +484,7 @@ function EtfList() {
   };
 
   const getAllTransactionsSortIndicator = (key) => {
-    if (allTransactionsSortConfig.key !== key) return '';
+    if (allTransactionsSortConfig.key !== key) return ' ↕';
     return allTransactionsSortConfig.direction === 'asc' ? ' ↑' : ' ↓';
   };
 
@@ -526,20 +546,96 @@ function EtfList() {
                 <table className="summary-table">
                   <thead>
                     <tr>
-                      <th>Ticker</th>
-                      <th>Name</th>
-                      <th>Transactions</th>
-                      <th>Total Units</th>
-                      <th>Total Investment</th>
-                      <th>% of Investment</th>
-                      <th>Current Price</th>
-                      <th>Current Value</th>
-                      <th>% of Portfolio</th>
-                      <th>Gain/Loss</th>
+                      <th onClick={() => handleSummarySort('ticker')} className="sortable">
+                        Ticker{getSummarySortIndicator('ticker')}
+                      </th>
+                      <th onClick={() => handleSummarySort('name')} className="sortable">
+                        Name{getSummarySortIndicator('name')}
+                      </th>
+                      <th onClick={() => handleSummarySort('transactionCount')} className="sortable">
+                        Transactions{getSummarySortIndicator('transactionCount')}
+                      </th>
+                      <th onClick={() => handleSummarySort('totalUnits')} className="sortable">
+                        Total Units{getSummarySortIndicator('totalUnits')}
+                      </th>
+                      <th onClick={() => handleSummarySort('totalInvestment')} className="sortable">
+                        Total Investment{getSummarySortIndicator('totalInvestment')}
+                      </th>
+                      <th onClick={() => handleSummarySort('investmentPercentage')} className="sortable">
+                        % of Investment{getSummarySortIndicator('investmentPercentage')}
+                      </th>
+                      <th onClick={() => handleSummarySort('currentPrice')} className="sortable">
+                        Current Price{getSummarySortIndicator('currentPrice')}
+                      </th>
+                      <th onClick={() => handleSummarySort('currentValue')} className="sortable">
+                        Current Value{getSummarySortIndicator('currentValue')}
+                      </th>
+                      <th onClick={() => handleSummarySort('portfolioPercentage')} className="sortable">
+                        % of Portfolio{getSummarySortIndicator('portfolioPercentage')}
+                      </th>
+                      <th onClick={() => handleSummarySort('gain')} className="sortable">
+                        Gain/Loss{getSummarySortIndicator('gain')}
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
-                    {summaryData.map(item => (
+                    {[...summaryData].sort((a, b) => {
+                      if (!summarySortConfig.key) return 0;
+                      
+                      let aVal, bVal;
+                      switch(summarySortConfig.key) {
+                        case 'ticker':
+                          aVal = a.ticker;
+                          bVal = b.ticker;
+                          break;
+                        case 'name':
+                          aVal = a.name;
+                          bVal = b.name;
+                          break;
+                        case 'transactionCount':
+                          aVal = a.transactionCount;
+                          bVal = b.transactionCount;
+                          break;
+                        case 'totalUnits':
+                          aVal = a.totalUnits;
+                          bVal = b.totalUnits;
+                          break;
+                        case 'totalInvestment':
+                          aVal = a.totalInvestment;
+                          bVal = b.totalInvestment;
+                          break;
+                        case 'investmentPercentage':
+                          aVal = (a.totalInvestment / totalPortfolioValue) * 100;
+                          bVal = (b.totalInvestment / totalPortfolioValue) * 100;
+                          break;
+                        case 'currentPrice':
+                          aVal = a.currentPrice ?? -Infinity;
+                          bVal = b.currentPrice ?? -Infinity;
+                          break;
+                        case 'currentValue':
+                          aVal = a.currentValue ?? 0;
+                          bVal = b.currentValue ?? 0;
+                          break;
+                        case 'portfolioPercentage':
+                          aVal = a.currentValue ? (a.currentValue / totalCurrentValue) * 100 : 0;
+                          bVal = b.currentValue ? (b.currentValue / totalCurrentValue) * 100 : 0;
+                          break;
+                        case 'gain':
+                          aVal = a.gain ?? 0;
+                          bVal = b.gain ?? 0;
+                          break;
+                        default:
+                          return 0;
+                      }
+                      
+                      if (typeof aVal === 'string') {
+                        return summarySortConfig.direction === 'asc' 
+                          ? aVal.localeCompare(bVal)
+                          : bVal.localeCompare(aVal);
+                      }
+                      
+                      return summarySortConfig.direction === 'asc' ? aVal - bVal : bVal - aVal;
+                    }).map(item => (
                       <tr key={item.ticker}>
                         <td className="ticker-cell">
                           <a 
@@ -767,6 +863,53 @@ function EtfList() {
                     })}
                   </svg>
                 </div>
+                <div className="chart-container">
+                  <div className="chart-header-with-toggle">
+                    <h4>Top ETFs</h4>
+                    <div className="toggle-switch-container">
+                      <span className={`toggle-label ${performanceRankingMode === 'amount' ? 'active' : ''}`}>€</span>
+                      <label className="toggle-switch">
+                        <input
+                          type="checkbox"
+                          checked={performanceRankingMode === 'percentage'}
+                          onChange={() => setPerformanceRankingMode(performanceRankingMode === 'amount' ? 'percentage' : 'amount')}
+                        />
+                        <span className="toggle-slider"></span>
+                      </label>
+                      <span className={`toggle-label ${performanceRankingMode === 'percentage' ? 'active' : ''}`}>%</span>
+                    </div>
+                  </div>
+                  <div className="performance-chart">
+                    {summaryData
+                      .filter(item => item.gain !== null && item.gain > 0)
+                      .sort((a, b) => performanceRankingMode === 'amount' ? b.gain - a.gain : b.gainPercentage - a.gainPercentage)
+                      .slice(0, 5)
+                      .map((item, index) => {
+                        const colors = getChartColors(summaryData.length);
+                        const etfIndex = summaryData.findIndex(e => e.ticker === item.ticker);
+                        return (
+                          <div key={item.ticker} className="performance-item">
+                            <div className="performance-rank">{index + 1}</div>
+                            <div className="performance-color" style={{ backgroundColor: colors[etfIndex] }}></div>
+                            <div className="performance-details">
+                              <div className="performance-ticker">{item.ticker}</div>
+                              <div className="performance-gain">
+                                <span className="gain-amount">{formatCurrency(item.gain)}</span>
+                                <span className="gain-percentage">
+                                  ({item.gainPercentage >= 0 ? '+' : ''}{item.gainPercentage.toFixed(2)}%)
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    {summaryData.filter(item => item.gain !== null && item.gain > 0).length === 0 && (
+                      <div className="no-performance-data">
+                        No gains to display yet. Prices will update when available.
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
             )}
@@ -794,6 +937,11 @@ function EtfList() {
             </div>
           </div>
           <div className="header-actions">
+            {expandedRows.size < etfs.length && etfs.length > 0 && (
+              <button className="collapse-all-button" onClick={expandAll}>
+                Expand All
+              </button>
+            )}
             {expandedRows.size > 0 && (
               <button className="collapse-all-button" onClick={collapseAll}>
                 Collapse All
@@ -924,6 +1072,7 @@ function EtfList() {
                                     Fees{getTransactionSortIndicator(etf.id, 'transactionFees')}
                                   </th>
                                   <th>Total</th>
+                                  <th>Actions</th>
                                 </tr>
                               </thead>
                               <tbody>
@@ -944,6 +1093,15 @@ function EtfList() {
                                           (parseFloat(transaction.transactionCost) || 0) + 
                                           (parseFloat(transaction.transactionFees) || 0)
                                         )}
+                                      </td>
+                                      <td>
+                                        <button 
+                                          className="edit-button-small"
+                                          onClick={() => navigate(`/etfs/${etf.id}/transactions/${transaction.id}/edit`)}
+                                          title="Edit transaction"
+                                        >
+                                          Edit
+                                        </button>
                                       </td>
                                     </tr>
                                   ))}
