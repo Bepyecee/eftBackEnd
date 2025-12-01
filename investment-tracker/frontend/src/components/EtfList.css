@@ -98,6 +98,30 @@
   color: #000;
 }
 
+.refresh-prices-button {
+  background: white;
+  border: 1px solid #ddd;
+  color: #666;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-left: auto;
+}
+
+.refresh-prices-button:hover:not(:disabled) {
+  border-color: #000;
+  color: #000;
+}
+
+.refresh-prices-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .section-summary-inline {
   color: #999;
   font-size: 0.85rem;
@@ -721,10 +745,9 @@
 }
 
 .summary-content {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 2rem;
-  align-items: start;
 }
 
 .summary-table-container {
@@ -771,11 +794,55 @@
   font-size: 1rem;
 }
 
+.price-cell {
+  text-align: right;
+  font-family: 'Courier New', monospace;
+}
+
+.loading-price {
+  color: #999;
+  font-style: italic;
+}
+
+.no-price {
+  color: #ccc;
+}
+
+.gain-cell {
+  text-align: right;
+  font-family: 'Courier New', monospace;
+}
+
+.gain-positive {
+  color: #28a745;
+  font-weight: 500;
+}
+
+.gain-negative {
+  color: #dc3545;
+  font-weight: 500;
+}
+
+.gain-percentage {
+  font-size: 0.9em;
+  margin-left: 0.3rem;
+}
+
+.charts-row {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
 .chart-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 1rem;
+  flex: 1;
+  min-width: 300px;
 }
 
 .chart-container h4 {

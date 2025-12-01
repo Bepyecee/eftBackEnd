@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as XLSX from 'xlsx';
 import etfService from '../services/etfService';
+import etfPriceService from '../services/etfPriceService';
 import messages from '../constants/messages';
 import './EtfList.css';
 
@@ -18,11 +19,19 @@ function EtfList() {
   const [allTransactionsSortConfig, setAllTransactionsSortConfig] = useState({ key: 'transactionDate', direction: 'asc' });
   const [transactionFilters, setTransactionFilters] = useState({ tickers: [], startDate: '', endDate: '' });
   const [tickerDropdownOpen, setTickerDropdownOpen] = useState(false);
+  const [prices, setPrices] = useState({});
+  const [loadingPrices, setLoadingPrices] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     loadEtfs();
   }, []);
+
+  useEffect(() => {
+    if (etfs.length > 0) {
+      loadPrices();
+    }
+  }, [etfs]);
 
   const loadEtfs = async () => {
     try {
@@ -37,6 +46,65 @@ function EtfList() {
       setEtfs([]); // Set to empty array on error
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadPrices = async () => {
+    try {
+      setLoadingPrices(true);
+      const tickers = etfs.filter(etf => etf.transactions && etf.transactions.length > 0)
+                          .map(etf => etf.ticker);
+      
+      if (tickers.length === 0) return;
+      
+      // Fetch prices for all tickers
+      const priceData = {};
+      await Promise.all(tickers.map(async (ticker) => {
+        try {
+          const priceResponse = await etfPriceService.getPrice(ticker);
+          priceData[ticker] = priceResponse;
+        } catch (err) {
+          console.error(`Error loading price for ${ticker}:`, err);
+          priceData[ticker] = null;
+        }
+      }));
+      
+      setPrices(priceData);
+    } catch (err) {
+      console.error('Error loading prices:', err);
+    } finally {
+      setLoadingPrices(false);
+    }
+  };
+
+  const refreshPrices = async () => {
+    try {
+      setLoadingPrices(true);
+      const tickers = etfs.filter(etf => etf.transactions && etf.transactions.length > 0)
+                          .map(etf => etf.ticker);
+      
+      if (tickers.length === 0) return;
+      
+      const response = await etfPriceService.refreshAllPrices(tickers);
+      
+      // Handle both array response and object response with prices array
+      const refreshedPrices = Array.isArray(response) ? response : response.prices || [];
+      
+      const priceData = {};
+      refreshedPrices.forEach(price => {
+        priceData[price.ticker] = price;
+      });
+      setPrices(priceData);
+      
+      // Show warning if some prices weren't available
+      if (response.warning) {
+        console.warn(response.warning);
+      }
+    } catch (err) {
+      console.error('Error refreshing prices:', err);
+      setError('Failed to refresh prices. Please try again.');
+    } finally {
+      setLoadingPrices(false);
     }
   };
 
@@ -226,12 +294,21 @@ function EtfList() {
         sum + (parseFloat(t.unitsPurchased) || 0), 0
       );
       
+      const currentPrice = prices[etf.ticker]?.price;
+      const currentValue = currentPrice ? totalUnits * parseFloat(currentPrice) : null;
+      const gain = currentValue !== null ? currentValue - totalInvestment : null;
+      const gainPercentage = gain !== null && totalInvestment > 0 ? (gain / totalInvestment) * 100 : null;
+      
       return {
         ticker: etf.ticker,
         name: etf.name,
         transactionCount,
         totalUnits,
-        totalInvestment
+        totalInvestment,
+        currentPrice,
+        currentValue,
+        gain,
+        gainPercentage
       };
     }).filter(summary => summary.transactionCount > 0);
   };
@@ -398,6 +475,9 @@ function EtfList() {
   const sortedEtfs = getSortedEtfs();
   const summaryData = calculateSummaryData();
   const totalPortfolioValue = summaryData.reduce((sum, item) => sum + item.totalInvestment, 0);
+  const totalCurrentValue = summaryData.reduce((sum, item) => sum + (item.currentValue || 0), 0);
+  const totalGain = summaryData.reduce((sum, item) => sum + (item.gain || 0), 0);
+  const totalGainPercentage = totalPortfolioValue > 0 ? (totalGain / totalPortfolioValue) * 100 : 0;
   const allTransactions = getSortedAllTransactions();
   const totalTransactionCount = getAllTransactions().length;
   const filteredTransactionCount = allTransactions.length;
@@ -419,8 +499,24 @@ function EtfList() {
                 >
                   {portfolioSummaryCollapsed ? '▼' : '▲'}
                 </button>
+                <button
+                  className="refresh-prices-button"
+                  onClick={refreshPrices}
+                  disabled={loadingPrices}
+                  title="Refresh all ETF prices"
+                >
+                  {loadingPrices ? '⟳' : '↻'} Refresh Prices
+                </button>
                 <div className="section-summary-inline">
-                  <span>{formatCurrency(totalPortfolioValue)} across {summaryData.length} ETF{summaryData.length !== 1 ? 's' : ''}. View investment breakdown and distribution chart.</span>
+                  <span>
+                    {formatCurrency(totalPortfolioValue)} invested → {formatCurrency(totalCurrentValue)} current
+                    {totalGain !== 0 && (
+                      <span className={totalGain >= 0 ? 'gain-positive' : 'gain-negative'}>
+                        {' '}({totalGain >= 0 ? '+' : ''}{formatCurrency(totalGain)}, {totalGainPercentage >= 0 ? '+' : ''}{totalGainPercentage.toFixed(2)}%)
+                      </span>
+                    )}
+                    {' '}across {summaryData.length} ETF{summaryData.length !== 1 ? 's' : ''}.
+                  </span>
                 </div>
               </div>
             </div>
@@ -435,7 +531,11 @@ function EtfList() {
                       <th>Transactions</th>
                       <th>Total Units</th>
                       <th>Total Investment</th>
+                      <th>% of Investment</th>
+                      <th>Current Price</th>
+                      <th>Current Value</th>
                       <th>% of Portfolio</th>
+                      <th>Gain/Loss</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -456,6 +556,49 @@ function EtfList() {
                         <td>{item.totalUnits.toFixed(3)}</td>
                         <td>{formatCurrency(item.totalInvestment)}</td>
                         <td>{((item.totalInvestment / totalPortfolioValue) * 100).toFixed(1)}%</td>
+                        <td className="price-cell">
+                          {loadingPrices ? (
+                            <span className="loading-price">...</span>
+                          ) : item.currentPrice !== null ? (
+                            <span>{formatCurrency(item.currentPrice)}</span>
+                          ) : (
+                            <span className="no-price">-</span>
+                          )}
+                        </td>
+                        <td className="price-cell">
+                          {loadingPrices ? (
+                            <span className="loading-price">...</span>
+                          ) : item.currentValue !== null ? (
+                            formatCurrency(item.currentValue)
+                          ) : (
+                            <span className="no-price">-</span>
+                          )}
+                        </td>
+                        <td>
+                          {loadingPrices ? (
+                            <span className="loading-price">...</span>
+                          ) : item.currentValue !== null && totalCurrentValue > 0 ? (
+                            `${((item.currentValue / totalCurrentValue) * 100).toFixed(1)}%`
+                          ) : (
+                            <span className="no-price">-</span>
+                          )}
+                        </td>
+                        <td className="gain-cell">
+                          {loadingPrices ? (
+                            <span className="loading-price">...</span>
+                          ) : item.gain !== null ? (
+                            <>
+                              <span className={item.gain >= 0 ? 'gain-positive' : 'gain-negative'}>
+                                {item.gain >= 0 ? '+' : ''}{formatCurrency(item.gain)}
+                              </span>
+                              <span className={`gain-percentage ${item.gainPercentage >= 0 ? 'gain-positive' : 'gain-negative'}`}>
+                                {' '}({item.gainPercentage >= 0 ? '+' : ''}{item.gainPercentage.toFixed(2)}%)
+                              </span>
+                            </>
+                          ) : (
+                            <span className="no-price">-</span>
+                          )}
+                        </td>
                       </tr>
                     ))}
                     <tr className="total-row">
@@ -464,51 +607,165 @@ function EtfList() {
                       <td><strong>{summaryData.reduce((sum, item) => sum + item.totalUnits, 0).toFixed(3)}</strong></td>
                       <td><strong>{formatCurrency(totalPortfolioValue)}</strong></td>
                       <td><strong>100.0%</strong></td>
+                      <td></td>
+                      <td><strong>{formatCurrency(totalCurrentValue)}</strong></td>
+                      <td><strong>100.0%</strong></td>
+                      <td className="gain-cell">
+                        <strong className={totalGain >= 0 ? 'gain-positive' : 'gain-negative'}>
+                          {totalGain >= 0 ? '+' : ''}{formatCurrency(totalGain)}
+                        </strong>
+                        <strong className={`gain-percentage ${totalGainPercentage >= 0 ? 'gain-positive' : 'gain-negative'}`}>
+                          {' '}({totalGainPercentage >= 0 ? '+' : ''}{totalGainPercentage.toFixed(2)}%)
+                        </strong>
+                      </td>
                     </tr>
                   </tbody>
                 </table>
               </div>
-              <div className="chart-container">
-                <h4>Investment Distribution</h4>
-                <svg viewBox="0 0 200 200" className="pie-chart">
-                  {summaryData.map((item, index) => {
-                    const colors = getChartColors(summaryData.length);
-                    const percentage = (item.totalInvestment / totalPortfolioValue) * 100;
-                    let cumulativePercentage = 0;
-                    for (let i = 0; i < index; i++) {
-                      cumulativePercentage += (summaryData[i].totalInvestment / totalPortfolioValue) * 100;
-                    }
-                    
-                    const startAngle = (cumulativePercentage / 100) * 2 * Math.PI - Math.PI / 2;
-                    const endAngle = ((cumulativePercentage + percentage) / 100) * 2 * Math.PI - Math.PI / 2;
-                    
-                    const x1 = 100 + 80 * Math.cos(startAngle);
-                    const y1 = 100 + 80 * Math.sin(startAngle);
-                    const x2 = 100 + 80 * Math.cos(endAngle);
-                    const y2 = 100 + 80 * Math.sin(endAngle);
-                    
-                    const largeArcFlag = percentage > 50 ? 1 : 0;
-                    
-                    const path = `M 100 100 L ${x1} ${y1} A 80 80 0 ${largeArcFlag} 1 ${x2} ${y2} Z`;
-                    
-                    return (
-                      <g key={item.ticker}>
-                        <path d={path} fill={colors[index]} stroke="white" strokeWidth="2" />
-                      </g>
-                    );
-                  })}
-                </svg>
-                <div className="chart-legend">
-                  {summaryData.map((item, index) => {
-                    const colors = getChartColors(summaryData.length);
-                    const percentage = ((item.totalInvestment / totalPortfolioValue) * 100).toFixed(1);
-                    return (
-                      <div key={item.ticker} className="legend-item">
-                        <span className="legend-color" style={{ backgroundColor: colors[index] }}></span>
-                        <span className="legend-text">{item.ticker}: {percentage}%</span>
-                      </div>
-                    );
-                  })}
+              <div className="charts-row">
+                <div className="chart-container">
+                  <h4>Investment Distribution</h4>
+                  <svg viewBox="0 0 200 200" className="pie-chart">
+                    {summaryData.map((item, index) => {
+                      const colors = getChartColors(summaryData.length);
+                      const percentage = (item.totalInvestment / totalPortfolioValue) * 100;
+                      let cumulativePercentage = 0;
+                      for (let i = 0; i < index; i++) {
+                        cumulativePercentage += (summaryData[i].totalInvestment / totalPortfolioValue) * 100;
+                      }
+                      
+                      const startAngle = (cumulativePercentage / 100) * 2 * Math.PI - Math.PI / 2;
+                      const endAngle = ((cumulativePercentage + percentage) / 100) * 2 * Math.PI - Math.PI / 2;
+                      
+                      const x1 = 100 + 80 * Math.cos(startAngle);
+                      const y1 = 100 + 80 * Math.sin(startAngle);
+                      const x2 = 100 + 80 * Math.cos(endAngle);
+                      const y2 = 100 + 80 * Math.sin(endAngle);
+                      
+                      const largeArcFlag = percentage > 50 ? 1 : 0;
+                      
+                      const path = `M 100 100 L ${x1} ${y1} A 80 80 0 ${largeArcFlag} 1 ${x2} ${y2} Z`;
+                      
+                      // Calculate label position (midpoint of the arc at 60% radius)
+                      const midAngle = (startAngle + endAngle) / 2;
+                      const labelX = 100 + 60 * Math.cos(midAngle);
+                      const labelY = 100 + 60 * Math.sin(midAngle);
+                      
+                      return (
+                        <g key={item.ticker}>
+                          <path d={path} fill={colors[index]} stroke="white" strokeWidth="2" />
+                          {percentage > 5 && (
+                            <>
+                              <text
+                                x={labelX}
+                                y={labelY - 6}
+                                textAnchor="middle"
+                                dominantBaseline="middle"
+                                fill="white"
+                                fontSize="10"
+                                fontWeight="bold"
+                              >
+                                {item.ticker}
+                              </text>
+                              <text
+                                x={labelX}
+                                y={labelY + 5}
+                                textAnchor="middle"
+                                dominantBaseline="middle"
+                                fill="white"
+                                fontSize="8"
+                              >
+                                {formatCurrency(item.totalInvestment)}
+                              </text>
+                              <text
+                                x={labelX}
+                                y={labelY + 14}
+                                textAnchor="middle"
+                                dominantBaseline="middle"
+                                fill="white"
+                                fontSize="8"
+                              >
+                                {percentage.toFixed(1)}%
+                              </text>
+                            </>
+                          )}
+                        </g>
+                      );
+                    })}
+                  </svg>
+                </div>
+                <div className="chart-container">
+                  <h4>Portfolio Distribution</h4>
+                  <svg viewBox="0 0 200 200" className="pie-chart">
+                    {summaryData.map((item, index) => {
+                      const colors = getChartColors(summaryData.length);
+                      const currentValue = item.currentValue || 0;
+                      const percentage = totalCurrentValue > 0 ? (currentValue / totalCurrentValue) * 100 : 0;
+                      let cumulativePercentage = 0;
+                      for (let i = 0; i < index; i++) {
+                        const prevValue = summaryData[i].currentValue || 0;
+                        cumulativePercentage += totalCurrentValue > 0 ? (prevValue / totalCurrentValue) * 100 : 0;
+                      }
+                      
+                      const startAngle = (cumulativePercentage / 100) * 2 * Math.PI - Math.PI / 2;
+                      const endAngle = ((cumulativePercentage + percentage) / 100) * 2 * Math.PI - Math.PI / 2;
+                      
+                      const x1 = 100 + 80 * Math.cos(startAngle);
+                      const y1 = 100 + 80 * Math.sin(startAngle);
+                      const x2 = 100 + 80 * Math.cos(endAngle);
+                      const y2 = 100 + 80 * Math.sin(endAngle);
+                      
+                      const largeArcFlag = percentage > 50 ? 1 : 0;
+                      
+                      const path = `M 100 100 L ${x1} ${y1} A 80 80 0 ${largeArcFlag} 1 ${x2} ${y2} Z`;
+                      
+                      // Calculate label position (midpoint of the arc at 60% radius)
+                      const midAngle = (startAngle + endAngle) / 2;
+                      const labelX = 100 + 60 * Math.cos(midAngle);
+                      const labelY = 100 + 60 * Math.sin(midAngle);
+                      
+                      return (
+                        <g key={item.ticker}>
+                          <path d={path} fill={colors[index]} stroke="white" strokeWidth="2" />
+                          {percentage > 5 && (
+                            <>
+                              <text
+                                x={labelX}
+                                y={labelY - 6}
+                                textAnchor="middle"
+                                dominantBaseline="middle"
+                                fill="white"
+                                fontSize="10"
+                                fontWeight="bold"
+                              >
+                                {item.ticker}
+                              </text>
+                              <text
+                                x={labelX}
+                                y={labelY + 5}
+                                textAnchor="middle"
+                                dominantBaseline="middle"
+                                fill="white"
+                                fontSize="8"
+                              >
+                                {formatCurrency(currentValue)}
+                              </text>
+                              <text
+                                x={labelX}
+                                y={labelY + 14}
+                                textAnchor="middle"
+                                dominantBaseline="middle"
+                                fill="white"
+                                fontSize="8"
+                              >
+                                {percentage.toFixed(1)}%
+                              </text>
+                            </>
+                          )}
+                        </g>
+                      );
+                    })}
+                  </svg>
                 </div>
               </div>
             </div>
