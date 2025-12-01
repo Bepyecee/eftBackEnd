@@ -406,6 +406,117 @@ function EtfList() {
     <div className="etf-list-container">
       {error && <div className="error-message">{error}</div>}
 
+      {summaryData.length > 0 && (
+        <>
+          <div className="portfolio-summary-section">
+            <div className="section-header">
+              <div className="section-title-with-toggle">
+                <h3>ETF Portfolio Summary</h3>
+                <button 
+                  className="section-toggle-button"
+                  onClick={() => setPortfolioSummaryCollapsed(!portfolioSummaryCollapsed)}
+                  title={portfolioSummaryCollapsed ? 'Expand section' : 'Collapse section'}
+                >
+                  {portfolioSummaryCollapsed ? '▼' : '▲'}
+                </button>
+                <div className="section-summary-inline">
+                  <span>{formatCurrency(totalPortfolioValue)} across {summaryData.length} ETF{summaryData.length !== 1 ? 's' : ''}. View investment breakdown and distribution chart.</span>
+                </div>
+              </div>
+            </div>
+            {!portfolioSummaryCollapsed && (
+            <div className="summary-content">
+              <div className="summary-table-container">
+                <table className="summary-table">
+                  <thead>
+                    <tr>
+                      <th>Ticker</th>
+                      <th>Name</th>
+                      <th>Transactions</th>
+                      <th>Total Units</th>
+                      <th>Total Investment</th>
+                      <th>% of Portfolio</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {summaryData.map(item => (
+                      <tr key={item.ticker}>
+                        <td className="ticker-cell">
+                          <a 
+                            href={`https://www.justetf.com/en/find-etf.html?query=${item.ticker}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="ticker-link"
+                          >
+                            {item.ticker}
+                          </a>
+                        </td>
+                        <td>{item.name}</td>
+                        <td>{item.transactionCount}</td>
+                        <td>{item.totalUnits.toFixed(3)}</td>
+                        <td>{formatCurrency(item.totalInvestment)}</td>
+                        <td>{((item.totalInvestment / totalPortfolioValue) * 100).toFixed(1)}%</td>
+                      </tr>
+                    ))}
+                    <tr className="total-row">
+                      <td colSpan="2"><strong>TOTAL</strong></td>
+                      <td><strong>{summaryData.reduce((sum, item) => sum + item.transactionCount, 0)}</strong></td>
+                      <td><strong>{summaryData.reduce((sum, item) => sum + item.totalUnits, 0).toFixed(3)}</strong></td>
+                      <td><strong>{formatCurrency(totalPortfolioValue)}</strong></td>
+                      <td><strong>100.0%</strong></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div className="chart-container">
+                <h4>Investment Distribution</h4>
+                <svg viewBox="0 0 200 200" className="pie-chart">
+                  {summaryData.map((item, index) => {
+                    const colors = getChartColors(summaryData.length);
+                    const percentage = (item.totalInvestment / totalPortfolioValue) * 100;
+                    let cumulativePercentage = 0;
+                    for (let i = 0; i < index; i++) {
+                      cumulativePercentage += (summaryData[i].totalInvestment / totalPortfolioValue) * 100;
+                    }
+                    
+                    const startAngle = (cumulativePercentage / 100) * 2 * Math.PI - Math.PI / 2;
+                    const endAngle = ((cumulativePercentage + percentage) / 100) * 2 * Math.PI - Math.PI / 2;
+                    
+                    const x1 = 100 + 80 * Math.cos(startAngle);
+                    const y1 = 100 + 80 * Math.sin(startAngle);
+                    const x2 = 100 + 80 * Math.cos(endAngle);
+                    const y2 = 100 + 80 * Math.sin(endAngle);
+                    
+                    const largeArcFlag = percentage > 50 ? 1 : 0;
+                    
+                    const path = `M 100 100 L ${x1} ${y1} A 80 80 0 ${largeArcFlag} 1 ${x2} ${y2} Z`;
+                    
+                    return (
+                      <g key={item.ticker}>
+                        <path d={path} fill={colors[index]} stroke="white" strokeWidth="2" />
+                      </g>
+                    );
+                  })}
+                </svg>
+                <div className="chart-legend">
+                  {summaryData.map((item, index) => {
+                    const colors = getChartColors(summaryData.length);
+                    const percentage = ((item.totalInvestment / totalPortfolioValue) * 100).toFixed(1);
+                    return (
+                      <div key={item.ticker} className="legend-item">
+                        <span className="legend-color" style={{ backgroundColor: colors[index] }}></span>
+                        <span className="legend-text">{item.ticker}: {percentage}%</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+            )}
+          </div>
+        </>
+      )}
+
       <div className="ticker-manager-section">
         <div className="etf-list-header">
           <div className="section-title-with-toggle">
@@ -601,117 +712,6 @@ function EtfList() {
           )
         )}
       </div>
-
-      {summaryData.length > 0 && (
-        <>
-          <div className="portfolio-summary-section">
-            <div className="section-header">
-              <div className="section-title-with-toggle">
-                <h3>ETF Portfolio Summary</h3>
-                <button 
-                  className="section-toggle-button"
-                  onClick={() => setPortfolioSummaryCollapsed(!portfolioSummaryCollapsed)}
-                  title={portfolioSummaryCollapsed ? 'Expand section' : 'Collapse section'}
-                >
-                  {portfolioSummaryCollapsed ? '▼' : '▲'}
-                </button>
-                <div className="section-summary-inline">
-                  <span>{formatCurrency(totalPortfolioValue)} across {summaryData.length} ETF{summaryData.length !== 1 ? 's' : ''}. View investment breakdown and distribution chart.</span>
-                </div>
-              </div>
-            </div>
-            {!portfolioSummaryCollapsed && (
-            <div className="summary-content">
-              <div className="summary-table-container">
-                <table className="summary-table">
-                  <thead>
-                    <tr>
-                      <th>Ticker</th>
-                      <th>Name</th>
-                      <th>Transactions</th>
-                      <th>Total Units</th>
-                      <th>Total Investment</th>
-                      <th>% of Portfolio</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {summaryData.map(item => (
-                      <tr key={item.ticker}>
-                        <td className="ticker-cell">
-                          <a 
-                            href={`https://www.justetf.com/en/find-etf.html?query=${item.ticker}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="ticker-link"
-                          >
-                            {item.ticker}
-                          </a>
-                        </td>
-                        <td>{item.name}</td>
-                        <td>{item.transactionCount}</td>
-                        <td>{item.totalUnits.toFixed(3)}</td>
-                        <td>{formatCurrency(item.totalInvestment)}</td>
-                        <td>{((item.totalInvestment / totalPortfolioValue) * 100).toFixed(1)}%</td>
-                      </tr>
-                    ))}
-                    <tr className="total-row">
-                      <td colSpan="2"><strong>TOTAL</strong></td>
-                      <td><strong>{summaryData.reduce((sum, item) => sum + item.transactionCount, 0)}</strong></td>
-                      <td><strong>{summaryData.reduce((sum, item) => sum + item.totalUnits, 0).toFixed(3)}</strong></td>
-                      <td><strong>{formatCurrency(totalPortfolioValue)}</strong></td>
-                      <td><strong>100.0%</strong></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <div className="chart-container">
-                <h4>Investment Distribution</h4>
-                <svg viewBox="0 0 200 200" className="pie-chart">
-                  {summaryData.map((item, index) => {
-                    const colors = getChartColors(summaryData.length);
-                    const percentage = (item.totalInvestment / totalPortfolioValue) * 100;
-                    let cumulativePercentage = 0;
-                    for (let i = 0; i < index; i++) {
-                      cumulativePercentage += (summaryData[i].totalInvestment / totalPortfolioValue) * 100;
-                    }
-                    
-                    const startAngle = (cumulativePercentage / 100) * 2 * Math.PI - Math.PI / 2;
-                    const endAngle = ((cumulativePercentage + percentage) / 100) * 2 * Math.PI - Math.PI / 2;
-                    
-                    const x1 = 100 + 80 * Math.cos(startAngle);
-                    const y1 = 100 + 80 * Math.sin(startAngle);
-                    const x2 = 100 + 80 * Math.cos(endAngle);
-                    const y2 = 100 + 80 * Math.sin(endAngle);
-                    
-                    const largeArcFlag = percentage > 50 ? 1 : 0;
-                    
-                    const path = `M 100 100 L ${x1} ${y1} A 80 80 0 ${largeArcFlag} 1 ${x2} ${y2} Z`;
-                    
-                    return (
-                      <g key={item.ticker}>
-                        <path d={path} fill={colors[index]} stroke="white" strokeWidth="2" />
-                      </g>
-                    );
-                  })}
-                </svg>
-                <div className="chart-legend">
-                  {summaryData.map((item, index) => {
-                    const colors = getChartColors(summaryData.length);
-                    const percentage = ((item.totalInvestment / totalPortfolioValue) * 100).toFixed(1);
-                    return (
-                      <div key={item.ticker} className="legend-item">
-                        <span className="legend-color" style={{ backgroundColor: colors[index] }}></span>
-                        <span className="legend-text">{item.ticker}: {percentage}%</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-            )}
-          </div>
-        </>
-      )}
 
       {allTransactions.length > 0 && (
         <div className="all-transactions-section">
