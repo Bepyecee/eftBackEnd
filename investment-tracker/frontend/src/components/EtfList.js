@@ -206,11 +206,42 @@ function EtfList() {
     return marketMap[market] || market;
   };;
 
+  const calculateSummaryData = () => {
+    return etfs.map(etf => {
+      const transactionCount = etf.transactions?.length || 0;
+      const totalInvestment = (etf.transactions || []).reduce((sum, t) => 
+        sum + (parseFloat(t.transactionCost) || 0) + (parseFloat(t.transactionFees) || 0), 0
+      );
+      const totalUnits = (etf.transactions || []).reduce((sum, t) => 
+        sum + (parseFloat(t.unitsPurchased) || 0), 0
+      );
+      
+      return {
+        ticker: etf.ticker,
+        name: etf.name,
+        transactionCount,
+        totalUnits,
+        totalInvestment
+      };
+    }).filter(summary => summary.transactionCount > 0);
+  };
+
+  const getChartColors = (count) => {
+    const colors = [
+      '#4CAF50', '#2196F3', '#FF9800', '#9C27B0', '#F44336',
+      '#00BCD4', '#FFEB3B', '#795548', '#607D8B', '#E91E63',
+      '#3F51B5', '#8BC34A', '#FFC107', '#673AB7', '#FF5722'
+    ];
+    return colors.slice(0, count);
+  };
+
   if (loading) {
     return <div className="loading">{messages.GENERIC.LOADING}</div>;
   }
 
   const sortedEtfs = getSortedEtfs();
+  const summaryData = calculateSummaryData();
+  const totalPortfolioValue = summaryData.reduce((sum, item) => sum + item.totalInvestment, 0);
 
   return (
     <div className="etf-list-container">
@@ -388,6 +419,101 @@ function EtfList() {
             </tbody>
           </table>
         </div>
+      )}
+
+      {summaryData.length > 0 && (
+        <>
+          <div className="portfolio-summary-section">
+            <h3>Portfolio Summary</h3>
+            <div className="summary-content">
+              <div className="summary-table-container">
+                <table className="summary-table">
+                  <thead>
+                    <tr>
+                      <th>Ticker</th>
+                      <th>Name</th>
+                      <th>Transactions</th>
+                      <th>Total Units</th>
+                      <th>Total Investment</th>
+                      <th>% of Portfolio</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {summaryData.map(item => (
+                      <tr key={item.ticker}>
+                        <td className="ticker-cell">
+                          <a 
+                            href={`https://www.justetf.com/en/find-etf.html?query=${item.ticker}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="ticker-link"
+                          >
+                            {item.ticker}
+                          </a>
+                        </td>
+                        <td>{item.name}</td>
+                        <td>{item.transactionCount}</td>
+                        <td>{item.totalUnits.toFixed(3)}</td>
+                        <td>{formatCurrency(item.totalInvestment)}</td>
+                        <td>{((item.totalInvestment / totalPortfolioValue) * 100).toFixed(1)}%</td>
+                      </tr>
+                    ))}
+                    <tr className="total-row">
+                      <td colSpan="2"><strong>TOTAL</strong></td>
+                      <td><strong>{summaryData.reduce((sum, item) => sum + item.transactionCount, 0)}</strong></td>
+                      <td><strong>{summaryData.reduce((sum, item) => sum + item.totalUnits, 0).toFixed(3)}</strong></td>
+                      <td><strong>{formatCurrency(totalPortfolioValue)}</strong></td>
+                      <td><strong>100.0%</strong></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div className="chart-container">
+                <h4>Investment Distribution</h4>
+                <svg viewBox="0 0 200 200" className="pie-chart">
+                  {summaryData.map((item, index) => {
+                    const colors = getChartColors(summaryData.length);
+                    const percentage = (item.totalInvestment / totalPortfolioValue) * 100;
+                    let cumulativePercentage = 0;
+                    for (let i = 0; i < index; i++) {
+                      cumulativePercentage += (summaryData[i].totalInvestment / totalPortfolioValue) * 100;
+                    }
+                    
+                    const startAngle = (cumulativePercentage / 100) * 2 * Math.PI - Math.PI / 2;
+                    const endAngle = ((cumulativePercentage + percentage) / 100) * 2 * Math.PI - Math.PI / 2;
+                    
+                    const x1 = 100 + 80 * Math.cos(startAngle);
+                    const y1 = 100 + 80 * Math.sin(startAngle);
+                    const x2 = 100 + 80 * Math.cos(endAngle);
+                    const y2 = 100 + 80 * Math.sin(endAngle);
+                    
+                    const largeArcFlag = percentage > 50 ? 1 : 0;
+                    
+                    const path = `M 100 100 L ${x1} ${y1} A 80 80 0 ${largeArcFlag} 1 ${x2} ${y2} Z`;
+                    
+                    return (
+                      <g key={item.ticker}>
+                        <path d={path} fill={colors[index]} stroke="white" strokeWidth="2" />
+                      </g>
+                    );
+                  })}
+                </svg>
+                <div className="chart-legend">
+                  {summaryData.map((item, index) => {
+                    const colors = getChartColors(summaryData.length);
+                    const percentage = ((item.totalInvestment / totalPortfolioValue) * 100).toFixed(1);
+                    return (
+                      <div key={item.ticker} className="legend-item">
+                        <span className="legend-color" style={{ backgroundColor: colors[index] }}></span>
+                        <span className="legend-text">{item.ticker}: {percentage}%</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );
