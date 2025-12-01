@@ -11,6 +11,8 @@ function EtfList() {
   const [expandedRows, setExpandedRows] = useState(new Set());
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
   const [transactionSortConfig, setTransactionSortConfig] = useState({});
+  const [tickerManagerCollapsed, setTickerManagerCollapsed] = useState(false);
+  const [portfolioSummaryCollapsed, setPortfolioSummaryCollapsed] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -245,29 +247,40 @@ function EtfList() {
 
   return (
     <div className="etf-list-container">
-      <div className="etf-list-header">
-        <h2>{messages.ETF.LIST_TITLE}</h2>
-        <div className="header-actions">
-          {expandedRows.size > 0 && (
-            <button className="collapse-all-button" onClick={collapseAll}>
-              Collapse All
-            </button>
-          )}
-          <button className="add-button" onClick={() => navigate('/etfs/new')}>
-            {messages.ETF.ADD_NEW}
-          </button>
-        </div>
-      </div>
-
       {error && <div className="error-message">{error}</div>}
 
-      {etfs.length === 0 ? (
-        <div className="empty-state">
-          <p>{messages.ETF.NO_ETFS}</p>
+      <div className="ticker-manager-section">
+        <div className="etf-list-header">
+          <div className="section-title-with-toggle">
+            <h2>{messages.ETF.LIST_TITLE}</h2>
+            <button 
+              className="section-toggle-button"
+              onClick={() => setTickerManagerCollapsed(!tickerManagerCollapsed)}
+              title={tickerManagerCollapsed ? 'Expand section' : 'Collapse section'}
+            >
+              {tickerManagerCollapsed ? '▼' : '▲'}
+            </button>
+          </div>
+          <div className="header-actions">
+            {expandedRows.size > 0 && (
+              <button className="collapse-all-button" onClick={collapseAll}>
+                Collapse All
+              </button>
+            )}
+            <button className="add-button" onClick={() => navigate('/etfs/new')}>
+              {messages.ETF.ADD_NEW}
+            </button>
+          </div>
         </div>
-      ) : (
-        <div className="etf-table-container">
-          <table className="etf-table">
+
+        {!tickerManagerCollapsed && (
+          etfs.length === 0 ? (
+            <div className="empty-state">
+              <p>{messages.ETF.NO_ETFS}</p>
+            </div>
+          ) : (
+            <div className="etf-table-container">
+            <table className="etf-table">
             <thead>
               <tr>
                 <th></th>
@@ -341,7 +354,9 @@ function EtfList() {
                         <button 
                           className="delete-button-small" 
                           onClick={() => handleDelete(etf.id)}
-                          title="Delete ETF"
+                          title={etf.transactions && etf.transactions.length > 0 
+                            ? `Cannot delete - ${etf.transactions.length} transaction(s) must be deleted first` 
+                            : "Delete ETF"}
                           disabled={etf.transactions && etf.transactions.length > 0}
                         >
                           Delete
@@ -419,12 +434,26 @@ function EtfList() {
             </tbody>
           </table>
         </div>
-      )}
+          )
+        )}
+      </div>
 
       {summaryData.length > 0 && (
         <>
           <div className="portfolio-summary-section">
-            <h3>Portfolio Summary</h3>
+            <div className="section-header">
+              <div className="section-title-with-toggle">
+                <h3>Portfolio Summary</h3>
+                <button 
+                  className="section-toggle-button"
+                  onClick={() => setPortfolioSummaryCollapsed(!portfolioSummaryCollapsed)}
+                  title={portfolioSummaryCollapsed ? 'Expand section' : 'Collapse section'}
+                >
+                  {portfolioSummaryCollapsed ? '▼' : '▲'}
+                </button>
+              </div>
+            </div>
+            {!portfolioSummaryCollapsed && (
             <div className="summary-content">
               <div className="summary-table-container">
                 <table className="summary-table">
@@ -512,6 +541,7 @@ function EtfList() {
                 </div>
               </div>
             </div>
+            )}
           </div>
         </>
       )}
