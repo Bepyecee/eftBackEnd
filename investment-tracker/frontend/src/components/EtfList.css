@@ -15,7 +15,7 @@
   color: #333;
   margin: 0;
   font-weight: 500;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
 }
 
 .header-actions {
@@ -66,10 +66,14 @@
 
 /* Ticker Manager Section */
 .ticker-manager-section {
-  padding: 2rem;
+  padding: 1.5rem;
   background: white;
   border: 1px solid #e0e0e0;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
+}
+
+.ticker-manager-section:has(.etf-list-header:only-child) {
+  padding: 1rem 1.5rem;
 }
 
 /* Section Header Styles */
@@ -92,6 +96,37 @@
 
 .section-toggle-button:hover {
   color: #000;
+}
+
+.section-summary-inline {
+  color: #999;
+  font-size: 0.85rem;
+  font-weight: 400;
+  margin-left: 0.5rem;
+  padding-left: 0.75rem;
+  border-left: 1px solid #ddd;
+}
+
+.section-description {
+  margin-top: 0.5rem;
+  padding: 0.75rem 1rem;
+  background-color: #f8f9fa;
+  border-left: 3px solid #e0e0e0;
+  color: #666;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.section-summary {
+  margin-top: 1rem;
+  padding: 0.75rem 0;
+  color: #666;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.section-summary p {
+  margin: 0;
 }
 
 /* Table Styles */
@@ -445,10 +480,14 @@
 
 /* Portfolio Summary Section */
 .portfolio-summary-section {
-  margin-top: 3rem;
-  padding: 2rem;
+  margin-top: 1rem;
+  padding: 1.5rem;
   background: white;
   border: 1px solid #e0e0e0;
+}
+
+.portfolio-summary-section:has(.section-header:only-child) {
+  padding: 1rem 1.5rem;
 }
 
 .portfolio-summary-section .section-header {
@@ -460,6 +499,225 @@
   font-size: 1.3rem;
   font-weight: 500;
   color: #333;
+}
+
+/* All Transactions Section */
+.all-transactions-section {
+  margin-top: 1rem;
+  padding: 1.5rem;
+  background: white;
+  border: 1px solid #e0e0e0;
+}
+
+.all-transactions-section:has(.section-header:only-child) {
+  padding: 1rem 1.5rem;
+}
+
+.all-transactions-section .section-header {
+  margin-bottom: 1.5rem;
+}
+
+.all-transactions-section h3 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.transactions-table-container {
+  background: white;
+  border: 1px solid #e0e0e0;
+  overflow-x: auto;
+}
+
+.transaction-filters {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-bottom: none;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.filter-group label {
+  font-size: 0.85rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.ticker-dropdown {
+  position: relative;
+  min-width: 200px;
+}
+
+.ticker-dropdown-button {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ddd;
+  background: white;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: border-color 0.2s;
+}
+
+.ticker-dropdown-button:hover {
+  border-color: #999;
+}
+
+.dropdown-arrow {
+  color: #666;
+  font-size: 0.75rem;
+  margin-left: 0.5rem;
+}
+
+.ticker-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 0.25rem;
+  background: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  max-height: 250px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.ticker-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  transition: background-color 0.15s;
+  font-size: 0.9rem;
+  user-select: none;
+}
+
+.ticker-dropdown-item:hover {
+  background-color: #f8f9fa;
+}
+
+.ticker-dropdown-item input[type="checkbox"] {
+  cursor: pointer;
+  margin: 0;
+}
+
+.no-tickers {
+  padding: 0.75rem;
+  color: #999;
+  font-size: 0.85rem;
+  font-style: italic;
+  text-align: center;
+}
+
+.ticker-multiselect {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  background: white;
+  min-width: 250px;
+  max-width: 500px;
+}
+
+.ticker-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.5rem;
+  background: #f8f9fa;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.ticker-checkbox:hover {
+  background: #e9ecef;
+  border-color: #999;
+}
+
+.ticker-checkbox input[type="checkbox"] {
+  cursor: pointer;
+  margin: 0;
+}
+
+.ticker-checkbox span {
+  user-select: none;
+}
+
+.no-tickers {
+  color: #999;
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+.filter-input {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ddd;
+  font-size: 0.9rem;
+  min-width: 150px;
+  transition: border-color 0.2s;
+}
+
+.filter-input:focus {
+  outline: none;
+  border-color: #333;
+}
+
+.clear-filters-button {
+  background: white;
+  border: 1px solid #ddd;
+  color: #666;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.clear-filters-button:hover {
+  border-color: #000;
+  color: #000;
+}
+
+.export-button {
+  background: #4CAF50;
+  border: 1px solid #4CAF50;
+  color: white;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.export-button:hover:not(:disabled) {
+  background: #45a049;
+  border-color: #45a049;
+}
+
+.export-button:disabled {
+  background: #ccc;
+  border-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .summary-content {
