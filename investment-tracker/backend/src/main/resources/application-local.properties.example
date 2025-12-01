@@ -49,6 +49,29 @@ spring.datasource.url=jdbc:h2:C:/Gav/workspaces/itr/db for etf app/h2 db
 # app.auth.dev.username=myuser
 # app.auth.dev.password=mypass
 
+# ===== YAHOO FINANCE CONFIGURATION =====
+# API timeout in seconds (default: 10)
+# yahoo.finance.timeout=15
+
+# Cache expiration time in minutes (default: 30)
+# yahoo.finance.cache-expiration-minutes=60
+
+# Maximum number of cached prices (default: 100)
+# yahoo.finance.cache-max-size=200
+
+# Default exchange suffix for unmapped European tickers (default: .DE)
+# yahoo.finance.default-european-suffix=.AS
+
+# Custom Ticker Mappings
+# Add your own ticker mappings here to override or extend defaults
+# Format: yahoo.finance.ticker-mappings.<YOUR_TICKER>=<YAHOO_SYMBOL>
+#
+# Examples:
+# yahoo.finance.ticker-mappings.IWDA=IWDA.AS
+# yahoo.finance.ticker-mappings.EMIM=EMIM.AS
+# yahoo.finance.ticker-mappings.VUSA=VUSA.L
+# yahoo.finance.ticker-mappings.QQQ=QQQ
+
 # ===== H2 CONSOLE =====
 # spring.h2.console.enabled=true
 # spring.h2.console.path=/h2-console
