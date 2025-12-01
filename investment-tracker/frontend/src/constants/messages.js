@@ -85,8 +85,8 @@ const messages = {
     MARKET_CONCENTRATION_PLACEHOLDER: 'Select market concentration',
     DOMICILE: 'Domicile',
     DOMICILE_PLACEHOLDER: 'Select domicile',
-    RISK: 'Risk Level',
-    RISK_PLACEHOLDER: 'Low, Medium, High',
+    VOLATILITY: 'Volatility',
+    VOLATILITY_PLACEHOLDER: 'Low, Moderate, High',
     DIVIDEND: 'Dividend',
     DIVIDEND_PLACEHOLDER: 'Accumulating or Distributing',
     TER: 'Total Expense Ratio (%)',
@@ -100,11 +100,11 @@ const messages = {
     PRIORITY_HIGH: 'High',
     PRIORITY_VERY_HIGH: 'Very High',
     
-    // ETF Risk Options
-    RISK_LOW: 'Low',
-    RISK_MEDIUM: 'Medium',
-    RISK_HIGH: 'High',
-    RISK_VERY_HIGH: 'Very High',
+    // ETF Volatility Options
+    VOLATILITY_LOW: 'Low',
+    VOLATILITY_MODERATE: 'Moderate',
+    VOLATILITY_HIGH: 'High',
+    VOLATILITY_VERY_HIGH: 'Very High',
     
     // ETF Domicile Options
     DOMICILE_IRELAND: 'Ireland',

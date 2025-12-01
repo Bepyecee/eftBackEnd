@@ -146,7 +146,7 @@
   color: #0052a3;
 }
 
-.risk-badge {
+.volatility-badge {
   padding: 0.2rem 0.6rem;
   border: 1px solid;
   font-size: 0.7rem;
@@ -155,25 +155,25 @@
   text-transform: uppercase;
 }
 
-.risk-badge.risk-low {
+.volatility-badge.volatility-low {
   background-color: #f0f9ff;
   border-color: #0ea5e9;
   color: #0284c7;
 }
 
-.risk-badge.risk-medium {
+.volatility-badge.volatility-moderate {
   background-color: #fffbeb;
   border-color: #f59e0b;
   color: #d97706;
 }
 
-.risk-badge.risk-high {
+.volatility-badge.volatility-high {
   background-color: #fef2f2;
   border-color: #ef4444;
   color: #dc2626;
 }
 
-.risk-badge.risk-very_high {
+.volatility-badge.volatility-very_high {
   background-color: #fef2f2;
   border-color: #b91c1c;
   color: #991b1b;

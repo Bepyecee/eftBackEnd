@@ -1,8 +1,8 @@
 package com.example.investmenttracker.model;
 
-public enum ETFRisk {
+public enum ETFVolatility {
     LOW,
-    MEDIUM,
+    MODERATE,
     HIGH,
     VERY_HIGH
 }
