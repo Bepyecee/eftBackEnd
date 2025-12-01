@@ -252,8 +252,8 @@ function EtfList() {
                 <th className="sortable" onClick={() => handleSort('marketConcentration')}>
                   Market{getSortIndicator('marketConcentration')}
                 </th>
-                <th className="sortable" onClick={() => handleSort('risk')}>
-                  Risk{getSortIndicator('risk')}
+                <th className="sortable" onClick={() => handleSort('volatility')}>
+                  Volatility{getSortIndicator('volatility')}
                 </th>
                 <th className="sortable" onClick={() => handleSort('ter')}>
                   TER{getSortIndicator('ter')}
@@ -292,8 +292,8 @@ function EtfList() {
                     <td>{getTypeDisplay(etf.type)}</td>
                     <td>{getMarketDisplay(etf.marketConcentration)}</td>
                     <td>
-                      <span className={`risk-badge risk-${etf.risk?.toLowerCase()}`}>
-                        {etf.risk}
+                      <span className={`volatility-badge volatility-${etf.volatility?.toLowerCase()}`}>
+                        {etf.volatility}
                       </span>
                     </td>
                     <td>{etf.ter}%</td>

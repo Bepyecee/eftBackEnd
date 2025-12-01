@@ -31,7 +31,7 @@ public class Etf {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private ETFRisk risk;
+    private ETFVolatility volatility;
 
     @Column(unique = true, nullable = false)
     private String ticker;
@@ -67,12 +67,12 @@ public class Etf {
     }
 
     public Etf(String name, ETFType type, ETFMarketConcentration marketConcentration, ETFDomicile domicile,
-            ETFRisk risk, String ticker, BigDecimal ter, String notes) {
+            ETFVolatility volatility, String ticker, BigDecimal ter, String notes) {
         this.name = name;
         this.type = type;
         this.marketConcentration = marketConcentration;
         this.domicile = domicile;
-        this.risk = risk;
+        this.volatility = volatility;
         this.ticker = ticker;
         this.ter = ter;
         this.notes = notes;
@@ -110,12 +110,12 @@ public class Etf {
         this.domicile = domicile;
     }
 
-    public ETFRisk getRisk() {
-        return risk;
+    public ETFVolatility getVolatility() {
+        return volatility;
     }
 
-    public void setRisk(ETFRisk risk) {
-        this.risk = risk;
+    public void setVolatility(ETFVolatility volatility) {
+        this.volatility = volatility;
     }
 
     public String getTicker() {

@@ -15,7 +15,7 @@ function EtfForm() {
     type: 'EQUITY',
     marketConcentration: 'GLOBAL_DEVELOPED',
     domicile: 'IRELAND',
-    risk: 'HIGH',
+    volatility: 'HIGH',
     ticker: '',
     ter: '',
     notes: '',
@@ -336,7 +336,7 @@ function EtfForm() {
             />
           </div>
 
-          {/* Row 2: Type, TER, and Risk Level */}
+          {/* Row 2: Type, TER, and Volatility */}
           <div className="form-group">
             <label htmlFor="type">{messages.ETF.TYPE}</label>
             <select
@@ -365,18 +365,18 @@ function EtfForm() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="risk">{messages.ETF.RISK} *</label>
+            <label htmlFor="volatility">{messages.ETF.VOLATILITY} *</label>
             <select
-              id="risk"
-              name="risk"
-              value={formData.risk}
+              id="volatility"
+              name="volatility"
+              value={formData.volatility}
               onChange={handleChange}
               required
             >
-              <option value="LOW">{messages.ETF.RISK_LOW}</option>
-              <option value="MEDIUM">{messages.ETF.RISK_MEDIUM}</option>
-              <option value="HIGH">{messages.ETF.RISK_HIGH}</option>
-              <option value="VERY_HIGH">{messages.ETF.RISK_VERY_HIGH}</option>
+              <option value="LOW">{messages.ETF.VOLATILITY_LOW}</option>
+              <option value="MODERATE">{messages.ETF.VOLATILITY_MODERATE}</option>
+              <option value="HIGH">{messages.ETF.VOLATILITY_HIGH}</option>
+              <option value="VERY_HIGH">{messages.ETF.VOLATILITY_VERY_HIGH}</option>
             </select>
           </div>
 
