@@ -412,3 +412,127 @@
   display: flex;
   align-items: center;
 }
+
+/* Portfolio Summary Section */
+.portfolio-summary-section {
+  margin-top: 3rem;
+  padding: 2rem;
+  background: white;
+  border: 1px solid #e0e0e0;
+}
+
+.portfolio-summary-section h3 {
+  margin: 0 0 1.5rem 0;
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.summary-content {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+.summary-table-container {
+  overflow-x: auto;
+}
+
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.summary-table thead {
+  background: #f8f9fa;
+  border-bottom: 2px solid #ddd;
+}
+
+.summary-table th,
+.summary-table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.summary-table th {
+  font-weight: 600;
+  color: #666;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.summary-table tbody tr:hover {
+  background: #f8f9fa;
+}
+
+.summary-table .total-row {
+  background: #f8f9fa;
+  border-top: 2px solid #ddd;
+}
+
+.summary-table .total-row td {
+  padding: 1rem 0.75rem;
+  font-size: 1rem;
+}
+
+.chart-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+}
+
+.chart-container h4 {
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #666;
+  text-align: center;
+}
+
+.pie-chart {
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  margin-bottom: 1rem;
+}
+
+.chart-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.legend-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.legend-text {
+  color: #666;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .summary-content {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-container {
+    margin-top: 2rem;
+  }
+}
