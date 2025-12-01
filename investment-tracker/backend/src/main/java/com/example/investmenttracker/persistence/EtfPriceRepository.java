@@ -8,8 +8,8 @@ import java.util.Optional;
 
 @Repository
 public interface EtfPriceRepository extends JpaRepository<EtfPrice, Long> {
-    
+
     Optional<EtfPrice> findByTicker(String ticker);
-    
+
     void deleteByTicker(String ticker);
 }

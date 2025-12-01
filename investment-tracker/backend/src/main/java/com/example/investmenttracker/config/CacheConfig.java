@@ -12,13 +12,13 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 @EnableCaching
 public class CacheConfig {
-    
+
     private final YahooFinanceProperties properties;
-    
+
     public CacheConfig(YahooFinanceProperties properties) {
         this.properties = properties;
     }
-    
+
     @Bean
     public CacheManager cacheManager() {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager("etfPrices");

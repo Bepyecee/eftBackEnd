@@ -15,15 +15,15 @@ import java.util.Map;
 @RequestMapping("/api/etf-prices")
 @CrossOrigin(origins = "http://localhost:3000")
 public class EtfPriceController {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(EtfPriceController.class);
-    
+
     private final EtfPriceService etfPriceService;
-    
+
     public EtfPriceController(EtfPriceService etfPriceService) {
         this.etfPriceService = etfPriceService;
     }
-    
+
     @GetMapping("/{ticker}")
     public ResponseEntity<?> getPrice(@PathVariable String ticker) {
         try {
@@ -36,7 +36,7 @@ public class EtfPriceController {
                     .body(Map.of("error", "Failed to fetch price: " + e.getMessage()));
         }
     }
-    
+
     @GetMapping
     public ResponseEntity<?> getAllPrices() {
         try {
@@ -49,7 +49,7 @@ public class EtfPriceController {
                     .body(Map.of("error", "Failed to fetch prices: " + e.getMessage()));
         }
     }
-    
+
     @PostMapping("/refresh/{ticker}")
     public ResponseEntity<?> refreshPrice(@PathVariable String ticker) {
         try {
@@ -62,29 +62,27 @@ public class EtfPriceController {
                     .body(Map.of("error", "Failed to refresh price: " + e.getMessage()));
         }
     }
-    
+
     @PostMapping("/refresh")
     public ResponseEntity<?> refreshAllPrices(@RequestBody List<String> tickers) {
         try {
             logger.info("POST request to refresh prices for {} tickers", tickers.size());
             List<EtfPriceResponse> prices = etfPriceService.refreshAllPrices(tickers);
-            
+
             if (prices.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
                         .body(Map.of(
-                            "error", "No prices available",
-                            "message", "Unable to fetch prices for any of the requested tickers"
-                        ));
+                                "error", "No prices available",
+                                "message", "Unable to fetch prices for any of the requested tickers"));
             }
-            
+
             if (prices.size() < tickers.size()) {
                 int unavailable = tickers.size() - prices.size();
                 return ResponseEntity.ok(Map.of(
-                    "prices", prices,
-                    "warning", unavailable + " ticker(s) unavailable"
-                ));
+                        "prices", prices,
+                        "warning", unavailable + " ticker(s) unavailable"));
             }
-            
+
             return ResponseEntity.ok(prices);
         } catch (Exception e) {
             logger.error("Error refreshing prices: {}", e.getMessage());
