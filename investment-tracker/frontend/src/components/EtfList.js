@@ -16,7 +16,9 @@ function EtfList() {
   const [tickerManagerCollapsed, setTickerManagerCollapsed] = useState(false);
   const [portfolioSummaryCollapsed, setPortfolioSummaryCollapsed] = useState(false);
   const [allTransactionsCollapsed, setAllTransactionsCollapsed] = useState(false);
+  const [taxCalculatorCollapsed, setTaxCalculatorCollapsed] = useState(false);
   const [allTransactionsSortConfig, setAllTransactionsSortConfig] = useState({ key: 'transactionDate', direction: 'asc' });
+  const [taxCalculatorSortConfig, setTaxCalculatorSortConfig] = useState({ key: 'transactionDate', direction: 'asc' });
   const [transactionFilters, setTransactionFilters] = useState({ tickers: [], startDate: '', endDate: '' });
   const [tickerDropdownOpen, setTickerDropdownOpen] = useState(false);
   const [prices, setPrices] = useState({});
@@ -486,6 +488,19 @@ function EtfList() {
   const getAllTransactionsSortIndicator = (key) => {
     if (allTransactionsSortConfig.key !== key) return ' ↕';
     return allTransactionsSortConfig.direction === 'asc' ? ' ↑' : ' ↓';
+  };
+
+  const handleTaxCalculatorSort = (key) => {
+    let direction = 'asc';
+    if (taxCalculatorSortConfig.key === key && taxCalculatorSortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setTaxCalculatorSortConfig({ key, direction });
+  };
+
+  const getTaxCalculatorSortIndicator = (key) => {
+    if (taxCalculatorSortConfig.key !== key) return ' ↕';
+    return taxCalculatorSortConfig.direction === 'asc' ? ' ↑' : ' ↓';
   };
 
   if (loading) {
@@ -1297,8 +1312,94 @@ function EtfList() {
           )}
         </div>
       )}
+
+      {/* Tax Calculator Section */}
+      {!loading && !error && etfs.length > 0 && allTransactions.length > 0 && (
+        <div className="all-transactions-section">
+          <div className="section-header">
+            <div className="section-title-with-toggle">
+              <h3>{messages.TAX_CALCULATOR.TITLE}</h3>
+              <button 
+                className="section-toggle-button"
+                onClick={() => setTaxCalculatorCollapsed(!taxCalculatorCollapsed)}
+                title={taxCalculatorCollapsed ? 'Expand section' : 'Collapse section'}
+              >
+                {taxCalculatorCollapsed ? '\u25bc' : '\u25b2'}
+              </button>
+              <div className="section-summary-inline">
+                <span>
+                  Deemed disposal dates for all {allTransactions.length} transaction{allTransactions.length !== 1 ? 's' : ''}. Tax event occurs 8 years after purchase.
+                </span>
+              </div>
+            </div>
+          </div>
+          {!taxCalculatorCollapsed && (
+            <div className="transactions-table-container">
+              <table className="transactions-table">
+                <thead>
+                  <tr>
+                    <th className="sortable" onClick={() => handleTaxCalculatorSort('etfTicker')}>
+                      Ticker{getTaxCalculatorSortIndicator('etfTicker')}
+                    </th>
+                    <th className="sortable" onClick={() => handleTaxCalculatorSort('transactionDate')}>
+                      {messages.TAX_CALCULATOR.TRANSACTION_DATE}{getTaxCalculatorSortIndicator('transactionDate')}
+                    </th>
+                    <th className="sortable" onClick={() => handleTaxCalculatorSort('deemedDisposalDate')}>
+                      {messages.TAX_CALCULATOR.DEEMED_DISPOSAL_DATE}{getTaxCalculatorSortIndicator('deemedDisposalDate')}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[...allTransactions]
+                    .map(transaction => ({
+                      ...transaction,
+                      deemedDisposalDate: transaction.deemedDisposalDate
+                        ? transaction.deemedDisposalDate
+                        : new Date(new Date(transaction.transactionDate).setFullYear(new Date(transaction.transactionDate).getFullYear() + 8)).toISOString().split('T')[0]
+                    }))
+                    .sort((a, b) => {
+                      let aValue = a[taxCalculatorSortConfig.key];
+                      let bValue = b[taxCalculatorSortConfig.key];
+
+                      if (taxCalculatorSortConfig.key === 'transactionDate' || taxCalculatorSortConfig.key === 'deemedDisposalDate') {
+                        aValue = new Date(aValue).getTime();
+                        bValue = new Date(bValue).getTime();
+                      }
+
+                      if (typeof aValue === 'string') {
+                        return taxCalculatorSortConfig.direction === 'asc'
+                          ? aValue.localeCompare(bValue)
+                          : bValue.localeCompare(aValue);
+                      }
+
+                      return taxCalculatorSortConfig.direction === 'asc' ? aValue - bValue : bValue - aValue;
+                    })
+                    .map((transaction) => (
+                      <tr key={`${transaction.etfTicker}-${transaction.id}`}>
+                        <td className="ticker-cell">
+                          <a 
+                            href={`https://www.justetf.com/en/find-etf.html?query=${transaction.etfTicker}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="ticker-link"
+                          >
+                            {transaction.etfTicker}
+                          </a>
+                        </td>
+                        <td>{formatDate(transaction.transactionDate)}</td>
+                        <td>{formatDate(transaction.deemedDisposalDate)}</td>
+                      </tr>
+                    ))
+                  }
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
 
 export default EtfList;
+

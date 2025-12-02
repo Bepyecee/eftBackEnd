@@ -605,6 +605,38 @@ function EtfForm() {
           )}
         </div>
 
+        {/* Tax Calculator Section */}
+        {isEditMode && transactions.length > 0 && (
+          <div className="tax-calculator-section">
+            <div className="tax-calculator-header">
+              <h3>{messages.TAX_CALCULATOR.TITLE}</h3>
+            </div>
+            <div className="tax-calculator-content">
+              <table className="tax-calculator-table">
+                <thead>
+                  <tr>
+                    <th>{messages.TAX_CALCULATOR.TRANSACTION_DATE}</th>
+                    <th>{messages.TAX_CALCULATOR.DEEMED_DISPOSAL_DATE}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {getSortedTransactions().map((transaction, index) => (
+                    <tr key={index}>
+                      <td>{new Date(transaction.transactionDate).toLocaleDateString()}</td>
+                      <td>
+                        {transaction.deemedDisposalDate 
+                          ? new Date(transaction.deemedDisposalDate).toLocaleDateString()
+                          : new Date(new Date(transaction.transactionDate).setFullYear(new Date(transaction.transactionDate).getFullYear() + 8)).toLocaleDateString()
+                        }
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
         <div className="form-actions">
           <button type="button" className="cancel-button" onClick={handleCancel}>
             {messages.GENERIC.CANCEL}
