@@ -879,6 +879,104 @@ function EtfList() {
                   </svg>
                 </div>
                 <div className="chart-container">
+                  <h4>Volatility Distribution</h4>
+                  <svg viewBox="0 0 200 200" className="pie-chart">
+                    {(() => {
+                      // Group by volatility
+                      const volatilityGroups = {};
+                      summaryData.forEach(item => {
+                        const etf = etfs.find(e => e.ticker === item.ticker);
+                        const volatility = etf?.volatility || 'UNKNOWN';
+                        if (!volatilityGroups[volatility]) {
+                          volatilityGroups[volatility] = {
+                            volatility,
+                            totalValue: 0,
+                            items: []
+                          };
+                        }
+                        volatilityGroups[volatility].totalValue += item.currentValue || 0;
+                        volatilityGroups[volatility].items.push(item);
+                      });
+
+                      const volatilityData = Object.values(volatilityGroups).sort((a, b) => b.totalValue - a.totalValue);
+                      const volatilityColors = {
+                        'LOW': '#4CAF50',
+                        'MODERATE': '#FFC107',
+                        'HIGH': '#FF9800',
+                        'VERY_HIGH': '#F44336',
+                        'UNKNOWN': '#9E9E9E'
+                      };
+
+                      return volatilityData.map((group, index) => {
+                        const percentage = totalCurrentValue > 0 ? (group.totalValue / totalCurrentValue) * 100 : 0;
+                        let cumulativePercentage = 0;
+                        for (let i = 0; i < index; i++) {
+                          cumulativePercentage += totalCurrentValue > 0 ? (volatilityData[i].totalValue / totalCurrentValue) * 100 : 0;
+                        }
+                        
+                        const startAngle = (cumulativePercentage / 100) * 2 * Math.PI - Math.PI / 2;
+                        const endAngle = ((cumulativePercentage + percentage) / 100) * 2 * Math.PI - Math.PI / 2;
+                        
+                        const x1 = 100 + 80 * Math.cos(startAngle);
+                        const y1 = 100 + 80 * Math.sin(startAngle);
+                        const x2 = 100 + 80 * Math.cos(endAngle);
+                        const y2 = 100 + 80 * Math.sin(endAngle);
+                        
+                        const largeArcFlag = percentage > 50 ? 1 : 0;
+                        
+                        const path = `M 100 100 L ${x1} ${y1} A 80 80 0 ${largeArcFlag} 1 ${x2} ${y2} Z`;
+                        
+                        const midAngle = (startAngle + endAngle) / 2;
+                        const labelX = 100 + 60 * Math.cos(midAngle);
+                        const labelY = 100 + 60 * Math.sin(midAngle);
+                        
+                        const volatilityLabel = group.volatility.replace('_', ' ');
+                        
+                        return (
+                          <g key={group.volatility}>
+                            <path d={path} fill={volatilityColors[group.volatility]} stroke="white" strokeWidth="2" />
+                            {percentage > 5 && (
+                              <>
+                                <text
+                                  x={labelX}
+                                  y={labelY - 6}
+                                  textAnchor="middle"
+                                  dominantBaseline="middle"
+                                  fill="white"
+                                  fontSize="9"
+                                  fontWeight="bold"
+                                >
+                                  {volatilityLabel}
+                                </text>
+                                <text
+                                  x={labelX}
+                                  y={labelY + 5}
+                                  textAnchor="middle"
+                                  dominantBaseline="middle"
+                                  fill="white"
+                                  fontSize="8"
+                                >
+                                  {formatCurrency(group.totalValue)}
+                                </text>
+                                <text
+                                  x={labelX}
+                                  y={labelY + 14}
+                                  textAnchor="middle"
+                                  dominantBaseline="middle"
+                                  fill="white"
+                                  fontSize="8"
+                                >
+                                  {percentage.toFixed(1)}%
+                                </text>
+                              </>
+                            )}
+                          </g>
+                        );
+                      });
+                    })()}
+                  </svg>
+                </div>
+                <div className="chart-container">
                   <div className="chart-header-with-toggle">
                     <h4>Top ETFs</h4>
                     <div className="toggle-switch-container">
