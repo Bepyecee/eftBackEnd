@@ -202,6 +202,14 @@ const messages = {
     TOTAL_INVESTED: 'Total Invested',
   },
 
+  // Tax Calculator Messages
+  TAX_CALCULATOR: {
+    TITLE: 'Tax Calculator',
+    TRANSACTION_DATE: 'Transaction Date',
+    DEEMED_DISPOSAL_DATE: 'Deemed Disposal Date',
+    NO_TRANSACTIONS: 'No transactions available for tax calculation.',
+  },
+
   // Error Messages
   ERROR: {
     GENERIC: 'An unexpected error occurred. Please try again.',

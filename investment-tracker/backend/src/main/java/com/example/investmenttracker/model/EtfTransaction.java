@@ -21,6 +21,9 @@ public class EtfTransaction {
     @Column(nullable = false)
     private LocalDate transactionDate;
 
+    @Column(nullable = true)
+    private LocalDate deemedDisposalDate;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TransactionType transactionType;
@@ -47,6 +50,7 @@ public class EtfTransaction {
             BigDecimal unitsPurchased, BigDecimal transactionCost, BigDecimal transactionFees) {
         this.etf = etf;
         this.transactionDate = transactionDate;
+        this.deemedDisposalDate = transactionDate.plusYears(8);
         this.transactionType = transactionType;
         this.unitsPurchased = unitsPurchased;
         this.transactionCost = transactionCost;
@@ -57,11 +61,17 @@ public class EtfTransaction {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
+        if (deemedDisposalDate == null && transactionDate != null) {
+            deemedDisposalDate = transactionDate.plusYears(8);
+        }
     }
 
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
+        if (transactionDate != null) {
+            deemedDisposalDate = transactionDate.plusYears(8);
+        }
     }
 
     // Getters and Setters
@@ -87,6 +97,9 @@ public class EtfTransaction {
 
     public void setTransactionDate(LocalDate transactionDate) {
         this.transactionDate = transactionDate;
+        if (transactionDate != null) {
+            this.deemedDisposalDate = transactionDate.plusYears(8);
+        }
     }
 
     public TransactionType getTransactionType() {
@@ -127,5 +140,13 @@ public class EtfTransaction {
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
+    }
+
+    public LocalDate getDeemedDisposalDate() {
+        return deemedDisposalDate;
+    }
+
+    public void setDeemedDisposalDate(LocalDate deemedDisposalDate) {
+        this.deemedDisposalDate = deemedDisposalDate;
     }
 }
