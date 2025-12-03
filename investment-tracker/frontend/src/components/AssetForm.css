@@ -111,6 +111,69 @@
   background: #e0e0e0;
 }
 
+/* Dark theme styles */
+[data-theme="trading-terminal"] .asset-form-container {
+  background: transparent;
+}
+
+[data-theme="trading-terminal"] .form-header h2 {
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .loading {
+  color: #b2b5be;
+}
+
+[data-theme="trading-terminal"] .error-message {
+  background-color: #2a1f1f;
+  color: #ff8787;
+  border: 1px solid #ff6b6b;
+}
+
+[data-theme="trading-terminal"] .asset-form {
+  background: #1e222d;
+  border: 1px solid #2a2e39;
+  box-shadow: none;
+}
+
+[data-theme="trading-terminal"] .form-group label {
+  color: #b2b5be;
+}
+
+[data-theme="trading-terminal"] .form-group input {
+  background: #131722;
+  border: 1px solid #2a2e39;
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .form-group input:focus {
+  border-color: #00bcd4;
+  box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.1);
+}
+
+[data-theme="trading-terminal"] .form-group small {
+  color: #787b86;
+}
+
+[data-theme="trading-terminal"] .submit-button {
+  background: #00bcd4;
+}
+
+[data-theme="trading-terminal"] .submit-button:hover:not(:disabled) {
+  background: #00acc1;
+}
+
+[data-theme="trading-terminal"] .cancel-button {
+  background: #131722;
+  color: #b2b5be;
+  border: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .cancel-button:hover {
+  background: #2a2e39;
+  color: #d1d4dc;
+}
+
 @media (max-width: 768px) {
   .form-actions {
     flex-direction: column-reverse;

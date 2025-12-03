@@ -366,6 +366,208 @@
   background-color: #fafafa;
 }
 
+/* Dark theme styles */
+[data-theme="trading-terminal"] .etf-form-container {
+  background: transparent;
+}
+
+[data-theme="trading-terminal"] .form-header h2 {
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .loading {
+  color: #b2b5be;
+}
+
+[data-theme="trading-terminal"] .error-message {
+  background-color: #2a1f1f;
+  border: 1px solid #ff6b6b;
+  color: #ff8787;
+}
+
+[data-theme="trading-terminal"] .etf-form {
+  background: #1e222d;
+  border: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .form-group label {
+  color: #b2b5be;
+}
+
+[data-theme="trading-terminal"] .form-group input,
+[data-theme="trading-terminal"] .form-group select,
+[data-theme="trading-terminal"] .form-group textarea {
+  background: #131722;
+  border: 1px solid #2a2e39;
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .form-group input:focus,
+[data-theme="trading-terminal"] .form-group select:focus,
+[data-theme="trading-terminal"] .form-group textarea:focus {
+  border-color: #00bcd4;
+}
+
+[data-theme="trading-terminal"] .ticker-readonly-link {
+  border: 1px solid #2a2e39;
+  background-color: #131722;
+  color: #00bcd4;
+}
+
+[data-theme="trading-terminal"] .ticker-readonly-link:hover {
+  border-color: #00bcd4;
+  background-color: #1e222d;
+}
+
+[data-theme="trading-terminal"] .submit-button,
+[data-theme="trading-terminal"] .cancel-button {
+  background: #131722 !important;
+  border: 1px solid #2a2e39 !important;
+  color: #b2b5be !important;
+}
+
+[data-theme="trading-terminal"] .submit-button:hover:not(:disabled) {
+  border-color: #00bcd4 !important;
+  color: #00bcd4 !important;
+}
+
+[data-theme="trading-terminal"] .cancel-button:hover {
+  border-color: #787b86 !important;
+  color: #d1d4dc !important;
+}
+
+[data-theme="trading-terminal"] .transactions-section {
+  border-top: 2px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .transactions-header h3 {
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .add-transaction-button {
+  background: #131722;
+  border: 1px solid #2a2e39;
+  color: #b2b5be;
+}
+
+[data-theme="trading-terminal"] .add-transaction-button:hover {
+  border-color: #00bcd4;
+  color: #00bcd4;
+}
+
+[data-theme="trading-terminal"] .transaction-form {
+  background: #131722;
+  border: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .save-transaction-button,
+[data-theme="trading-terminal"] .transaction-form .cancel-button {
+  background: #1e222d;
+  border: 1px solid #2a2e39;
+  color: #b2b5be;
+}
+
+[data-theme="trading-terminal"] .save-transaction-button:hover {
+  border-color: #00bcd4;
+  color: #00bcd4;
+}
+
+[data-theme="trading-terminal"] .transaction-form .cancel-button:hover {
+  border-color: #787b86;
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .transactions-table {
+  background: #1e222d;
+  border: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .transactions-table th,
+[data-theme="trading-terminal"] .transactions-table td {
+  border-bottom: 1px solid #2a2e39;
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .transactions-table thead th {
+  background-color: #131722;
+  color: #b2b5be;
+}
+
+[data-theme="trading-terminal"] .transactions-table thead th.sortable:hover {
+  background-color: #1e222d;
+}
+
+[data-theme="trading-terminal"] .transactions-table tbody tr:hover {
+  background-color: #2a2e39;
+}
+
+[data-theme="trading-terminal"] .total-row {
+  background-color: #131722;
+  border-top: 2px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .total-row td {
+  color: #00bcd4;
+}
+
+[data-theme="trading-terminal"] .edit-transaction-button,
+[data-theme="trading-terminal"] .delete-transaction-button {
+  background: #131722;
+  border: 1px solid #2a2e39;
+  color: #b2b5be;
+}
+
+[data-theme="trading-terminal"] .edit-transaction-button:hover {
+  border-color: #00bcd4;
+  color: #00bcd4;
+}
+
+[data-theme="trading-terminal"] .delete-transaction-button:hover {
+  border-color: #ff6b6b;
+  color: #ff6b6b;
+}
+
+[data-theme="trading-terminal"] .tax-calculator-section {
+  border-top: 2px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .tax-calculator-header h3 {
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .tax-calculator-table {
+  background: #1e222d;
+  border: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .tax-calculator-table th,
+[data-theme="trading-terminal"] .tax-calculator-table td {
+  border-bottom: 1px solid #2a2e39;
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .tax-calculator-table thead th {
+  background-color: #131722;
+  color: #b2b5be;
+}
+
+[data-theme="trading-terminal"] .tax-calculator-table tbody tr:hover {
+  background-color: #2a2e39;
+}
+
+/* Dark theme - Transaction type badges with dark backgrounds */
+[data-theme="trading-terminal"] .transaction-type-badge.buy {
+  background-color: #0d1f14;
+  border-color: #22c55e;
+  color: #4ade80;
+}
+
+[data-theme="trading-terminal"] .transaction-type-badge.sell {
+  background-color: #1f1416;
+  border-color: #ef4444;
+  color: #f87171;
+}
+
 @media (max-width: 768px) {
   .form-grid {
     grid-template-columns: 1fr;

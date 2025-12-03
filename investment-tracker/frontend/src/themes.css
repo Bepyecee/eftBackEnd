@@ -1,0 +1,840 @@
+/* Default theme (Light) */
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --bg-tertiary: #e9ecef;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --text-tertiary: #999999;
+  --border-color: #e0e0e0;
+  --border-hover: #999999;
+  --accent-color: #4CAF50;
+  --accent-hover: #45a049;
+  --danger-color: #f44336;
+  --danger-hover: #da190b;
+  --success-bg: #f0fdf4;
+  --success-border: #22c55e;
+  --success-text: #16a34a;
+  --error-bg: #fff5f5;
+  --error-border: #ff6b6b;
+  --error-text: #c92a2a;
+}
+
+/* Trading Terminal theme (Dark) */
+[data-theme="trading-terminal"] {
+  --bg-primary: #131722;
+  --bg-secondary: #1e222d;
+  --bg-tertiary: #2a2e39;
+  --text-primary: #d1d4dc;
+  --text-secondary: #b2b5be;
+  --text-tertiary: #787b86;
+  --border-color: #2a2e39;
+  --border-hover: #434651;
+  --accent-color: #00bcd4;
+  --accent-hover: #00acc1;
+  --danger-color: #ff6b6b;
+  --danger-hover: #ff5252;
+  --success-bg: #1f2a1f;
+  --success-border: #22c55e;
+  --success-text: #4ade80;
+  --error-bg: #2a1f1f;
+  --error-border: #ff6b6b;
+  --error-text: #ff8787;
+}
+
+/* Global theme transition */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Body background */
+[data-theme="trading-terminal"] body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Navigation dark theme */
+[data-theme="trading-terminal"] .navigation {
+  background: linear-gradient(135deg, #1e222d 0%, #131722 100%);
+  border-bottom: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .navigation h1 {
+  color: #00bcd4;
+}
+
+[data-theme="trading-terminal"] .nav-links a {
+  color: #b2b5be;
+}
+
+[data-theme="trading-terminal"] .nav-links a:hover {
+  color: #00bcd4;
+  background: #2a2e39;
+}
+
+[data-theme="trading-terminal"] .nav-links a.active {
+  color: #00bcd4;
+  border-bottom: 2px solid #00bcd4;
+  background: #2a2e39;
+}
+
+[data-theme="trading-terminal"] .logout-button {
+  background: #1e222d;
+  color: #b2b5be;
+  border: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .logout-button:hover {
+  background: #2a2e39;
+  color: #d1d4dc;
+  border-color: #434651;
+}
+
+/* Dashboard dark theme */
+[data-theme="trading-terminal"] .dashboard-container {
+  background: transparent;
+}
+
+[data-theme="trading-terminal"] .dashboard-header h2 {
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .dashboard-cards {
+  background: transparent;
+}
+
+[data-theme="trading-terminal"] .dashboard-card {
+  background: #1e222d;
+  border: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .dashboard-card h3 {
+  color: #b2b5be;
+}
+
+[data-theme="trading-terminal"] .dashboard-card .card-value {
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .dashboard-card .card-change {
+  color: #787b86;
+}
+
+[data-theme="trading-terminal"] .dashboard-card .card-change.positive {
+  color: #22c55e;
+}
+
+[data-theme="trading-terminal"] .dashboard-card .card-change.negative {
+  color: #ff6b6b;
+}
+
+/* ETF List dark theme */
+[data-theme="trading-terminal"] .etf-container {
+  background: transparent;
+}
+
+[data-theme="trading-terminal"] .etf-header h2 {
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .add-etf-button {
+  background: #1e222d;
+  color: #00bcd4;
+  border: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .add-etf-button:hover {
+  background: #2a2e39;
+  border-color: #00bcd4;
+}
+
+[data-theme="trading-terminal"] .etf-section {
+  background: #1e222d;
+  border: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .section-title {
+  color: #d1d4dc;
+  border-bottom: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .etf-table {
+  background: transparent;
+}
+
+[data-theme="trading-terminal"] .etf-table th {
+  background: #131722;
+  color: #b2b5be;
+  border-bottom: 2px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .etf-table td {
+  color: #d1d4dc;
+  border-bottom: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .etf-table tr:hover {
+  background: #2a2e39;
+}
+
+[data-theme="trading-terminal"] .etf-table .positive {
+  color: #22c55e;
+}
+
+[data-theme="trading-terminal"] .etf-table .negative {
+  color: #ff6b6b;
+}
+
+[data-theme="trading-terminal"] .total-row {
+  background: #131722;
+  border-top: 2px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .total-row td {
+  color: #00bcd4;
+  font-weight: 600;
+}
+
+[data-theme="trading-terminal"] .edit-button,
+[data-theme="trading-terminal"] .delete-button,
+[data-theme="trading-terminal"] .view-transactions-button {
+  background: #131722;
+  color: #b2b5be;
+  border: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .edit-button:hover {
+  background: #2a2e39;
+  color: #00bcd4;
+  border-color: #00bcd4;
+}
+
+[data-theme="trading-terminal"] .delete-button:hover {
+  background: #2a2e39;
+  color: #ff6b6b;
+  border-color: #ff6b6b;
+}
+
+[data-theme="trading-terminal"] .view-transactions-button:hover {
+  background: #2a2e39;
+  color: #00bcd4;
+  border-color: #00bcd4;
+}
+
+[data-theme="trading-terminal"] .currency-toggle {
+  background: #131722;
+  border: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .currency-toggle button {
+  color: #787b86;
+}
+
+[data-theme="trading-terminal"] .currency-toggle button.active {
+  background: #00bcd4;
+  color: white;
+}
+
+[data-theme="trading-terminal"] .loading,
+[data-theme="trading-terminal"] .error,
+[data-theme="trading-terminal"] .no-etfs {
+  color: #b2b5be;
+}
+
+/* ETF Form dark theme */
+[data-theme="trading-terminal"] .etf-form-container {
+  background: transparent;
+}
+
+[data-theme="trading-terminal"] .etf-form-header h2 {
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .etf-form {
+  background: #1e222d;
+  border: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .form-group label {
+  color: #b2b5be;
+}
+
+[data-theme="trading-terminal"] .form-group input,
+[data-theme="trading-terminal"] .form-group select {
+  background: #131722;
+  border: 1px solid #2a2e39;
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .form-group input:focus,
+[data-theme="trading-terminal"] .form-group select:focus {
+  border-color: #00bcd4;
+}
+
+[data-theme="trading-terminal"] .submit-button {
+  background: #00bcd4;
+  color: white;
+}
+
+[data-theme="trading-terminal"] .submit-button:hover {
+  background: #00acc1;
+}
+
+[data-theme="trading-terminal"] .cancel-button {
+  background: #131722;
+  color: #b2b5be;
+  border: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .cancel-button:hover {
+  background: #2a2e39;
+  color: #d1d4dc;
+}
+
+/* Transaction sections dark theme */
+[data-theme="trading-terminal"] .transactions-section {
+  background: #1e222d;
+  border: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .transactions-section h3 {
+  color: #d1d4dc;
+  border-bottom: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .transaction-table th {
+  background: #131722;
+  color: #b2b5be;
+  border-bottom: 2px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .transaction-table td {
+  color: #d1d4dc;
+  border-bottom: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .transaction-table tr:hover {
+  background: #2a2e39;
+}
+
+[data-theme="trading-terminal"] .add-transaction-button {
+  background: #131722;
+  color: #00bcd4;
+  border: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .add-transaction-button:hover {
+  background: #2a2e39;
+  border-color: #00bcd4;
+}
+
+/* Tax Calculator dark theme */
+[data-theme="trading-terminal"] .tax-calculator {
+  background: #1e222d;
+  border: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .tax-calculator h3 {
+  color: #d1d4dc;
+  border-bottom: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .tax-summary-table th {
+  background: #131722;
+  color: #b2b5be;
+  border-bottom: 2px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .tax-summary-table td {
+  color: #d1d4dc;
+  border-bottom: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .tax-total-row {
+  background: #131722;
+  border-top: 2px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .tax-total-row td {
+  color: #00bcd4;
+  font-weight: 600;
+}
+
+/* Asset List dark theme */
+[data-theme="trading-terminal"] .asset-container {
+  background: transparent;
+}
+
+[data-theme="trading-terminal"] .asset-header h2 {
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .add-asset-button {
+  background: #1e222d;
+  color: #00bcd4;
+  border: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .add-asset-button:hover {
+  background: #2a2e39;
+  border-color: #00bcd4;
+}
+
+[data-theme="trading-terminal"] .asset-table {
+  background: #1e222d;
+  border: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .asset-table th {
+  background: #131722;
+  color: #b2b5be;
+  border-bottom: 2px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .asset-table td {
+  color: #d1d4dc;
+  border-bottom: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .asset-table tr:hover {
+  background: #2a2e39;
+}
+
+/* Asset Form dark theme */
+[data-theme="trading-terminal"] .asset-form-container {
+  background: transparent;
+}
+
+[data-theme="trading-terminal"] .asset-form-header h2 {
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .asset-form {
+  background: #1e222d;
+  border: 1px solid #2a2e39;
+}
+
+/* Error and success messages */
+[data-theme="trading-terminal"] .error-message {
+  background-color: var(--error-bg);
+  border: 1px solid var(--error-border);
+  color: var(--error-text);
+}
+
+[data-theme="trading-terminal"] .success-message {
+  background-color: var(--success-bg);
+  border: 1px solid var(--success-border);
+  color: var(--success-text);
+}
+
+/* Comprehensive ETF List dark theme */
+[data-theme="trading-terminal"] .etf-list-container {
+  background: transparent;
+}
+
+[data-theme="trading-terminal"] .etf-list-header h2 {
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .add-button,
+[data-theme="trading-terminal"] .collapse-all-button {
+  background: #131722;
+  border: 1px solid #2a2e39;
+  color: #b2b5be;
+}
+
+[data-theme="trading-terminal"] .add-button:hover,
+[data-theme="trading-terminal"] .collapse-all-button:hover {
+  border-color: #00bcd4;
+  color: #00bcd4;
+}
+
+[data-theme="trading-terminal"] .ticker-manager-section,
+[data-theme="trading-terminal"] .portfolio-summary-section,
+[data-theme="trading-terminal"] .all-transactions-section {
+  background: #1e222d;
+  border: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .section-title-with-toggle h3,
+[data-theme="trading-terminal"] .portfolio-summary-section h3,
+[data-theme="trading-terminal"] .all-transactions-section h3 {
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .section-toggle-button {
+  color: #b2b5be;
+}
+
+[data-theme="trading-terminal"] .section-toggle-button:hover {
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .refresh-prices-button {
+  background: #131722;
+  border: 1px solid #2a2e39;
+  color: #b2b5be;
+}
+
+[data-theme="trading-terminal"] .refresh-prices-button:hover:not(:disabled) {
+  border-color: #00bcd4;
+  color: #00bcd4;
+}
+
+[data-theme="trading-terminal"] .section-summary-inline {
+  color: #787b86;
+  border-left: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .section-description {
+  background-color: #131722;
+  border-left: 3px solid #2a2e39;
+  color: #b2b5be;
+}
+
+[data-theme="trading-terminal"] .section-summary {
+  color: #b2b5be;
+}
+
+[data-theme="trading-terminal"] .etf-table-container,
+[data-theme="trading-terminal"] .transactions-table-container,
+[data-theme="trading-terminal"] .summary-table-container {
+  background: #1e222d;
+  border: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .etf-table thead,
+[data-theme="trading-terminal"] .summary-table thead {
+  background: #131722;
+}
+
+[data-theme="trading-terminal"] .etf-table thead th,
+[data-theme="trading-terminal"] .summary-table thead th {
+  color: #b2b5be;
+  border-bottom: 2px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .etf-table thead th.sortable:hover,
+[data-theme="trading-terminal"] .summary-table thead th.sortable:hover {
+  background-color: #1e222d;
+}
+
+[data-theme="trading-terminal"] .etf-row,
+[data-theme="trading-terminal"] .summary-table tbody tr {
+  border-bottom: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .etf-row:hover,
+[data-theme="trading-terminal"] .summary-table tbody tr:hover {
+  background-color: #2a2e39;
+}
+
+[data-theme="trading-terminal"] .etf-row td,
+[data-theme="trading-terminal"] .summary-table td {
+  color: #d1d4dc;
+  border-bottom: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .ticker-link {
+  color: #00bcd4;
+}
+
+[data-theme="trading-terminal"] .ticker-link:hover {
+  color: #00acc1;
+}
+
+[data-theme="trading-terminal"] .expand-button {
+  border: 1px solid #2a2e39;
+  color: #b2b5be;
+  background: #131722;
+}
+
+[data-theme="trading-terminal"] .expand-button:hover {
+  border-color: #00bcd4;
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .edit-button-small,
+[data-theme="trading-terminal"] .delete-button-small {
+  background: #131722;
+  border: 1px solid #2a2e39;
+  color: #b2b5be;
+}
+
+[data-theme="trading-terminal"] .edit-button-small:hover {
+  border-color: #00bcd4;
+  color: #00bcd4;
+}
+
+[data-theme="trading-terminal"] .delete-button-small:hover:not(:disabled) {
+  border-color: #ff6b6b;
+  color: #ff6b6b;
+}
+
+[data-theme="trading-terminal"] .transactions-row td {
+  background-color: #131722;
+}
+
+[data-theme="trading-terminal"] .transactions-table {
+  background: #1e222d;
+  border: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .transactions-table thead {
+  background-color: #131722;
+  border-bottom: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .transactions-table thead th {
+  color: #b2b5be;
+}
+
+[data-theme="trading-terminal"] .transactions-table thead th.sortable:hover {
+  background-color: #1e222d;
+}
+
+[data-theme="trading-terminal"] .transactions-table tbody tr {
+  border-bottom: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .transactions-table tbody tr:hover {
+  background-color: #2a2e39;
+}
+
+[data-theme="trading-terminal"] .transactions-table tbody td {
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .summary-table .total-row {
+  background: #131722;
+  border-top: 2px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .summary-table .total-row td,
+[data-theme="trading-terminal"] .total-row td,
+[data-theme="trading-terminal"] .total-cell {
+  color: #00bcd4;
+}
+
+[data-theme="trading-terminal"] .gain-positive {
+  color: #22c55e;
+}
+
+[data-theme="trading-terminal"] .gain-negative {
+  color: #ff6b6b;
+}
+
+[data-theme="trading-terminal"] .no-transactions {
+  color: #787b86;
+}
+
+[data-theme="trading-terminal"] .transaction-filters {
+  background-color: #131722;
+  border: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .filter-group label {
+  color: #b2b5be;
+}
+
+[data-theme="trading-terminal"] .ticker-dropdown-button {
+  background: #131722;
+  border: 1px solid #2a2e39;
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .ticker-dropdown-button:hover {
+  border-color: #00bcd4;
+}
+
+[data-theme="trading-terminal"] .dropdown-arrow {
+  color: #b2b5be;
+}
+
+[data-theme="trading-terminal"] .ticker-dropdown-menu {
+  background: #1e222d;
+  border: 1px solid #2a2e39;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="trading-terminal"] .ticker-dropdown-item:hover {
+  background-color: #2a2e39;
+}
+
+[data-theme="trading-terminal"] .ticker-multiselect {
+  border: 1px solid #2a2e39;
+  background: #131722;
+}
+
+[data-theme="trading-terminal"] .ticker-checkbox {
+  background: #1e222d;
+  border: 1px solid #2a2e39;
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .ticker-checkbox:hover {
+  background: #2a2e39;
+  border-color: #00bcd4;
+}
+
+[data-theme="trading-terminal"] .no-tickers {
+  color: #787b86;
+}
+
+[data-theme="trading-terminal"] .filter-input {
+  background: #131722;
+  border: 1px solid #2a2e39;
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .filter-input:focus {
+  border-color: #00bcd4;
+}
+
+[data-theme="trading-terminal"] .clear-filters-button {
+  background: #131722;
+  border: 1px solid #2a2e39;
+  color: #b2b5be;
+}
+
+[data-theme="trading-terminal"] .clear-filters-button:hover {
+  border-color: #00bcd4;
+  color: #00bcd4;
+}
+
+[data-theme="trading-terminal"] .export-button {
+  background: #131722;
+  border: 1px solid #2a2e39;
+  color: white;
+}
+
+[data-theme="trading-terminal"] .export-button:hover:not(:disabled) {
+  background: #1e222d;
+  border-color: #00bcd4;
+}
+
+[data-theme="trading-terminal"] .export-button:disabled {
+  background: #2a2e39;
+  border-color: #2a2e39;
+}
+
+[data-theme="trading-terminal"] .chart-container h4 {
+  color: #b2b5be;
+}
+
+[data-theme="trading-terminal"] .legend-text {
+  color: #b2b5be;
+}
+
+[data-theme="trading-terminal"] .performance-item {
+  background: #131722;
+}
+
+[data-theme="trading-terminal"] .performance-item:hover {
+  background: #1e222d;
+}
+
+[data-theme="trading-terminal"] .performance-rank {
+  color: #b2b5be;
+}
+
+[data-theme="trading-terminal"] .performance-ticker {
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .no-performance-data {
+  color: #787b86;
+}
+
+[data-theme="trading-terminal"] .toggle-label {
+  color: #787b86;
+}
+
+[data-theme="trading-terminal"] .toggle-label.active {
+  color: #b2b5be;
+}
+
+[data-theme="trading-terminal"] .toggle-slider {
+  background-color: #2a2e39;
+}
+
+[data-theme="trading-terminal"] .toggle-switch input:checked + .toggle-slider {
+  background-color: #00bcd4;
+}
+
+/* ETF Form additional styles */
+[data-theme="trading-terminal"] .etf-form-container {
+  background: transparent;
+}
+
+[data-theme="trading-terminal"] .etf-form-header h2 {
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .etf-form {
+  background: #1e222d;
+  border: 1px solid #2a2e39;
+}
+
+/* Asset List comprehensive styles */
+[data-theme="trading-terminal"] .asset-list-container {
+  background: transparent;
+}
+
+[data-theme="trading-terminal"] .asset-list-header h2 {
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .asset-list-table {
+  background: #1e222d;
+  border: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .asset-list-table thead {
+  background: #131722;
+}
+
+[data-theme="trading-terminal"] .asset-list-table thead th {
+  color: #b2b5be;
+  border-bottom: 2px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .asset-list-table tbody tr {
+  border-bottom: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .asset-list-table tbody tr:hover {
+  background-color: #2a2e39;
+}
+
+[data-theme="trading-terminal"] .asset-list-table tbody td {
+  color: #d1d4dc;
+}
+
+/* Asset Form styles */
+[data-theme="trading-terminal"] .asset-form-container {
+  background: transparent;
+}
+
+[data-theme="trading-terminal"] .asset-form-header h2 {
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .asset-form {
+  background: #1e222d;
+  border: 1px solid #2a2e39;
+}
+
+/* Common button styles */
+[data-theme="trading-terminal"] button:not(.theme-option):not(.toggle-slider) {
+  transition: all 0.2s;
+}
+
+[data-theme="trading-terminal"] .back-button {
+  background: #00bcd4;
+  color: white;
+}
+
+[data-theme="trading-terminal"] .back-button:hover {
+  background: #00acc1;
+}

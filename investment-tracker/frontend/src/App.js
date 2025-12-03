@@ -11,13 +11,16 @@ import AssetForm from './components/AssetForm';
 import Settings from './components/Settings';
 import Navigation from './components/Navigation';
 import PrivateRoute from './components/PrivateRoute';
+import { ThemeProvider } from './contexts/ThemeContext';
 import authService from './services/authService';
 import './App.css';
+import './themes.css';
 
 function App() {
   return (
-    <Router>
-      <div className="App">
+    <ThemeProvider>
+      <Router>
+        <div className="App">
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route
@@ -42,8 +45,9 @@ function App() {
             }
           />
         </Routes>
-      </div>
-    </Router>
+        </div>
+      </Router>
+    </ThemeProvider>
   );
 }
 
