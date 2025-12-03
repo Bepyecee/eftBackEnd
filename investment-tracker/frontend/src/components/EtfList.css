@@ -1066,3 +1066,28 @@
     margin-top: 2rem;
   }
 }
+
+/* Dark theme - Volatility badges with dark backgrounds */
+[data-theme="trading-terminal"] .volatility-badge.volatility-low {
+  background-color: #0a1929;
+  border-color: #0ea5e9;
+  color: #38bdf8;
+}
+
+[data-theme="trading-terminal"] .volatility-badge.volatility-moderate {
+  background-color: #1c1917;
+  border-color: #f59e0b;
+  color: #fbbf24;
+}
+
+[data-theme="trading-terminal"] .volatility-badge.volatility-high {
+  background-color: #1f1416;
+  border-color: #ef4444;
+  color: #f87171;
+}
+
+[data-theme="trading-terminal"] .volatility-badge.volatility-very_high {
+  background-color: #1f1416;
+  border-color: #b91c1c;
+  color: #ef4444;
+}

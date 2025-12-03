@@ -94,3 +94,57 @@
   color: #999;
   font-size: 0.85rem;
 }
+
+/* Dark theme styles */
+[data-theme="trading-terminal"] .login-container {
+  background: #131722;
+}
+
+[data-theme="trading-terminal"] .login-box {
+  background: #1e222d;
+  border: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .login-box h2 {
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .login-box p {
+  color: #b2b5be;
+}
+
+[data-theme="trading-terminal"] .form-group label {
+  color: #b2b5be;
+}
+
+[data-theme="trading-terminal"] .form-group input {
+  background: #131722;
+  border: 1px solid #2a2e39;
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .form-group input:focus {
+  border-color: #00bcd4;
+}
+
+[data-theme="trading-terminal"] .login-button {
+  background: #131722;
+  border: 1px solid #2a2e39;
+  color: #b2b5be;
+}
+
+[data-theme="trading-terminal"] .login-button:hover {
+  border-color: #00bcd4;
+  color: #00bcd4;
+}
+
+[data-theme="trading-terminal"] .error-message {
+  background-color: #2a1f1f;
+  border: 1px solid #ff6b6b;
+  color: #ff8787;
+}
+
+[data-theme="trading-terminal"] .dev-credentials {
+  border-top: 1px solid #2a2e39;
+  color: #787b86;
+}

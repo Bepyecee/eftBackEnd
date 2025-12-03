@@ -86,3 +86,42 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
+
+/* Dark theme styles */
+[data-theme="trading-terminal"] .dashboard {
+  background: transparent;
+}
+
+[data-theme="trading-terminal"] .dashboard-header h1 {
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .dashboard-header p {
+  color: #b2b5be;
+}
+
+[data-theme="trading-terminal"] .dashboard-card {
+  background: #1e222d;
+  border: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .dashboard-card:not(.disabled):hover {
+  border-color: #00bcd4;
+}
+
+[data-theme="trading-terminal"] .dashboard-card h3 {
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .dashboard-card p {
+  color: #b2b5be;
+}
+
+[data-theme="trading-terminal"] .card-arrow {
+  color: #00bcd4;
+}
+
+[data-theme="trading-terminal"] .card-badge {
+  border: 1px solid #2a2e39;
+  color: #787b86;
+}

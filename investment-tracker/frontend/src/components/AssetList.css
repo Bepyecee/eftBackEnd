@@ -102,3 +102,59 @@
 .delete-button:hover {
   opacity: 0.9;
 }
+
+/* Dark theme styles */
+[data-theme="trading-terminal"] .asset-list-container {
+  background: transparent;
+}
+
+[data-theme="trading-terminal"] .asset-list-header h2 {
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .not-implemented-banner {
+  background: #1e222d;
+  border: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .not-implemented-banner p {
+  color: #787b86;
+}
+
+[data-theme="trading-terminal"] .empty-state {
+  color: #787b86;
+}
+
+[data-theme="trading-terminal"] .asset-table {
+  background: #1e222d;
+  box-shadow: none;
+  border: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .asset-table thead {
+  background: #131722;
+}
+
+[data-theme="trading-terminal"] .asset-table th {
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .asset-table tbody tr {
+  border-bottom: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .asset-table tbody tr:hover {
+  background-color: #2a2e39;
+}
+
+[data-theme="trading-terminal"] .asset-table td {
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .edit-button {
+  background-color: #00bcd4;
+}
+
+[data-theme="trading-terminal"] .delete-button {
+  background-color: #ff6b6b;
+}

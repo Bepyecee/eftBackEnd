@@ -106,3 +106,44 @@
   color: #333;
   background: #efefef;
 }
+
+/* Dark theme styles */
+[data-theme="trading-terminal"] .navigation {
+  background: linear-gradient(135deg, #1e222d 0%, #131722 100%);
+  border-bottom: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .nav-brand h1 {
+  color: #00bcd4;
+}
+
+[data-theme="trading-terminal"] .nav-links a {
+  color: #b2b5be;
+}
+
+[data-theme="trading-terminal"] .nav-links a:hover {
+  color: #00bcd4;
+  background: #2a2e39;
+  border-bottom-color: #00bcd4;
+}
+
+[data-theme="trading-terminal"] .nav-links a.active {
+  color: #00bcd4;
+  border-bottom-color: #00bcd4;
+  background: #2a2e39;
+}
+
+[data-theme="trading-terminal"] .icon-button {
+  color: #b2b5be;
+  border-left: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .icon-button:hover {
+  color: #d1d4dc;
+  background: #2a2e39;
+}
+
+[data-theme="trading-terminal"] .icon-button.active {
+  color: #d1d4dc;
+  background: #2a2e39;
+}

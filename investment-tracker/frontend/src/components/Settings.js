@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import settingsService from '../services/settingsService';
 import messages from '../constants/messages';
+import { useTheme } from '../contexts/ThemeContext';
 import './Settings.css';
 
 function Settings() {
+  const { theme, changeTheme } = useTheme();
   const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [formData, setFormData] = useState({});
   const [expandedSections, setExpandedSections] = useState({
+    appearance: false,
     yahooFinance: false,
     logging: false,
     cache: false
@@ -62,8 +65,20 @@ function Settings() {
 
   const handleReset = () => {
     setFormData(settings);
+    // Reset theme to match settings
+    if (settings.theme && settings.theme !== theme) {
+      changeTheme(settings.theme);
+    }
     setSuccess('');
     setError('');
+  };
+
+  const handleThemeChange = (newTheme) => {
+    changeTheme(newTheme);
+    setFormData(prev => ({
+      ...prev,
+      theme: newTheme
+    }));
   };
 
   const toggleSection = (section) => {
@@ -87,6 +102,46 @@ function Settings() {
       {success && <div className="success-message">{success}</div>}
 
       <form onSubmit={handleSubmit} className="settings-form">
+        <div className="settings-section">
+          <div className="section-header">
+            <div className="section-title-with-toggle">
+              <h3>Appearance</h3>
+              <button 
+                className="section-toggle-button"
+                onClick={() => toggleSection('appearance')}
+                title={expandedSections.appearance ? 'Collapse section' : 'Expand section'}
+                type="button"
+              >
+                {expandedSections.appearance ? '▲' : '▼'}
+              </button>
+              <div className="section-summary-inline">
+                <span>Customize the visual theme of the application.</span>
+              </div>
+            </div>
+          </div>
+          {expandedSections.appearance && (
+            <>
+              <div className="form-grid">
+                <div className="form-group full-width">
+                  <label>Theme</label>
+                  <div className="theme-toggle">
+                    <span className={`toggle-label ${theme === 'default' ? 'active' : ''}`}>Light</span>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={theme === 'trading-terminal'} 
+                        onChange={(e) => handleThemeChange(e.target.checked ? 'trading-terminal' : 'default')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                    <span className={`toggle-label ${theme === 'trading-terminal' ? 'active' : ''}`}>Dark</span>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+
         <div className="settings-section">
           <div className="section-header">
             <div className="section-title-with-toggle">
