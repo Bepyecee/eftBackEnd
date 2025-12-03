@@ -10,9 +10,9 @@ function Settings() {
   const [success, setSuccess] = useState('');
   const [formData, setFormData] = useState({});
   const [expandedSections, setExpandedSections] = useState({
-    yahooFinance: true,
-    logging: true,
-    cache: true
+    yahooFinance: false,
+    logging: false,
+    cache: false
   });
 
   useEffect(() => {
