@@ -8,6 +8,7 @@ import TransactionList from './components/TransactionList';
 import TransactionForm from './components/TransactionForm';
 import AssetList from './components/AssetList';
 import AssetForm from './components/AssetForm';
+import Settings from './components/Settings';
 import Navigation from './components/Navigation';
 import PrivateRoute from './components/PrivateRoute';
 import authService from './services/authService';
@@ -34,6 +35,7 @@ function App() {
                   <Route path="/assets" element={<AssetList />} />
                   <Route path="/assets/new" element={<AssetForm />} />
                   <Route path="/assets/edit/:id" element={<AssetForm />} />
+                  <Route path="/settings" element={<Settings />} />
                   <Route path="*" element={<Navigate to="/" />} />
                 </Routes>
               </PrivateRoute>

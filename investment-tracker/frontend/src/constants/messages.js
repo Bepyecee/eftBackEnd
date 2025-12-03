@@ -221,6 +221,12 @@ const messages = {
     UPDATE: 'Updated successfully',
   },
 
+  // Settings Messages
+  SETTINGS: {
+    TITLE: 'Settings',
+    DESCRIPTION: 'Configure your application preferences',
+  },
+
   // Confirmation Messages
   CONFIRM: {
     DELETE: 'Are you sure you want to delete this item?',
