@@ -317,6 +317,55 @@
   color: #dc2626;
 }
 
+/* Tax Calculator Section */
+.tax-calculator-section {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 2px solid #e0e0e0;
+}
+
+.tax-calculator-header {
+  margin-bottom: 1.5rem;
+}
+
+.tax-calculator-header h3 {
+  color: #333;
+  margin: 0;
+  font-weight: 500;
+  font-size: 1.1rem;
+}
+
+.tax-calculator-content {
+  overflow-x: auto;
+}
+
+.tax-calculator-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border: 1px solid #e0e0e0;
+}
+
+.tax-calculator-table th,
+.tax-calculator-table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.tax-calculator-table thead th {
+  background-color: #f8f9fa;
+  font-weight: 500;
+  color: #666;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tax-calculator-table tbody tr:hover {
+  background-color: #fafafa;
+}
+
 @media (max-width: 768px) {
   .form-grid {
     grid-template-columns: 1fr;
