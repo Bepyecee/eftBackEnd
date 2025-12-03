@@ -12,15 +12,15 @@ import java.io.IOException;
 @RequestMapping("/api/settings")
 @CrossOrigin(origins = "*")
 public class SettingsController {
-    
+
     @Autowired
     private SettingsService settingsService;
-    
+
     @GetMapping
     public ResponseEntity<ApplicationSettings> getSettings() {
         return ResponseEntity.ok(settingsService.getSettings());
     }
-    
+
     @PutMapping
     public ResponseEntity<ApplicationSettings> updateSettings(@RequestBody ApplicationSettings settings) {
         try {
