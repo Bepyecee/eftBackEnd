@@ -108,6 +108,7 @@ public class EtfService {
         existingEtf.setDomicile(updatedEtf.getDomicile());
         existingEtf.setVolatility(updatedEtf.getVolatility());
         existingEtf.setTicker(updatedEtf.getTicker());
+        existingEtf.setYahooFinanceTicker(updatedEtf.getYahooFinanceTicker());
         existingEtf.setTer(updatedEtf.getTer());
         existingEtf.setNotes(updatedEtf.getNotes());
 

@@ -24,10 +24,13 @@ public class EtfPriceService {
 
     private final EtfPriceRepository etfPriceRepository;
     private final YahooFinanceService yahooFinanceService;
+    private final EtfService etfService;
 
-    public EtfPriceService(EtfPriceRepository etfPriceRepository, YahooFinanceService yahooFinanceService) {
+    public EtfPriceService(EtfPriceRepository etfPriceRepository, YahooFinanceService yahooFinanceService,
+            EtfService etfService) {
         this.etfPriceRepository = etfPriceRepository;
         this.yahooFinanceService = yahooFinanceService;
+        this.etfService = etfService;
     }
 
     @Cacheable(value = "etfPrices", key = "#ticker")
@@ -78,7 +81,26 @@ public class EtfPriceService {
 
     private EtfPriceResponse fetchAndSavePrice(String ticker) {
         try {
-            YahooFinanceResponse response = yahooFinanceService.fetchPrice(ticker);
+            // Get the ETF to check if it has a custom Yahoo Finance ticker
+            String yahooTicker = null;
+            try {
+                var etfs = etfService.getAllEtfs();
+                var etf = etfs.stream()
+                        .filter(e -> e.getTicker().equalsIgnoreCase(ticker))
+                        .findFirst()
+                        .orElse(null);
+
+                if (etf != null) {
+                    yahooTicker = etf.getYahooFinanceTicker();
+                    if (yahooTicker != null && !yahooTicker.trim().isEmpty()) {
+                        logger.debug("Using custom Yahoo ticker for {}: {}", ticker, yahooTicker);
+                    }
+                }
+            } catch (Exception e) {
+                logger.debug("No ETF found for ticker {}, will use default mapping", ticker);
+            }
+
+            YahooFinanceResponse response = yahooFinanceService.fetchPrice(ticker, yahooTicker);
 
             if (response == null || response.getChart() == null ||
                     response.getChart().getResult() == null ||

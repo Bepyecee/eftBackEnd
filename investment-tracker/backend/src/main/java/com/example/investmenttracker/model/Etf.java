@@ -36,6 +36,9 @@ public class Etf {
     @Column(unique = true, nullable = false)
     private String ticker;
 
+    @Column(name = "yahoo_finance_ticker")
+    private String yahooFinanceTicker;
+
     @Column(nullable = false)
     private BigDecimal ter;
 
@@ -74,6 +77,7 @@ public class Etf {
         this.domicile = domicile;
         this.volatility = volatility;
         this.ticker = ticker;
+        this.yahooFinanceTicker = null; // Can be set separately
         this.ter = ter;
         this.notes = notes;
     }
@@ -124,6 +128,14 @@ public class Etf {
 
     public void setTicker(String ticker) {
         this.ticker = ticker;
+    }
+
+    public String getYahooFinanceTicker() {
+        return yahooFinanceTicker;
+    }
+
+    public void setYahooFinanceTicker(String yahooFinanceTicker) {
+        this.yahooFinanceTicker = yahooFinanceTicker;
     }
 
     public BigDecimal getTer() {

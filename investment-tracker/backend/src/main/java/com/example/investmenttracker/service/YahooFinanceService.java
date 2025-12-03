@@ -27,9 +27,15 @@ public class YahooFinanceService {
     }
 
     public YahooFinanceResponse fetchPrice(String ticker) {
+        return fetchPrice(ticker, null);
+    }
+
+    public YahooFinanceResponse fetchPrice(String ticker, String explicitYahooTicker) {
         try {
-            // Convert ticker to Yahoo Finance format
-            String yahooTicker = mapTickerToYahooSymbol(ticker);
+            // Use explicit Yahoo ticker if provided, otherwise map it
+            String yahooTicker = (explicitYahooTicker != null && !explicitYahooTicker.trim().isEmpty())
+                    ? explicitYahooTicker
+                    : mapTickerToYahooSymbol(ticker);
 
             logger.debug("Fetching price for ticker: {} (Yahoo symbol: {})", ticker, yahooTicker);
 
@@ -70,27 +76,16 @@ public class YahooFinanceService {
     }
 
     private String mapTickerToYahooSymbol(String ticker) {
-        // Check if we have a specific mapping for this ticker
-        String upperTicker = ticker.toUpperCase();
-        if (properties.getTickerMappings().containsKey(upperTicker)) {
-            return properties.getTickerMappings().get(upperTicker);
-        }
-
-        // If no mapping exists and it doesn't already have an exchange suffix,
+        // If ticker doesn't already have an exchange suffix,
         // assume it's a European ticker and add configured default suffix
+        String upperTicker = ticker.toUpperCase();
         if (!ticker.contains(".")) {
-            logger.debug("No mapping found for {}, adding default suffix: {}", ticker,
+            logger.debug("No exchange suffix for {}, adding default suffix: {}", ticker,
                     properties.getDefaultEuropeanSuffix());
             return upperTicker + properties.getDefaultEuropeanSuffix();
         }
 
         // Return as-is if it already has a suffix
         return upperTicker;
-    }
-
-    // Method to manually add ticker mappings at runtime
-    public void addTickerMapping(String ticker, String yahooSymbol) {
-        properties.getTickerMappings().put(ticker.toUpperCase(), yahooSymbol.toUpperCase());
-        logger.info("Added ticker mapping: {} -> {}", ticker, yahooSymbol);
     }
 }

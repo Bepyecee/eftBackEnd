@@ -17,6 +17,7 @@ function EtfForm() {
     domicile: 'IRELAND',
     volatility: 'HIGH',
     ticker: '',
+    yahooFinanceTicker: '',
     ter: '',
     notes: '',
   });
@@ -57,6 +58,8 @@ function EtfForm() {
     try {
       setLoading(true);
       const data = await etfService.getEtfById(id);
+      // If yahooFinanceTicker is not set, populate with default (ticker + .DE if no suffix)
+      const defaultYahooTicker = data.ticker && !data.ticker.includes('.') ? data.ticker + '.DE' : data.ticker;
       setFormData({
         name: data.name || '',
         type: data.type || 'EQUITY',
@@ -64,6 +67,7 @@ function EtfForm() {
         domicile: data.domicile || 'IRELAND',
         volatility: data.volatility || 'HIGH',
         ticker: data.ticker || '',
+        yahooFinanceTicker: data.yahooFinanceTicker || defaultYahooTicker || '',
         ter: data.ter || '',
         notes: data.notes || '',
       });
@@ -78,10 +82,23 @@ function EtfForm() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => {
+      const updated = {
+        ...prev,
+        [name]: value,
+      };
+      
+      // Auto-populate yahooFinanceTicker when ticker changes, unless user has manually set it
+      if (name === 'ticker' && value) {
+        // Only update if yahooFinanceTicker is empty or matches the old default
+        const oldDefault = prev.ticker && !prev.ticker.includes('.') ? prev.ticker + '.DE' : prev.ticker;
+        if (!prev.yahooFinanceTicker || prev.yahooFinanceTicker === oldDefault || prev.yahooFinanceTicker === prev.ticker) {
+          updated.yahooFinanceTicker = value.includes('.') ? value : value + '.DE';
+        }
+      }
+      
+      return updated;
+    });
   };
 
   const handleTransactionChange = (e) => {
@@ -333,6 +350,18 @@ function EtfForm() {
               onChange={handleChange}
               placeholder={messages.ETF.NAME_PLACEHOLDER}
               required
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="yahooFinanceTicker">Yahoo Finance Ticker</label>
+            <input
+              type="text"
+              id="yahooFinanceTicker"
+              name="yahooFinanceTicker"
+              value={formData.yahooFinanceTicker}
+              onChange={handleChange}
+              placeholder="Yahoo ETF url Symbol e.g. XXXX.DE"
             />
           </div>
 
