@@ -804,6 +804,7 @@ function EtfList() {
                       );
                     })}
                   </svg>
+                  <div className="chart-total-value">€{totalPortfolioValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                 </div>
                 <div className="chart-container">
                   <h4>Portfolio Distribution</h4>
@@ -877,7 +878,116 @@ function EtfList() {
                       );
                     })}
                   </svg>
+                  <div className="chart-total-value">€{totalCurrentValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                 </div>
+                <div className="chart-container">
+                  <h4>Volatility Distribution</h4>
+                  <svg viewBox="0 0 200 200" className="pie-chart">
+                    {(() => {
+                      // Group ETFs by volatility
+                      const volatilityGroups = {
+                        'LOW': { label: 'Low', value: 0, color: '#0ea5e9' },
+                        'MODERATE': { label: 'Moderate', value: 0, color: '#f59e0b' },
+                        'HIGH': { label: 'High', value: 0, color: '#ef4444' },
+                        'VERY_HIGH': { label: 'Very High', value: 0, color: '#b91c1c' }
+                      };
+
+                      summaryData.forEach(item => {
+                        const etf = etfs.find(e => e.ticker === item.ticker);
+                        if (etf && etf.volatility) {
+                          const currentValue = item.currentValue || 0;
+                          if (currentValue > 0 && volatilityGroups[etf.volatility]) {
+                            volatilityGroups[etf.volatility].value += currentValue;
+                          }
+                        }
+                      });
+
+                      // Filter out groups with no value
+                      const activeGroups = Object.entries(volatilityGroups)
+                        .filter(([_, data]) => data.value > 0)
+                        .map(([key, data]) => ({ key, ...data }));
+
+                      if (activeGroups.length === 0) {
+                        return (
+                          <text x="100" y="100" textAnchor="middle" fill="#999" fontSize="12">
+                            No data available
+                          </text>
+                        );
+                      }
+
+                      const total = activeGroups.reduce((sum, group) => sum + group.value, 0);
+
+                      return activeGroups.map((group, index) => {
+                        const percentage = (group.value / total) * 100;
+                        let cumulativePercentage = 0;
+                        for (let i = 0; i < index; i++) {
+                          cumulativePercentage += (activeGroups[i].value / total) * 100;
+                        }
+
+                        const startAngle = (cumulativePercentage / 100) * 2 * Math.PI - Math.PI / 2;
+                        const endAngle = ((cumulativePercentage + percentage) / 100) * 2 * Math.PI - Math.PI / 2;
+
+                        const x1 = 100 + 80 * Math.cos(startAngle);
+                        const y1 = 100 + 80 * Math.sin(startAngle);
+                        const x2 = 100 + 80 * Math.cos(endAngle);
+                        const y2 = 100 + 80 * Math.sin(endAngle);
+
+                        const largeArcFlag = percentage > 50 ? 1 : 0;
+
+                        const path = `M 100 100 L ${x1} ${y1} A 80 80 0 ${largeArcFlag} 1 ${x2} ${y2} Z`;
+
+                        // Calculate label position
+                        const midAngle = (startAngle + endAngle) / 2;
+                        const labelX = 100 + 60 * Math.cos(midAngle);
+                        const labelY = 100 + 60 * Math.sin(midAngle);
+
+                        return (
+                          <g key={group.key}>
+                            <path d={path} fill={group.color} stroke="white" strokeWidth="2" />
+                            {percentage > 5 && (
+                              <>
+                                <text
+                                  x={labelX}
+                                  y={labelY - 6}
+                                  textAnchor="middle"
+                                  dominantBaseline="middle"
+                                  fill="white"
+                                  fontSize="10"
+                                  fontWeight="bold"
+                                >
+                                  {group.label}
+                                </text>
+                                <text
+                                  x={labelX}
+                                  y={labelY + 5}
+                                  textAnchor="middle"
+                                  dominantBaseline="middle"
+                                  fill="white"
+                                  fontSize="8"
+                                >
+                                  {formatCurrency(group.value)}
+                                </text>
+                                <text
+                                  x={labelX}
+                                  y={labelY + 14}
+                                  textAnchor="middle"
+                                  dominantBaseline="middle"
+                                  fill="white"
+                                  fontSize="8"
+                                >
+                                  {percentage.toFixed(1)}%
+                                </text>
+                              </>
+                            )}
+                          </g>
+                        );
+                      });
+                    })()}
+                  </svg>
+                  <div className="chart-total-value">€{totalCurrentValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                </div>
+              </div>
+              <div className="charts-row">
                 <div className="chart-container">
                   <div className="chart-header-with-toggle">
                     <h4>Top ETFs</h4>
