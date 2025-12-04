@@ -651,6 +651,10 @@
   border-top: 2px solid #2a2e39;
 }
 
+[data-theme="trading-terminal"] .summary-table .total-row td {
+  background: #131722;
+}
+
 [data-theme="trading-terminal"] .summary-table .total-row td,
 [data-theme="trading-terminal"] .total-row td,
 [data-theme="trading-terminal"] .total-cell {
