@@ -637,6 +637,15 @@
   color: #d1d4dc;
 }
 
+[data-theme="trading-terminal"] .transactions-table .total-row {
+  background: #131722;
+  border-top: 2px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .transactions-table .total-row td {
+  background: #131722;
+}
+
 [data-theme="trading-terminal"] .summary-table .total-row {
   background: #131722;
   border-top: 2px solid #2a2e39;
