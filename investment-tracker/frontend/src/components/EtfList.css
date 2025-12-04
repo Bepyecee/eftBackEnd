@@ -363,7 +363,7 @@
 .transactions-table {
   width: 100%;
   border-collapse: collapse;
-  background: white;
+  background: transparent;
   border: 1px solid #e0e0e0;
 }
 
@@ -393,6 +393,7 @@
 }
 
 .transactions-table tbody tr {
+  background-color: white;
   border-bottom: 1px solid #f0f0f0;
 }
 
@@ -408,6 +409,7 @@
   padding: 0.6rem 1rem;
   color: #333;
   font-size: 0.85rem;
+  background-color: inherit;
 }
 
 .transaction-type {
@@ -432,7 +434,7 @@
 }
 
 .total-row {
-  background-color: #f8f9fa;
+  background-color: #f8f9fa !important;
   border-top: 2px solid #333;
   font-weight: 600;
 }
@@ -440,6 +442,7 @@
 .total-row td {
   padding: 0.85rem 1rem;
   color: #000;
+  background-color: #f8f9fa;
 }
 
 .total-cell {
