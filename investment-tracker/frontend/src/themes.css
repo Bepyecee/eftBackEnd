@@ -603,11 +603,11 @@
 }
 
 [data-theme="trading-terminal"] .transactions-row td {
-  background-color: #131722;
+  background-color: #1e222d;
 }
 
 [data-theme="trading-terminal"] .transactions-table {
-  background: #1e222d;
+  background: transparent;
   border: 1px solid #2a2e39;
 }
 
@@ -625,6 +625,7 @@
 }
 
 [data-theme="trading-terminal"] .transactions-table tbody tr {
+  background: transparent;
   border-bottom: 1px solid #2a2e39;
 }
 
