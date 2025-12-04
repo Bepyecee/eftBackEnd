@@ -1104,3 +1104,16 @@
   border-color: #b91c1c;
   color: #ef4444;
 }
+
+/* Dark theme - Transaction type badges with dark backgrounds */
+[data-theme="trading-terminal"] .transaction-type.buy {
+  background-color: #0d1f14;
+  border-color: #22c55e;
+  color: #4ade80;
+}
+
+[data-theme="trading-terminal"] .transaction-type.sell {
+  background-color: #1f1416;
+  border-color: #ef4444;
+  color: #f87171;
+}
