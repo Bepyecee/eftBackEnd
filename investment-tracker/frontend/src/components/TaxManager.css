@@ -1,0 +1,159 @@
+.tax-manager-container {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.loading {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+  font-size: 1rem;
+}
+
+.error-message {
+  background-color: #fff5f5;
+  border: 1px solid #ff6b6b;
+  color: #c92a2a;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: #999;
+  background: white;
+  border: 1px solid #e0e0e0;
+}
+
+/* Tax Calculator Section */
+.tax-calculator-section {
+  margin-bottom: 1rem;
+  padding: 1.5rem;
+  background: white;
+  border: 1px solid #e0e0e0;
+}
+
+.tax-calculator-section .section-header {
+  margin-bottom: 1.5rem;
+}
+
+.tax-calculator-section h3 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: #333;
+}
+
+/* Section Header Styles */
+.section-title-with-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.section-toggle-button {
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  transition: color 0.2s;
+  line-height: 1;
+}
+
+.section-toggle-button:hover {
+  color: #000;
+}
+
+.section-summary-inline {
+  color: #999;
+  font-size: 0.85rem;
+  font-weight: 400;
+  margin-left: 0.5rem;
+  padding-left: 0.75rem;
+  border-left: 1px solid #ddd;
+}
+
+/* Table Styles */
+.transactions-table-container {
+  margin-top: 1rem;
+  overflow-x: auto;
+}
+
+.transactions-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.transactions-table thead {
+  background: #f8f9fa;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.transactions-table th {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 500;
+  color: #666;
+  font-size: 0.9rem;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.transactions-table th.sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.transactions-table th.sortable:hover {
+  background: #e9ecef;
+}
+
+.transactions-table tbody tr {
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s;
+}
+
+.transactions-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.transactions-table td {
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.ticker-cell {
+  font-weight: 500;
+}
+
+.ticker-link {
+  color: #4CAF50;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.ticker-link:hover {
+  color: #45a049;
+  text-decoration: underline;
+}
+
+.not-implemented-banner {
+  background: white;
+  border: 1px solid #e0e0e0;
+  padding: 3rem;
+  text-align: center;
+}
+
+.not-implemented-banner p {
+  margin: 0;
+  font-size: 1rem;
+  color: #999;
+}
