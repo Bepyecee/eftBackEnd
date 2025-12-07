@@ -43,6 +43,9 @@ public class SettingsService {
     @Value("${spring.cache.caffeine.spec:maximumSize=100,expireAfterWrite=30m}")
     private String caffeineSpec;
 
+    @Value("${tax.etf-exit-tax-percentage:41.0}")
+    private Double etfExitTaxPercentage;
+
     @Autowired
     private ConfigurableEnvironment environment;
 
@@ -65,6 +68,9 @@ public class SettingsService {
         // Cache settings
         settings.setCacheType(cacheType);
         settings.setCaffeineSpec(caffeineSpec);
+
+        // Tax settings
+        settings.setEtfExitTaxPercentage(etfExitTaxPercentage);
 
         return settings;
     }
@@ -114,6 +120,11 @@ public class SettingsService {
         }
         if (settings.getCaffeineSpec() != null) {
             props.setProperty("spring.cache.caffeine.spec", settings.getCaffeineSpec());
+        }
+
+        // Update Tax settings
+        if (settings.getEtfExitTaxPercentage() != null) {
+            props.setProperty("tax.etf-exit-tax-percentage", settings.getEtfExitTaxPercentage().toString());
         }
 
         // Save to application-local.properties

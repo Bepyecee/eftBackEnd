@@ -16,6 +16,9 @@ public class ApplicationSettings {
     private String cacheType;
     private String caffeineSpec;
 
+    // Tax Settings
+    private Double etfExitTaxPercentage;
+
     public ApplicationSettings() {
     }
 
@@ -92,5 +95,14 @@ public class ApplicationSettings {
 
     public void setCaffeineSpec(String caffeineSpec) {
         this.caffeineSpec = caffeineSpec;
+    }
+
+    // Tax getters and setters
+    public Double getEtfExitTaxPercentage() {
+        return etfExitTaxPercentage;
+    }
+
+    public void setEtfExitTaxPercentage(Double etfExitTaxPercentage) {
+        this.etfExitTaxPercentage = etfExitTaxPercentage;
     }
 }
