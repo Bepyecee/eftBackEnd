@@ -204,7 +204,7 @@ const messages = {
 
   // Tax Calculator Messages
   TAX_CALCULATOR: {
-    TITLE: 'Tax Calculator',
+    TITLE: 'ETF Deemed Disposal Tracker',
     TRANSACTION_DATE: 'Transaction Date',
     DEEMED_DISPOSAL_DATE: 'Deemed Disposal Date',
     NO_TRANSACTIONS: 'No transactions available for tax calculation.',
