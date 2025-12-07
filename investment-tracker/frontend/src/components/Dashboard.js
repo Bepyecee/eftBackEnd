@@ -11,14 +11,14 @@ function Dashboard() {
         <p>{messages.DASHBOARD.OVERVIEW}</p>
       </div>
       <div className="dashboard-cards">
-        <Link to="/etfs" className="dashboard-card">
-          <h3>{messages.DASHBOARD.ETF_CARD_TITLE}</h3>
-          <p>{messages.DASHBOARD.ETF_CARD_DESCRIPTION}</p>
-          <span className="card-arrow">→</span>
-        </Link>
         <Link to="/assets" className="dashboard-card">
           <h3>{messages.DASHBOARD.ASSET_CARD_TITLE}</h3>
           <p>{messages.DASHBOARD.ASSET_CARD_DESCRIPTION}</p>
+          <span className="card-arrow">→</span>
+        </Link>
+        <Link to="/etfs" className="dashboard-card">
+          <h3>{messages.DASHBOARD.ETF_CARD_TITLE}</h3>
+          <p>{messages.DASHBOARD.ETF_CARD_DESCRIPTION}</p>
           <span className="card-arrow">→</span>
         </Link>
         <Link to="/tax-manager" className="dashboard-card">
