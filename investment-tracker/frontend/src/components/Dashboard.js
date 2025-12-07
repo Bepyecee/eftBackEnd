@@ -16,10 +16,10 @@ function Dashboard() {
           <p>{messages.DASHBOARD.ETF_CARD_DESCRIPTION}</p>
           <span className="card-arrow">→</span>
         </Link>
-        <Link to="/assets" className="dashboard-card disabled">
+        <Link to="/assets" className="dashboard-card">
           <h3>{messages.DASHBOARD.ASSET_CARD_TITLE}</h3>
           <p>{messages.DASHBOARD.ASSET_CARD_DESCRIPTION}</p>
-          <span className="card-badge">Coming Soon</span>
+          <span className="card-arrow">→</span>
         </Link>
       </div>
     </div>
