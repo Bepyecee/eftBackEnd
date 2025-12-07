@@ -909,6 +909,71 @@
   background: transparent;
 }
 
+[data-theme="trading-terminal"] .tax-calculator-section {
+  background: #1e222d;
+  border: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .tax-calculator-section h3 {
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .tax-calculator-section .section-toggle-button {
+  color: #b2b5be;
+}
+
+[data-theme="trading-terminal"] .tax-calculator-section .section-toggle-button:hover {
+  color: #00bcd4;
+}
+
+[data-theme="trading-terminal"] .tax-calculator-section .section-summary-inline {
+  color: #787b86;
+  border-left-color: #2a2e39;
+}
+
+[data-theme="trading-terminal"] .tax-manager-container .empty-state {
+  background: #1e222d;
+  border: 1px solid #2a2e39;
+  color: #787b86;
+}
+
+[data-theme="trading-terminal"] .transactions-table {
+  background: transparent;
+}
+
+[data-theme="trading-terminal"] .transactions-table thead {
+  background: #131722;
+}
+
+[data-theme="trading-terminal"] .transactions-table th {
+  color: #b2b5be;
+  border-bottom-color: #2a2e39;
+}
+
+[data-theme="trading-terminal"] .transactions-table th.sortable:hover {
+  background: #2a2e39;
+}
+
+[data-theme="trading-terminal"] .transactions-table tbody tr {
+  border-bottom-color: #2a2e39;
+}
+
+[data-theme="trading-terminal"] .transactions-table tbody tr:hover {
+  background: #2a2e39;
+}
+
+[data-theme="trading-terminal"] .transactions-table td {
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .ticker-link {
+  color: #00bcd4;
+}
+
+[data-theme="trading-terminal"] .ticker-link:hover {
+  color: #00acc1;
+}
+
 [data-theme="trading-terminal"] .tax-manager-container .not-implemented-banner {
   background: #1e222d;
   border: 1px solid #2a2e39;
