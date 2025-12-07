@@ -15,7 +15,8 @@ function Settings() {
     appearance: false,
     yahooFinance: false,
     logging: false,
-    cache: false
+    cache: false,
+    tax: false
   });
 
   useEffect(() => {
@@ -334,6 +335,46 @@ function Settings() {
                     placeholder="maximumSize=100,expireAfterWrite=30m"
                   />
                   <small>Format: maximumSize=X,expireAfterWrite=Ym</small>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+
+        <div className="settings-section">
+          <div className="section-header">
+            <div className="section-title-with-toggle">
+              <h3>Tax Settings</h3>
+              <button 
+                className="section-toggle-button"
+                onClick={() => toggleSection('tax')}
+                title={expandedSections.tax ? 'Collapse section' : 'Expand section'}
+                type="button"
+              >
+                {expandedSections.tax ? '▲' : '▼'}
+              </button>
+              <div className="section-summary-inline">
+                <span>Configure tax calculation parameters.</span>
+              </div>
+            </div>
+          </div>
+          {expandedSections.tax && (
+            <>
+              <div className="form-grid">
+                <div className="form-group">
+                  <label htmlFor="etfExitTaxPercentage">ETF Exit Tax Percentage (%)</label>
+                  <input
+                    type="number"
+                    id="etfExitTaxPercentage"
+                    name="etfExitTaxPercentage"
+                    value={formData.etfExitTaxPercentage || ''}
+                    onChange={handleChange}
+                    placeholder="41.0"
+                    step="0.1"
+                    min="0"
+                    max="100"
+                  />
+                  <small>Percentage applied to calculate exit tax on ETF deemed/actual disposal</small>
                 </div>
               </div>
             </>
