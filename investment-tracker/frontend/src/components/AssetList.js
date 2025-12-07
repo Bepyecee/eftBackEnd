@@ -7,10 +7,6 @@ function AssetList() {
 
   return (
     <div className="asset-list-container">
-      <div className="asset-list-header">
-        <h2>{messages.ASSET.LIST_TITLE}</h2>
-      </div>
-
       <div className="allocation-strategy-section">
         <div className="section-header">
           <div className="section-title-with-toggle">
