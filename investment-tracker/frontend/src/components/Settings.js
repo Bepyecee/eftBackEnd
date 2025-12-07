@@ -369,7 +369,7 @@ function Settings() {
                     name="etfExitTaxPercentage"
                     value={formData.etfExitTaxPercentage || ''}
                     onChange={handleChange}
-                    placeholder="41.0"
+                    placeholder="38.0"
                     step="0.1"
                     min="0"
                     max="100"

@@ -43,7 +43,7 @@ public class SettingsService {
     @Value("${spring.cache.caffeine.spec:maximumSize=100,expireAfterWrite=30m}")
     private String caffeineSpec;
 
-    @Value("${tax.etf-exit-tax-percentage:41.0}")
+    @Value("${tax.etf-exit-tax-percentage:38.0}")
     private Double etfExitTaxPercentage;
 
     @Autowired
