@@ -21,6 +21,11 @@ function Dashboard() {
           <p>{messages.DASHBOARD.ASSET_CARD_DESCRIPTION}</p>
           <span className="card-arrow">→</span>
         </Link>
+        <Link to="/tax-manager" className="dashboard-card">
+          <h3>Tax Manager</h3>
+          <p>Manage transaction snapshots and tax calculations</p>
+          <span className="card-arrow">→</span>
+        </Link>
       </div>
     </div>
   );

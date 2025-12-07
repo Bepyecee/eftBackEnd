@@ -904,6 +904,17 @@
   border: 1px solid #2a2e39;
 }
 
+/* Tax Manager styles */
+[data-theme="trading-terminal"] .tax-manager-container {
+  background: transparent;
+}
+
+[data-theme="trading-terminal"] .tax-manager-container .not-implemented-banner {
+  background: #1e222d;
+  border: 1px solid #2a2e39;
+  color: #787b86;
+}
+
 /* Common button styles */
 [data-theme="trading-terminal"] button:not(.theme-option):not(.toggle-slider) {
   transition: all 0.2s;

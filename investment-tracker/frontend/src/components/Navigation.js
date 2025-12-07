@@ -28,6 +28,9 @@ function Navigation() {
         <li>
           <Link to="/assets" className={location.pathname === '/assets' ? 'active' : ''}>{messages.NAV.ASSETS}</Link>
         </li>
+        <li>
+          <Link to="/tax-manager" className={location.pathname === '/tax-manager' ? 'active' : ''}>Tax Manager</Link>
+        </li>
       </ul>
       <ul className="nav-actions">
         <li>
