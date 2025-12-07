@@ -847,6 +847,11 @@
   color: #00bcd4;
 }
 
+[data-theme="trading-terminal"] .allocation-strategy-section .section-summary-inline {
+  color: #787b86;
+  border-left-color: #2a2e39;
+}
+
 [data-theme="trading-terminal"] .section-description {
   background-color: #131722;
   border-left-color: #2a2e39;
