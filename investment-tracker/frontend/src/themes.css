@@ -830,6 +830,40 @@
   color: #d1d4dc;
 }
 
+[data-theme="trading-terminal"] .allocation-strategy-section {
+  background: #1e222d;
+  border: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .allocation-strategy-section h3 {
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .section-toggle-button {
+  color: #b2b5be;
+}
+
+[data-theme="trading-terminal"] .section-toggle-button:hover {
+  color: #00bcd4;
+}
+
+[data-theme="trading-terminal"] .allocation-strategy-section .section-summary-inline {
+  color: #787b86;
+  border-left-color: #2a2e39;
+}
+
+[data-theme="trading-terminal"] .section-description {
+  background-color: #131722;
+  border-left-color: #2a2e39;
+  color: #787b86;
+}
+
+[data-theme="trading-terminal"] .allocation-strategy-content .not-implemented-banner {
+  background: #131722;
+  border: 1px solid #2a2e39;
+  color: #787b86;
+}
+
 [data-theme="trading-terminal"] .asset-list-table {
   background: #1e222d;
   border: 1px solid #2a2e39;
