@@ -350,7 +350,10 @@ function EtfList() {
           allTransactions.push({
             ...transaction,
             etfTicker: etf.ticker,
-            etfName: etf.name
+            etfName: etf.name,
+            deemedDisposalDate: transaction.deemedDisposalDate
+              ? transaction.deemedDisposalDate
+              : new Date(new Date(transaction.transactionDate).setFullYear(new Date(transaction.transactionDate).getFullYear() + 8)).toISOString().split('T')[0]
           });
         });
       }
@@ -418,7 +421,8 @@ function EtfList() {
         : '0.00',
       'Cost': parseFloat(transaction.transactionCost || 0).toFixed(2),
       'Fees': parseFloat(transaction.transactionFees || 0).toFixed(2),
-      'Total': ((parseFloat(transaction.transactionCost) || 0) + (parseFloat(transaction.transactionFees) || 0)).toFixed(2)
+      'Total': ((parseFloat(transaction.transactionCost) || 0) + (parseFloat(transaction.transactionFees) || 0)).toFixed(2),
+      'Deemed Disposal Date': formatDate(transaction.deemedDisposalDate)
     }));
 
     // Add totals row
@@ -435,7 +439,8 @@ function EtfList() {
       'Price/Unit': '',
       'Cost': totalCost.toFixed(2),
       'Fees': totalFees.toFixed(2),
-      'Total': grandTotal.toFixed(2)
+      'Total': grandTotal.toFixed(2),
+      'Deemed Disposal Date': ''
     });
 
     // Create worksheet and workbook
@@ -1360,6 +1365,9 @@ function EtfList() {
                       Fees{getAllTransactionsSortIndicator('transactionFees')}
                     </th>
                     <th>Total</th>
+                    <th className="sortable" onClick={() => handleAllTransactionsSort('deemedDisposalDate')}>
+                      Deemed Disposal{getAllTransactionsSortIndicator('deemedDisposalDate')}
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1391,6 +1399,7 @@ function EtfList() {
                           (parseFloat(transaction.transactionFees) || 0)
                         )}
                       </td>
+                      <td>{formatDate(transaction.deemedDisposalDate)}</td>
                     </tr>
                   ))}
                   <tr className="total-row">
@@ -1400,6 +1409,7 @@ function EtfList() {
                     <td><strong>{formatCurrency(allTransactions.reduce((sum, t) => sum + (parseFloat(t.transactionCost) || 0), 0))}</strong></td>
                     <td><strong>{formatCurrency(allTransactions.reduce((sum, t) => sum + (parseFloat(t.transactionFees) || 0), 0))}</strong></td>
                     <td className="total-cell"><strong>{formatCurrency(allTransactions.reduce((sum, t) => sum + (parseFloat(t.transactionCost) || 0) + (parseFloat(t.transactionFees) || 0), 0))}</strong></td>
+                    <td></td>
                   </tr>
                 </tbody>
               </table>
