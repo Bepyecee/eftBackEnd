@@ -1054,7 +1054,7 @@ function EtfList() {
                                       <td>
                                         <button 
                                           className="edit-button-small"
-                                          onClick={() => navigate(`/etfs/${etf.id}/transactions/${transaction.id}/edit`)}
+                                          onClick={() => handleEdit(etf.id)}
                                           title="Edit transaction"
                                         >
                                           Edit
