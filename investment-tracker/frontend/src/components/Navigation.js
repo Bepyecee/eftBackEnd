@@ -28,9 +28,6 @@ function Navigation() {
         <li>
           <Link to="/etfs" className={location.pathname === '/etfs' ? 'active' : ''}>{messages.NAV.ETFS}</Link>
         </li>
-        <li>
-          <Link to="/tax-manager" className={location.pathname === '/tax-manager' ? 'active' : ''}>Tax Manager</Link>
-        </li>
       </ul>
       <ul className="nav-actions">
         <li>
