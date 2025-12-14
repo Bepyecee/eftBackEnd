@@ -1,7 +1,9 @@
 package com.example.investmenttracker.service;
 
 import com.example.investmenttracker.model.Etf;
+import com.example.investmenttracker.model.User;
 import com.example.investmenttracker.persistence.EtfRepository;
+import com.example.investmenttracker.persistence.JpaEtfRepository;
 import com.example.investmenttracker.exception.ResourceConflictException;
 import com.example.investmenttracker.exception.ValidationException;
 import org.springframework.stereotype.Service;
@@ -9,19 +11,56 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 @Service
 @Transactional
 public class EtfService {
     private final EtfRepository etfRepository;
+    private final UserService userService;
 
-    public EtfService(EtfRepository etfRepository) {
+    public EtfService(EtfRepository etfRepository, UserService userService) {
         this.etfRepository = etfRepository;
+        this.userService = userService;
     }
 
-    public List<Etf> getAllEtfs() {
+    /**
+     * Internal method to get all ETFs without user filtering.
+     * Used by internal services like EtfPriceService.
+     */
+    protected List<Etf> getAllEtfsInternal() {
         return etfRepository.findAll();
+    }
+
+    public List<Etf> getAllEtfs(String userEmail) {
+        User user = userService.getCurrentUser(userEmail);
+        
+        // If using JPA repository, use the user-specific query
+        if (etfRepository instanceof JpaEtfRepository) {
+            return ((JpaEtfRepository) etfRepository).findByUserId(user.getId());
+        }
+        
+        // Fallback for file-based repository - filter in memory
+        return etfRepository.findAll().stream()
+                .filter(etf -> etf.getUser() != null && etf.getUser().getId().equals(user.getId()))
+                .collect(Collectors.toList());
+    }
+
+    public Etf getEtfById(Long id, String userEmail) {
+        User user = userService.getCurrentUser(userEmail);
+        
+        // If using JPA repository, use the user-specific query
+        if (etfRepository instanceof JpaEtfRepository) {
+            return ((JpaEtfRepository) etfRepository).findByIdAndUserId(id, user.getId()).orElse(null);
+        }
+        
+        // Fallback for file-based repository
+        Etf etf = etfRepository.findById(id).orElse(null);
+        if (etf != null && etf.getUser() != null && etf.getUser().getId().equals(user.getId())) {
+            return etf;
+        }
+        return null;
     }
 
     public Etf getEtfById(Long id) {
@@ -36,8 +75,11 @@ public class EtfService {
      * Convenience method used by controllers: create and return the saved ETF.
      * Keeps backward compatibility if callers expect a returned Etf.
      */
-    public Etf createEtf(Etf etf) {
-        List<Etf> etfs = etfRepository.findAll();
+    public Etf createEtf(Etf etf, String userEmail) {
+        User user = userService.findOrCreateUser(userEmail, "local", userEmail);
+        etf.setUser(user);
+        
+        List<Etf> etfs = getAllEtfs(userEmail);
         // Validate mandatory fields
         if (etf.getTicker() == null || etf.getTicker().trim().isEmpty()) {
             throw new ValidationException("etf.missing.ticker");
@@ -77,8 +119,9 @@ public class EtfService {
         return etfRepository.save(etf);
     }
 
-    public Etf updateEtf(Long id, Etf updatedEtf) {
-        List<Etf> etfs = etfRepository.findAll();
+    public Etf updateEtf(Long id, Etf updatedEtf, String userEmail) {
+        User user = userService.getCurrentUser(userEmail);
+        List<Etf> etfs = getAllEtfs(userEmail);
         // Validate mandatory fields
         if (updatedEtf.getTicker() == null || updatedEtf.getTicker().trim().isEmpty()) {
             throw new ValidationException("etf.missing.ticker");
@@ -115,9 +158,12 @@ public class EtfService {
         return etfRepository.save(existingEtf);
     }
 
-    public void deleteEtf(Long id) {
-        Etf etf = etfRepository.findById(id).orElse(null);
-        if (etf != null && etf.getTransactions() != null && !etf.getTransactions().isEmpty()) {
+    public void deleteEtf(Long id, String userEmail) {
+        Etf etf = getEtfById(id, userEmail);
+        if (etf == null) {
+            throw new ValidationException("etf.not.found");
+        }
+        if (etf.getTransactions() != null && !etf.getTransactions().isEmpty()) {
             throw new ValidationException("etf.delete.has.transactions");
         }
         etfRepository.delete(id);

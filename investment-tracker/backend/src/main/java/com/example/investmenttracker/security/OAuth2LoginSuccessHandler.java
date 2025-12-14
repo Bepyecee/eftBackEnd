@@ -1,5 +1,6 @@
 package com.example.investmenttracker.security;
 
+import com.example.investmenttracker.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,6 +17,9 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
     @Autowired
     private JwtUtil jwtUtil;
+    
+    @Autowired
+    private UserService userService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -25,6 +29,9 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         // Extract user information
         String email = oauth2User.getAttribute("email");
         String name = oauth2User.getAttribute("name");
+        
+        // Create or update user in database
+        userService.findOrCreateUser(email, "google", name);
         
         // Generate JWT token
         String token = jwtUtil.generateToken(email);

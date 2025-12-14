@@ -76,6 +76,21 @@
   align-items: center;
 }
 
+.user-info {
+  border-left: 1px solid #e0e0e0;
+  padding: 0 1.2rem;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.user-name {
+  color: #333;
+  font-size: 0.9rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
 .icon-button {
   background: none;
   color: #888;

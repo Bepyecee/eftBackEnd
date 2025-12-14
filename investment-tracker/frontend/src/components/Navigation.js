@@ -1,12 +1,27 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import authService from '../services/authService';
+import userService from '../services/userService';
 import messages from '../constants/messages';
 import './Navigation.css';
 
 function Navigation() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const user = await userService.getCurrentUser();
+        setCurrentUser(user);
+      } catch (error) {
+        console.error('Failed to fetch user:', error);
+      }
+    };
+    
+    fetchUser();
+  }, []);
 
   const handleLogout = () => {
     authService.logout();
@@ -30,6 +45,11 @@ function Navigation() {
         </li>
       </ul>
       <ul className="nav-actions">
+        {currentUser && (
+          <li className="user-info">
+            <span className="user-name">{currentUser.name || currentUser.email}</span>
+          </li>
+        )}
         <li>
           <Link 
             to="/settings" 
