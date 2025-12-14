@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './components/Login';
+import OAuth2Callback from './components/OAuth2Callback';
 import Dashboard from './components/Dashboard';
 import EtfList from './components/EtfList';
 import EtfForm from './components/EtfForm';
@@ -23,6 +24,7 @@ function App() {
         <div className="App">
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/oauth2/callback" element={<OAuth2Callback />} />
           <Route
             path="/*"
             element={

@@ -77,6 +77,51 @@
   transform: none;
 }
 
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 1.5rem 0;
+  color: #999;
+  font-size: 0.85rem;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.divider span {
+  padding: 0 0.75rem;
+}
+
+.google-login-button {
+  width: 100%;
+  padding: 0.6rem;
+  background: white;
+  border: 1px solid #ddd;
+  color: #444;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.google-login-button:hover {
+  background: #f8f9fa;
+  border-color: #999;
+}
+
+.google-login-button svg {
+  flex-shrink: 0;
+}
+
 .error-message {
   background-color: #fff5f5;
   border: 1px solid #ff6b6b;
@@ -136,6 +181,26 @@
 [data-theme="trading-terminal"] .login-button:hover {
   border-color: #00bcd4;
   color: #00bcd4;
+}
+
+[data-theme="trading-terminal"] .divider::before,
+[data-theme="trading-terminal"] .divider::after {
+  border-bottom: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .divider {
+  color: #787b86;
+}
+
+[data-theme="trading-terminal"] .google-login-button {
+  background: #131722;
+  border: 1px solid #2a2e39;
+  color: #b2b5be;
+}
+
+[data-theme="trading-terminal"] .google-login-button:hover {
+  background: #1e222d;
+  border-color: #2a2e39;
 }
 
 [data-theme="trading-terminal"] .error-message {

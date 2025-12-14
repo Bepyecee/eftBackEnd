@@ -6,7 +6,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Collections;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
@@ -40,7 +43,19 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+            UserDetails userDetails;
+
+            // Check if this is the dev user (admin)
+            if ("admin".equals(username)) {
+                userDetails = this.userDetailsService.loadUserByUsername(username);
+            } else {
+                // This is an OAuth2 user (Google), create UserDetails from email
+                userDetails = User.builder()
+                        .username(username)
+                        .password("") // OAuth2 users don't have passwords
+                        .authorities(Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")))
+                        .build();
+            }
 
             if (jwtUtil.validateToken(jwt, userDetails.getUsername())) {
 
