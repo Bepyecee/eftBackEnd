@@ -59,7 +59,7 @@ function Navigation() {
           <li>
             <div 
               className="icon-button user-icon" 
-              title={`${currentUser.name || currentUser.email}${currentUser.provider ? ` (${currentUser.provider})` : ''}`}
+              title={`${currentUser.name || 'User'}${currentUser.name ? `\n${currentUser.email}` : currentUser.email}${currentUser.provider ? `\n(${currentUser.provider})` : ''}`}
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
