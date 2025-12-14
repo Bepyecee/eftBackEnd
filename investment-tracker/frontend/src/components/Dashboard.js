@@ -1,13 +1,37 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import userService from '../services/userService';
 import messages from '../constants/messages';
 import './Dashboard.css';
 
 function Dashboard() {
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const user = await userService.getCurrentUser();
+        console.log('Dashboard fetched user:', user);
+        setCurrentUser(user);
+      } catch (error) {
+        console.error('Dashboard failed to fetch user:', error);
+      }
+    };
+    
+    const token = localStorage.getItem('token');
+    if (token) {
+      fetchUser();
+    }
+  }, []);
+
   return (
     <div className="dashboard">
       <div className="dashboard-header">
-        <h1>{messages.DASHBOARD.WELCOME}</h1>
+        <h1>
+          {currentUser 
+            ? `Welcome, ${currentUser.name || currentUser.email}!` 
+            : messages.DASHBOARD.WELCOME}
+        </h1>
         <p>{messages.DASHBOARD.OVERVIEW}</p>
       </div>
       <div className="dashboard-cards">

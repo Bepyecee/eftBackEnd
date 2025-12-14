@@ -14,13 +14,23 @@ function Navigation() {
     const fetchUser = async () => {
       try {
         const user = await userService.getCurrentUser();
+        console.log('Fetched current user:', user);
         setCurrentUser(user);
       } catch (error) {
         console.error('Failed to fetch user:', error);
+        console.error('Error details:', error.response?.status, error.response?.data);
+        // Don't show user icon if not authenticated (401/403)
+        if (error.response?.status === 401 || error.response?.status === 403) {
+          setCurrentUser(null);
+        }
       }
     };
     
-    fetchUser();
+    // Only fetch user if we have a token
+    const token = localStorage.getItem('token');
+    if (token) {
+      fetchUser();
+    }
   }, []);
 
   const handleLogout = () => {
@@ -46,8 +56,16 @@ function Navigation() {
       </ul>
       <ul className="nav-actions">
         {currentUser && (
-          <li className="user-info">
-            <span className="user-name">{currentUser.name || currentUser.email}</span>
+          <li>
+            <div 
+              className="icon-button user-icon" 
+              title={`${currentUser.name || currentUser.email}${currentUser.provider ? ` (${currentUser.provider})` : ''}`}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </div>
           </li>
         )}
         <li>
