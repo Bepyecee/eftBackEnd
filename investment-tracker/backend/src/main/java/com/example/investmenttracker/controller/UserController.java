@@ -23,7 +23,7 @@ public class UserController {
     public ResponseEntity<Map<String, Object>> getCurrentUser(Authentication authentication) {
         String email = authentication.getName();
         User user = userService.getUserInfo(email);
-        
+
         Map<String, Object> response = new HashMap<>();
         if (user != null) {
             response.put("email", user.getEmail());
@@ -34,7 +34,7 @@ public class UserController {
             response.put("name", email);
             response.put("provider", "local");
         }
-        
+
         return ResponseEntity.ok(response);
     }
 }

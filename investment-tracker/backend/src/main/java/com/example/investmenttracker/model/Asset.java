@@ -10,12 +10,12 @@ public class Asset {
     @Id
     @GeneratedValue
     private Long id;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
     private User user;
-    
+
     private String name;
     private double allocationPercentage;
 

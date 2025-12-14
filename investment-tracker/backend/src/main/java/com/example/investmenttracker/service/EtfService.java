@@ -35,12 +35,12 @@ public class EtfService {
 
     public List<Etf> getAllEtfs(String userEmail) {
         User user = userService.getCurrentUser(userEmail);
-        
+
         // If using JPA repository, use the user-specific query
         if (etfRepository instanceof JpaEtfRepository) {
             return ((JpaEtfRepository) etfRepository).findByUserId(user.getId());
         }
-        
+
         // Fallback for file-based repository - filter in memory
         return etfRepository.findAll().stream()
                 .filter(etf -> etf.getUser() != null && etf.getUser().getId().equals(user.getId()))
@@ -49,12 +49,12 @@ public class EtfService {
 
     public Etf getEtfById(Long id, String userEmail) {
         User user = userService.getCurrentUser(userEmail);
-        
+
         // If using JPA repository, use the user-specific query
         if (etfRepository instanceof JpaEtfRepository) {
             return ((JpaEtfRepository) etfRepository).findByIdAndUserId(id, user.getId()).orElse(null);
         }
-        
+
         // Fallback for file-based repository
         Etf etf = etfRepository.findById(id).orElse(null);
         if (etf != null && etf.getUser() != null && etf.getUser().getId().equals(user.getId())) {
@@ -78,7 +78,7 @@ public class EtfService {
     public Etf createEtf(Etf etf, String userEmail) {
         User user = userService.findOrCreateUser(userEmail, "local", userEmail);
         etf.setUser(user);
-        
+
         List<Etf> etfs = getAllEtfs(userEmail);
         // Validate mandatory fields
         if (etf.getTicker() == null || etf.getTicker().trim().isEmpty()) {

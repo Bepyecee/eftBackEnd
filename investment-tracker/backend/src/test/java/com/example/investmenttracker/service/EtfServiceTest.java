@@ -30,17 +30,17 @@ public class EtfServiceTest {
         storage = new InMemoryFileStorage();
         repository = new FileEtfRepository(storage);
         userService = Mockito.mock(UserService.class);
-        
+
         // Mock user service to return a test user
         User testUser = new User();
         testUser.setId(1L);
         testUser.setEmail(TEST_USER_EMAIL);
         testUser.setName("Test User");
         testUser.setProvider("local");
-        
+
         when(userService.getCurrentUser(anyString())).thenReturn(testUser);
         when(userService.findOrCreateUser(anyString(), anyString(), anyString())).thenReturn(testUser);
-        
+
         service = new EtfService(repository, userService);
     }
 

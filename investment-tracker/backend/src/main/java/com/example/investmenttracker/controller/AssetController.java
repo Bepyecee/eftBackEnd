@@ -41,7 +41,8 @@ public class AssetController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Asset> updateAsset(@PathVariable Long id, @RequestBody Asset asset, Authentication authentication) {
+    public ResponseEntity<Asset> updateAsset(@PathVariable Long id, @RequestBody Asset asset,
+            Authentication authentication) {
         String userEmail = authentication.getName();
         Asset updatedAsset = assetService.updateAsset(id, asset, userEmail);
         return updatedAsset != null ? ResponseEntity.ok(updatedAsset) : ResponseEntity.notFound().build();

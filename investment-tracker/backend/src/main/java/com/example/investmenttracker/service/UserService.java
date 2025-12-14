@@ -7,10 +7,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
-    
+
     @Autowired
     private UserRepository userRepository;
-    
+
     public User findOrCreateUser(String email, String provider, String name) {
         return userRepository.findByEmail(email)
                 .orElseGet(() -> {
@@ -21,12 +21,12 @@ public class UserService {
                     return userRepository.save(newUser);
                 });
     }
-    
+
     public User getCurrentUser(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found: " + email));
     }
-    
+
     public User getUserInfo(String email) {
         return userRepository.findByEmail(email)
                 .orElse(null);

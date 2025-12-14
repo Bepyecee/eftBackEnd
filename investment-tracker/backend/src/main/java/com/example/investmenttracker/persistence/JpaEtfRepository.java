@@ -24,9 +24,9 @@ public interface JpaEtfRepository extends JpaRepository<Etf, Long>, EtfRepositor
     default void delete(Long id) {
         deleteById(id);
     }
-    
+
     // User-specific queries
     List<Etf> findByUserId(Long userId);
-    
+
     Optional<Etf> findByIdAndUserId(Long id, Long userId);
 }

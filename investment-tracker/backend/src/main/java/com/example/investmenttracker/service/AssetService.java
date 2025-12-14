@@ -15,10 +15,10 @@ import java.util.stream.Collectors;
 public class AssetService {
     private final FileStorage fileStorage;
     private final List<Asset> cache = new ArrayList<>();
-    
+
     @Autowired(required = false)
     private JpaAssetRepository jpaAssetRepository;
-    
+
     @Autowired
     private UserService userService;
 
@@ -28,12 +28,12 @@ public class AssetService {
 
     public List<Asset> getAllAssets(String userEmail) {
         User user = userService.getCurrentUser(userEmail);
-        
+
         // Use JPA repository if available
         if (jpaAssetRepository != null) {
             return jpaAssetRepository.findByUserId(user.getId());
         }
-        
+
         // Fallback to file storage and filter by user
         @SuppressWarnings("unchecked")
         List<Asset> assets = (List<Asset>) (List<?>) fileStorage.readAssets();
@@ -47,11 +47,11 @@ public class AssetService {
 
     public Asset getAssetById(Long id, String userEmail) {
         User user = userService.getCurrentUser(userEmail);
-        
+
         if (jpaAssetRepository != null) {
             return jpaAssetRepository.findByIdAndUserId(id, user.getId()).orElse(null);
         }
-        
+
         return getAllAssets(userEmail).stream()
                 .filter(asset -> asset.getId().equals(id))
                 .findFirst()
@@ -61,11 +61,11 @@ public class AssetService {
     public Asset addAsset(Asset asset, String userEmail) {
         User user = userService.findOrCreateUser(userEmail, "local", userEmail);
         asset.setUser(user);
-        
+
         if (jpaAssetRepository != null) {
             return jpaAssetRepository.save(asset);
         }
-        
+
         cache.add(asset);
         return asset;
     }
@@ -75,7 +75,7 @@ public class AssetService {
      */
     public Asset updateAsset(Long id, Asset asset, String userEmail) {
         User user = userService.getCurrentUser(userEmail);
-        
+
         if (jpaAssetRepository != null) {
             Asset existing = jpaAssetRepository.findByIdAndUserId(id, user.getId()).orElse(null);
             if (existing == null) {
@@ -85,7 +85,7 @@ public class AssetService {
             asset.setUser(user);
             return jpaAssetRepository.save(asset);
         }
-        
+
         for (int i = 0; i < cache.size(); i++) {
             Asset a = cache.get(i);
             if (Objects.equals(a.getId(), id) && a.getUser() != null && a.getUser().getId().equals(user.getId())) {
@@ -100,7 +100,7 @@ public class AssetService {
 
     public boolean deleteAsset(Long assetId, String userEmail) {
         User user = userService.getCurrentUser(userEmail);
-        
+
         if (jpaAssetRepository != null) {
             Asset asset = jpaAssetRepository.findByIdAndUserId(assetId, user.getId()).orElse(null);
             if (asset == null) {
@@ -109,11 +109,9 @@ public class AssetService {
             jpaAssetRepository.deleteById(assetId);
             return true;
         }
-        
-        return cache.removeIf(a -> 
-            Objects.equals(a.getId(), assetId) && 
-            a.getUser() != null && 
-            a.getUser().getId().equals(user.getId())
-        );
+
+        return cache.removeIf(a -> Objects.equals(a.getId(), assetId) &&
+                a.getUser() != null &&
+                a.getUser().getId().equals(user.getId()));
     }
 }

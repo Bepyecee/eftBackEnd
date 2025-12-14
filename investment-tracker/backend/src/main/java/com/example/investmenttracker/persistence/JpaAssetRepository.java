@@ -12,6 +12,6 @@ import java.util.Optional;
 @ConditionalOnProperty(name = "app.persistence.type", havingValue = "jpa", matchIfMissing = false)
 public interface JpaAssetRepository extends JpaRepository<Asset, Long> {
     List<Asset> findByUserId(Long userId);
-    
+
     Optional<Asset> findByIdAndUserId(Long id, Long userId);
 }

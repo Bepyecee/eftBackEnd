@@ -17,25 +17,25 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
     @Autowired
     private JwtUtil jwtUtil;
-    
+
     @Autowired
     private UserService userService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-                                        Authentication authentication) throws IOException, ServletException {
+            Authentication authentication) throws IOException, ServletException {
         OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
-        
+
         // Extract user information
         String email = oauth2User.getAttribute("email");
         String name = oauth2User.getAttribute("name");
-        
+
         // Create or update user in database
         userService.findOrCreateUser(email, "google", name);
-        
+
         // Generate JWT token
         String token = jwtUtil.generateToken(email);
-        
+
         // Redirect to frontend with token
         String redirectUrl = String.format("http://localhost:3000/oauth2/callback?token=%s&name=%s", token, name);
         getRedirectStrategy().sendRedirect(request, response, redirectUrl);
