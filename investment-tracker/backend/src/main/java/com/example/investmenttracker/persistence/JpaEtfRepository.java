@@ -5,6 +5,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Optional;
+
 /**
  * JPA Repository for Etf entity. Used by H2 (dev) and PostgreSQL (prod)
  * profiles.
@@ -21,4 +24,9 @@ public interface JpaEtfRepository extends JpaRepository<Etf, Long>, EtfRepositor
     default void delete(Long id) {
         deleteById(id);
     }
+
+    // User-specific queries
+    List<Etf> findByUserId(Long userId);
+
+    Optional<Etf> findByIdAndUserId(Long id, Long userId);
 }

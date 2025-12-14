@@ -84,7 +84,7 @@ public class EtfPriceService {
             // Get the ETF to check if it has a custom Yahoo Finance ticker
             String yahooTicker = null;
             try {
-                var etfs = etfService.getAllEtfs();
+                var etfs = etfService.getAllEtfsInternal();
                 var etf = etfs.stream()
                         .filter(e -> e.getTicker().equalsIgnoreCase(ticker))
                         .findFirst()
