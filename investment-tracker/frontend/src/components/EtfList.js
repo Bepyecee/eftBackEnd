@@ -1609,13 +1609,6 @@ function EtfList() {
               >
                 Export to PDF
               </button>
-              <button 
-                className="export-button"
-                onClick={exportToJSON}
-                title="Export complete portfolio snapshot including ETFs, transactions, assets, and settings"
-              >
-                Export Portfolio (JSON)
-              </button>
             </div>
             <div className="transactions-table-container">
               <table className="transactions-table">
