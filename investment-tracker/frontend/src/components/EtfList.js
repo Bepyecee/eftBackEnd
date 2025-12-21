@@ -411,8 +411,32 @@ function EtfList() {
     setTransactionFilters({...transactionFilters, tickers: currentTickers});
   };
 
+  const generateExportIdentifier = () => {
+    const now = new Date();
+    const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}${String(now.getSeconds()).padStart(2, '0')}`;
+    
+    // Get user email from localStorage or use default
+    let userEmail = 'user';
+    try {
+      const token = localStorage.getItem('token');
+      if (token) {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        userEmail = payload.sub || 'user';
+      }
+    } catch (e) {
+      console.error('Error extracting user email:', e);
+    }
+    
+    // Remove @ and . from email
+    const cleanEmail = userEmail.replace(/[@.]/g, '');
+    
+    return `${dateStr}_${cleanEmail}`;
+  };
+
   const exportToExcel = () => {
     const allTransactions = getSortedAllTransactions();
+    const identifier = generateExportIdentifier();
+    const exportDate = new Date().toISOString();
     // Prepare data for export
     const exportData = allTransactions.map(transaction => ({
       'Date': formatDate(transaction.transactionDate),
@@ -451,9 +475,18 @@ function EtfList() {
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Transactions');
 
-    // Generate filename with current date
-    const date = new Date();
-    const filename = `ETF_Transactions_${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}.xlsx`;
+    // Add metadata sheet
+    const metadata = [
+      { Property: 'Export ID', Value: identifier },
+      { Property: 'Export Date', Value: exportDate },
+      { Property: 'User Email', Value: identifier.split('_')[1] || 'unknown' },
+      { Property: 'Transaction Count', Value: allTransactions.length }
+    ];
+    const metadataSheet = XLSX.utils.json_to_sheet(metadata);
+    XLSX.utils.book_append_sheet(workbook, metadataSheet, 'Metadata');
+
+    // Generate filename with identifier
+    const filename = `ETF_Transactions_${identifier}.xlsx`;
 
     // Save file
     XLSX.writeFile(workbook, filename);
@@ -461,13 +494,20 @@ function EtfList() {
 
   const exportToPDF = () => {
     const allTransactions = getSortedAllTransactions();
+    const identifier = generateExportIdentifier();
+    const exportDate = new Date().toISOString();
     
     // Create new PDF document
     const doc = new jsPDF();
     
-    // Add title
+    // Add title and metadata
     doc.setFontSize(16);
     doc.text('ETF Transactions', 14, 15);
+    
+    doc.setFontSize(9);
+    doc.text(`Export ID: ${identifier}`, 14, 22);
+    doc.text(`Export Date: ${exportDate}`, 14, 27);
+    doc.text(`Transaction Count: ${allTransactions.length}`, 14, 32);
     
     // Prepare data for PDF
     const tableData = allTransactions.map(transaction => ([
@@ -506,7 +546,7 @@ function EtfList() {
     autoTable(doc, {
       head: [['Date', 'Ticker', 'ETF Name', 'Units', 'Price/Unit', 'Cost', 'Fees', 'Total', 'Deemed Disposal Date']],
       body: tableData,
-      startY: 25,
+      startY: 37,
       styles: { fontSize: 8 },
       headStyles: { fillColor: [66, 66, 66] },
       footStyles: { fillColor: [200, 200, 200], fontStyle: 'bold' },
@@ -519,9 +559,8 @@ function EtfList() {
       }
     });
     
-    // Generate filename with current date
-    const date = new Date();
-    const filename = `ETF_Transactions_${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}.pdf`;
+    // Generate filename with identifier
+    const filename = `ETF_Transactions_${identifier}.pdf`;
     
     // Save file
     doc.save(filename);
@@ -529,6 +568,8 @@ function EtfList() {
 
   const exportToJSON = () => {
     const allTransactions = getSortedAllTransactions();
+    const identifier = generateExportIdentifier();
+    const exportDate = new Date().toISOString();
     
     // Prepare data for export
     const exportData = allTransactions.map(transaction => ({
@@ -552,6 +593,12 @@ function EtfList() {
     const grandTotal = totalCost + totalFees;
 
     const jsonData = {
+      metadata: {
+        exportId: identifier,
+        exportDate: exportDate,
+        userEmail: identifier.split('_')[1] || 'unknown',
+        transactionCount: allTransactions.length
+      },
       transactions: exportData,
       summary: {
         totalUnits: totalUnits.toFixed(3),
@@ -570,9 +617,8 @@ function EtfList() {
     const link = document.createElement('a');
     link.href = url;
     
-    // Generate filename with current date
-    const date = new Date();
-    const filename = `ETF_Transactions_${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}.json`;
+    // Generate filename with identifier
+    const filename = `ETF_Transactions_${identifier}.json`;
     link.download = filename;
     
     document.body.appendChild(link);
