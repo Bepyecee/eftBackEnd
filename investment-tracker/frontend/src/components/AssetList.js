@@ -188,6 +188,31 @@ function AssetList() {
       <div className="allocation-strategy-section">
         <div className="section-header">
           <div className="section-title-with-toggle">
+            <h3>Allocation Strategy</h3>
+            <button 
+              className="section-toggle-button"
+              onClick={() => setAllocationStrategyCollapsed(!allocationStrategyCollapsed)}
+              title={allocationStrategyCollapsed ? 'Expand section' : 'Collapse section'}
+            >
+              {allocationStrategyCollapsed ? '▼' : '▲'}
+            </button>
+            <div className="section-summary-inline">
+              <span>Define your investment allocation strategy across different asset classes, risk profiles, and geographical regions.</span>
+            </div>
+          </div>
+        </div>
+        {!allocationStrategyCollapsed && (
+          <div className="allocation-strategy-content">
+            <div className="not-implemented-banner">
+              <p>Content coming soon</p>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="allocation-strategy-section">
+        <div className="section-header">
+          <div className="section-title-with-toggle">
             <h3>Manage Portfolio</h3>
             <button 
               className="section-toggle-button"
@@ -212,31 +237,6 @@ function AssetList() {
               >
                 📋 Export Portfolio (JSON)
               </button>
-            </div>
-          </div>
-        )}
-      </div>
-
-      <div className="allocation-strategy-section">
-        <div className="section-header">
-          <div className="section-title-with-toggle">
-            <h3>Allocation Strategy</h3>
-            <button 
-              className="section-toggle-button"
-              onClick={() => setAllocationStrategyCollapsed(!allocationStrategyCollapsed)}
-              title={allocationStrategyCollapsed ? 'Expand section' : 'Collapse section'}
-            >
-              {allocationStrategyCollapsed ? '▼' : '▲'}
-            </button>
-            <div className="section-summary-inline">
-              <span>Define your investment allocation strategy across different asset classes, risk profiles, and geographical regions.</span>
-            </div>
-          </div>
-        </div>
-        {!allocationStrategyCollapsed && (
-          <div className="allocation-strategy-content">
-            <div className="not-implemented-banner">
-              <p>Content coming soon</p>
             </div>
           </div>
         )}
