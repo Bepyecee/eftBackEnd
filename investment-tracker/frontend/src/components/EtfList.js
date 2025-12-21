@@ -1272,8 +1272,8 @@ function EtfList() {
                             <div className="performance-details">
                               <div className="performance-ticker">{item.ticker}</div>
                               <div className="performance-gain">
-                                <span className="gain-amount">{formatCurrency(item.gain)}</span>
-                                <span className="gain-percentage">
+                                <span className={`gain-amount ${item.gain >= 0 ? 'gain-positive' : 'gain-negative'}`}>{formatCurrency(item.gain)}</span>
+                                <span className={`gain-percentage ${item.gainPercentage >= 0 ? 'gain-positive' : 'gain-negative'}`}>
                                   ({item.gainPercentage >= 0 ? '+' : ''}{item.gainPercentage.toFixed(2)}%)
                                 </span>
                               </div>
