@@ -1,0 +1,257 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Investment Tracker Portfolio Export",
+  "description": "Complete portfolio snapshot including ETFs, transactions, assets, and settings",
+  "type": "object",
+  "required": ["schemaVersion", "metadata", "portfolio"],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "description": "Version of the export schema (semver format)",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "examples": ["1.0.0"]
+    },
+    "metadata": {
+      "type": "object",
+      "required": ["exportId", "exportDate", "userEmail", "applicationVersion"],
+      "properties": {
+        "exportId": {
+          "type": "string",
+          "description": "Unique identifier for this export (format: YYYYMMDDHHMMSS_email)"
+        },
+        "exportDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of export creation"
+        },
+        "userEmail": {
+          "type": "string",
+          "description": "Email of the user who created this export"
+        },
+        "applicationVersion": {
+          "type": "string",
+          "description": "Version of the Investment Tracker application"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Optional user notes about this export"
+        }
+      }
+    },
+    "portfolio": {
+      "type": "object",
+      "required": ["etfs", "transactions", "assets"],
+      "properties": {
+        "etfs": {
+          "type": "array",
+          "description": "Complete list of ETFs in the portfolio",
+          "items": {
+            "type": "object",
+            "required": ["id", "ticker", "name", "type"],
+            "properties": {
+              "id": {
+                "type": "integer",
+                "description": "Unique identifier for the ETF"
+              },
+              "ticker": {
+                "type": "string",
+                "description": "ETF ticker symbol"
+              },
+              "name": {
+                "type": "string",
+                "description": "Full name of the ETF"
+              },
+              "type": {
+                "type": "string",
+                "enum": ["EQUITY", "BOND"],
+                "description": "Type of ETF"
+              },
+              "domicile": {
+                "type": "string",
+                "enum": ["IRELAND", "EUROPE", "OTHER"],
+                "description": "ETF domicile location"
+              },
+              "marketConcentration": {
+                "type": "string",
+                "enum": ["US", "EUROPE", "GLOBAL_DEVELOPED", "GLOBAL_INCL_EMERGING", "US_TECH", "EUROPE_TECH", "GLOBAL_DEVELOPED_TECH", "CORPORATE"],
+                "description": "Market concentration of the ETF"
+              },
+              "volatility": {
+                "type": "string",
+                "enum": ["LOW", "MODERATE", "HIGH", "VERY_HIGH"],
+                "description": "Volatility level"
+              },
+              "ter": {
+                "type": "number",
+                "description": "Total Expense Ratio"
+              },
+              "yahooFinanceTicker": {
+                "type": ["string", "null"],
+                "description": "Yahoo Finance ticker if different from main ticker"
+              },
+              "notes": {
+                "type": ["string", "null"],
+                "description": "User notes about this ETF"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "currentPrice": {
+                "type": ["object", "null"],
+                "description": "Latest price information",
+                "properties": {
+                  "price": {
+                    "type": "number"
+                  },
+                  "currency": {
+                    "type": "string"
+                  },
+                  "lastUpdated": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "transactions": {
+          "type": "array",
+          "description": "All ETF transactions",
+          "items": {
+            "type": "object",
+            "required": ["id", "etfId", "transactionDate", "transactionType", "unitsPurchased", "transactionCost"],
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "etfId": {
+                "type": "integer",
+                "description": "Reference to ETF ID"
+              },
+              "etfTicker": {
+                "type": "string"
+              },
+              "etfName": {
+                "type": "string"
+              },
+              "transactionDate": {
+                "type": "string",
+                "format": "date"
+              },
+              "transactionType": {
+                "type": "string",
+                "enum": ["BUY", "SELL"]
+              },
+              "unitsPurchased": {
+                "type": "number"
+              },
+              "transactionCost": {
+                "type": "number"
+              },
+              "transactionFees": {
+                "type": "number"
+              },
+              "deemedDisposalDate": {
+                "type": ["string", "null"],
+                "format": "date"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        },
+        "assets": {
+          "type": "array",
+          "description": "Asset allocation information",
+          "items": {
+            "type": "object",
+            "required": ["id", "name", "allocationPercentage"],
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "name": {
+                "type": "string"
+              },
+              "allocationPercentage": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        },
+        "settings": {
+          "type": "object",
+          "description": "User settings and preferences",
+          "properties": {
+            "theme": {
+              "type": "string",
+              "description": "UI theme preference"
+            },
+            "currency": {
+              "type": "string",
+              "description": "Preferred currency"
+            },
+            "dateFormat": {
+              "type": "string",
+              "description": "Preferred date format"
+            },
+            "customSettings": {
+              "type": "object",
+              "description": "Additional custom settings",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "description": "Calculated portfolio summary",
+      "properties": {
+        "totalEtfs": {
+          "type": "integer"
+        },
+        "totalTransactions": {
+          "type": "integer"
+        },
+        "totalAssets": {
+          "type": "integer"
+        },
+        "totalInvested": {
+          "type": "number",
+          "description": "Total amount invested"
+        },
+        "totalFees": {
+          "type": "number",
+          "description": "Total fees paid"
+        },
+        "portfolioValue": {
+          "type": ["number", "null"],
+          "description": "Current portfolio value if prices available"
+        }
+      }
+    }
+  }
+}
