@@ -87,6 +87,40 @@
   margin-top: 1rem;
 }
 
+.manage-portfolio-content {
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.manage-portfolio-content p {
+  margin: 0 0 1rem 0;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.manage-portfolio-content .export-button {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  font-size: 1rem;
+}
+
+.manage-portfolio-content .export-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.manage-portfolio-content .export-button:active {
+  transform: translateY(0);
+}
+
 .not-implemented-banner {
   background: white;
   border: 1px solid #e0e0e0;
@@ -184,6 +218,23 @@
 [data-theme="trading-terminal"] .not-implemented-banner {
   background: #1e222d;
   border: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .manage-portfolio-content {
+  background: #131722;
+  border: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .manage-portfolio-content p {
+  color: #787b86;
+}
+
+[data-theme="trading-terminal"] .manage-portfolio-content .export-button {
+  background: linear-gradient(135deg, #00bcd4 0%, #0097a7 100%);
+}
+
+[data-theme="trading-terminal"] .manage-portfolio-content .export-button:hover {
+  box-shadow: 0 4px 12px rgba(0, 188, 212, 0.4);
 }
 
 [data-theme="trading-terminal"] .not-implemented-banner p {
