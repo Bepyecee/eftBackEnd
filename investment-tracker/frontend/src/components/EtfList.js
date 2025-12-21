@@ -1259,7 +1259,7 @@ function EtfList() {
                   </div>
                   <div className="performance-chart">
                     {summaryData
-                      .filter(item => item.gain !== null && item.gain > 0)
+                      .filter(item => item.gain !== null)
                       .sort((a, b) => performanceRankingMode === 'amount' ? b.gain - a.gain : b.gainPercentage - a.gainPercentage)
                       .slice(0, 5)
                       .map((item, index) => {
