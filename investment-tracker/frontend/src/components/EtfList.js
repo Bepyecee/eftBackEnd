@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as XLSX from 'xlsx';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import etfService from '../services/etfService';
 import etfPriceService from '../services/etfPriceService';
 import messages from '../constants/messages';
@@ -455,6 +457,74 @@ function EtfList() {
 
     // Save file
     XLSX.writeFile(workbook, filename);
+  };
+
+  const exportToPDF = () => {
+    const allTransactions = getSortedAllTransactions();
+    
+    // Create new PDF document
+    const doc = new jsPDF();
+    
+    // Add title
+    doc.setFontSize(16);
+    doc.text('ETF Transactions', 14, 15);
+    
+    // Prepare data for PDF
+    const tableData = allTransactions.map(transaction => ([
+      formatDate(transaction.transactionDate),
+      transaction.etfTicker,
+      transaction.etfName,
+      transaction.unitsPurchased,
+      transaction.unitsPurchased && transaction.transactionCost 
+        ? (parseFloat(transaction.transactionCost) / parseFloat(transaction.unitsPurchased)).toFixed(2)
+        : '0.00',
+      parseFloat(transaction.transactionCost || 0).toFixed(2),
+      parseFloat(transaction.transactionFees || 0).toFixed(2),
+      ((parseFloat(transaction.transactionCost) || 0) + (parseFloat(transaction.transactionFees) || 0)).toFixed(2),
+      formatDate(transaction.deemedDisposalDate)
+    ]));
+
+    // Add totals row
+    const totalUnits = allTransactions.reduce((sum, t) => sum + (parseFloat(t.unitsPurchased) || 0), 0);
+    const totalCost = allTransactions.reduce((sum, t) => sum + (parseFloat(t.transactionCost) || 0), 0);
+    const totalFees = allTransactions.reduce((sum, t) => sum + (parseFloat(t.transactionFees) || 0), 0);
+    const grandTotal = totalCost + totalFees;
+
+    tableData.push([
+      '',
+      '',
+      'TOTAL',
+      totalUnits.toFixed(3),
+      '',
+      totalCost.toFixed(2),
+      totalFees.toFixed(2),
+      grandTotal.toFixed(2),
+      ''
+    ]);
+
+    // Generate table
+    autoTable(doc, {
+      head: [['Date', 'Ticker', 'ETF Name', 'Units', 'Price/Unit', 'Cost', 'Fees', 'Total', 'Deemed Disposal Date']],
+      body: tableData,
+      startY: 25,
+      styles: { fontSize: 8 },
+      headStyles: { fillColor: [66, 66, 66] },
+      footStyles: { fillColor: [200, 200, 200], fontStyle: 'bold' },
+      didParseCell: (data) => {
+        // Make the totals row bold
+        if (data.row.index === tableData.length - 1) {
+          data.cell.styles.fontStyle = 'bold';
+          data.cell.styles.fillColor = [240, 240, 240];
+        }
+      }
+    });
+    
+    // Generate filename with current date
+    const date = new Date();
+    const filename = `ETF_Transactions_${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}.pdf`;
+    
+    // Save file
+    doc.save(filename);
   };
 
   const handleAllTransactionsSort = (key) => {
@@ -1338,6 +1408,14 @@ function EtfList() {
                 title="Export visible transactions to Excel"
               >
                 Export to Excel
+              </button>
+              <button 
+                className="export-button"
+                onClick={exportToPDF}
+                disabled={allTransactions.length === 0}
+                title="Export visible transactions to PDF"
+              >
+                Export to PDF
               </button>
             </div>
             <div className="transactions-table-container">
