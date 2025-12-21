@@ -566,65 +566,157 @@ function EtfList() {
     doc.save(filename);
   };
 
-  const exportToJSON = () => {
-    const allTransactions = getSortedAllTransactions();
-    const identifier = generateExportIdentifier();
-    const exportDate = new Date().toISOString();
-    
-    // Prepare data for export
-    const exportData = allTransactions.map(transaction => ({
-      date: formatDate(transaction.transactionDate),
-      ticker: transaction.etfTicker,
-      etfName: transaction.etfName,
-      units: transaction.unitsPurchased,
-      pricePerUnit: transaction.unitsPurchased && transaction.transactionCost 
-        ? (parseFloat(transaction.transactionCost) / parseFloat(transaction.unitsPurchased)).toFixed(2)
-        : '0.00',
-      cost: parseFloat(transaction.transactionCost || 0).toFixed(2),
-      fees: parseFloat(transaction.transactionFees || 0).toFixed(2),
-      total: ((parseFloat(transaction.transactionCost) || 0) + (parseFloat(transaction.transactionFees) || 0)).toFixed(2),
-      deemedDisposalDate: formatDate(transaction.deemedDisposalDate)
-    }));
+  const exportToJSON = async () => {
+    try {
+      const identifier = generateExportIdentifier();
+      const exportDate = new Date().toISOString();
+      
+      // Fetch all portfolio data
+      const [allEtfs, allAssets] = await Promise.all([
+        etfService.getAllEtfs(),
+        fetch('/api/assets', {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          }
+        }).then(res => res.ok ? res.json() : []).catch(() => [])
+      ]);
 
-    // Add totals
-    const totalUnits = allTransactions.reduce((sum, t) => sum + (parseFloat(t.unitsPurchased) || 0), 0);
-    const totalCost = allTransactions.reduce((sum, t) => sum + (parseFloat(t.transactionCost) || 0), 0);
-    const totalFees = allTransactions.reduce((sum, t) => sum + (parseFloat(t.transactionFees) || 0), 0);
-    const grandTotal = totalCost + totalFees;
-
-    const jsonData = {
-      metadata: {
-        exportId: identifier,
-        exportDate: exportDate,
-        userEmail: identifier.split('_')[1] || 'unknown',
-        transactionCount: allTransactions.length
-      },
-      transactions: exportData,
-      summary: {
-        totalUnits: totalUnits.toFixed(3),
-        totalCost: totalCost.toFixed(2),
-        totalFees: totalFees.toFixed(2),
-        grandTotal: grandTotal.toFixed(2)
+      // Get all transactions across all ETFs
+      const allTransactionsData = [];
+      for (const etf of allEtfs) {
+        if (etf.transactions && etf.transactions.length > 0) {
+          etf.transactions.forEach(transaction => {
+            allTransactionsData.push({
+              id: transaction.id,
+              etfId: etf.id,
+              etfTicker: etf.ticker,
+              etfName: etf.name,
+              transactionDate: transaction.transactionDate,
+              transactionType: transaction.transactionType || 'BUY',
+              unitsPurchased: parseFloat(transaction.unitsPurchased),
+              transactionCost: parseFloat(transaction.transactionCost),
+              transactionFees: parseFloat(transaction.transactionFees),
+              deemedDisposalDate: transaction.deemedDisposalDate,
+              createdAt: transaction.createdAt,
+              updatedAt: transaction.updatedAt
+            });
+          });
+        }
       }
-    };
 
-    // Convert to JSON string
-    const jsonString = JSON.stringify(jsonData, null, 2);
-    
-    // Create blob and download
-    const blob = new Blob([jsonString], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    
-    // Generate filename with identifier
-    const filename = `ETF_Transactions_${identifier}.json`;
-    link.download = filename;
-    
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+      // Prepare ETF data with current prices
+      const etfsWithPrices = await Promise.all(allEtfs.map(async (etf) => {
+        let currentPrice = null;
+        try {
+          const priceData = await etfPriceService.getPrice(etf.ticker);
+          if (priceData && priceData.price) {
+            currentPrice = {
+              price: parseFloat(priceData.price),
+              currency: priceData.currency || 'EUR',
+              lastUpdated: priceData.lastUpdated || new Date().toISOString()
+            };
+          }
+        } catch (e) {
+          console.warn(`Could not fetch price for ${etf.ticker}`, e);
+        }
+
+        return {
+          id: etf.id,
+          ticker: etf.ticker,
+          name: etf.name,
+          type: etf.type,
+          domicile: etf.domicile,
+          marketConcentration: etf.marketConcentration,
+          volatility: etf.volatility,
+          ter: parseFloat(etf.ter),
+          yahooFinanceTicker: etf.yahooFinanceTicker || null,
+          notes: etf.notes || null,
+          createdAt: etf.createdAt,
+          updatedAt: etf.updatedAt,
+          currentPrice
+        };
+      }));
+
+      // Calculate summary
+      const totalInvested = allTransactionsData.reduce((sum, t) => sum + (parseFloat(t.transactionCost) || 0), 0);
+      const totalFees = allTransactionsData.reduce((sum, t) => sum + (parseFloat(t.transactionFees) || 0), 0);
+      
+      let portfolioValue = null;
+      try {
+        portfolioValue = etfsWithPrices.reduce((sum, etf) => {
+          if (etf.currentPrice) {
+            const etfTransactions = allTransactionsData.filter(t => t.etfId === etf.id);
+            const totalUnits = etfTransactions.reduce((s, t) => s + parseFloat(t.unitsPurchased), 0);
+            return sum + (totalUnits * etf.currentPrice.price);
+          }
+          return sum;
+        }, 0);
+      } catch (e) {
+        console.warn('Could not calculate portfolio value', e);
+      }
+
+      // Get user settings from localStorage or default
+      const settings = {
+        theme: localStorage.getItem('theme') || 'default',
+        currency: 'EUR',
+        dateFormat: 'YYYY-MM-DD',
+        customSettings: {}
+      };
+
+      // Construct comprehensive export
+      const portfolioExport = {
+        schemaVersion: "1.0.0",
+        metadata: {
+          exportId: identifier,
+          exportDate: exportDate,
+          userEmail: identifier.split('_')[1].replace(/([a-z])([A-Z])/g, '$1@$2').replace(/([a-z])gmail/, '$1.gmail') || 'unknown',
+          applicationVersion: "1.0.0",
+          notes: ""
+        },
+        portfolio: {
+          etfs: etfsWithPrices,
+          transactions: allTransactionsData,
+          assets: allAssets.map(asset => ({
+            id: asset.id,
+            name: asset.name,
+            allocationPercentage: parseFloat(asset.allocationPercentage),
+            createdAt: asset.createdAt,
+            updatedAt: asset.updatedAt
+          })),
+          settings: settings
+        },
+        summary: {
+          totalEtfs: etfsWithPrices.length,
+          totalTransactions: allTransactionsData.length,
+          totalAssets: allAssets.length,
+          totalInvested: parseFloat(totalInvested.toFixed(2)),
+          totalFees: parseFloat(totalFees.toFixed(2)),
+          portfolioValue: portfolioValue ? parseFloat(portfolioValue.toFixed(2)) : null
+        }
+      };
+
+      // Convert to JSON string
+      const jsonString = JSON.stringify(portfolioExport, null, 2);
+      
+      // Create blob and download
+      const blob = new Blob([jsonString], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      
+      // Generate filename with identifier
+      const filename = `Portfolio_Export_${identifier}.json`;
+      link.download = filename;
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error exporting portfolio:', error);
+      alert('Failed to export portfolio. Please try again.');
+    }
   };
 
   const handleAllTransactionsSort = (key) => {
@@ -1520,10 +1612,9 @@ function EtfList() {
               <button 
                 className="export-button"
                 onClick={exportToJSON}
-                disabled={allTransactions.length === 0}
-                title="Export visible transactions to JSON"
+                title="Export complete portfolio snapshot including ETFs, transactions, assets, and settings"
               >
-                Export to JSON
+                Export Portfolio (JSON)
               </button>
             </div>
             <div className="transactions-table-container">
