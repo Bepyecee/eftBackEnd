@@ -527,6 +527,60 @@ function EtfList() {
     doc.save(filename);
   };
 
+  const exportToJSON = () => {
+    const allTransactions = getSortedAllTransactions();
+    
+    // Prepare data for export
+    const exportData = allTransactions.map(transaction => ({
+      date: formatDate(transaction.transactionDate),
+      ticker: transaction.etfTicker,
+      etfName: transaction.etfName,
+      units: transaction.unitsPurchased,
+      pricePerUnit: transaction.unitsPurchased && transaction.transactionCost 
+        ? (parseFloat(transaction.transactionCost) / parseFloat(transaction.unitsPurchased)).toFixed(2)
+        : '0.00',
+      cost: parseFloat(transaction.transactionCost || 0).toFixed(2),
+      fees: parseFloat(transaction.transactionFees || 0).toFixed(2),
+      total: ((parseFloat(transaction.transactionCost) || 0) + (parseFloat(transaction.transactionFees) || 0)).toFixed(2),
+      deemedDisposalDate: formatDate(transaction.deemedDisposalDate)
+    }));
+
+    // Add totals
+    const totalUnits = allTransactions.reduce((sum, t) => sum + (parseFloat(t.unitsPurchased) || 0), 0);
+    const totalCost = allTransactions.reduce((sum, t) => sum + (parseFloat(t.transactionCost) || 0), 0);
+    const totalFees = allTransactions.reduce((sum, t) => sum + (parseFloat(t.transactionFees) || 0), 0);
+    const grandTotal = totalCost + totalFees;
+
+    const jsonData = {
+      transactions: exportData,
+      summary: {
+        totalUnits: totalUnits.toFixed(3),
+        totalCost: totalCost.toFixed(2),
+        totalFees: totalFees.toFixed(2),
+        grandTotal: grandTotal.toFixed(2)
+      }
+    };
+
+    // Convert to JSON string
+    const jsonString = JSON.stringify(jsonData, null, 2);
+    
+    // Create blob and download
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    
+    // Generate filename with current date
+    const date = new Date();
+    const filename = `ETF_Transactions_${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}.json`;
+    link.download = filename;
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   const handleAllTransactionsSort = (key) => {
     let direction = 'asc';
     if (allTransactionsSortConfig.key === key && allTransactionsSortConfig.direction === 'asc') {
@@ -1416,6 +1470,14 @@ function EtfList() {
                 title="Export visible transactions to PDF"
               >
                 Export to PDF
+              </button>
+              <button 
+                className="export-button"
+                onClick={exportToJSON}
+                disabled={allTransactions.length === 0}
+                title="Export visible transactions to JSON"
+              >
+                Export to JSON
               </button>
             </div>
             <div className="transactions-table-container">
