@@ -6,7 +6,6 @@ import './AssetList.css';
 
 function AssetList() {
   const [allocationStrategyCollapsed, setAllocationStrategyCollapsed] = useState(false);
-  const [managePortfolioCollapsed, setManagePortfolioCollapsed] = useState(false);
   const [portfolioVersionsCollapsed, setPortfolioVersionsCollapsed] = useState(false);
   const [portfolioVersions, setPortfolioVersions] = useState([]);
   const [loadingVersions, setLoadingVersions] = useState(false);
@@ -316,38 +315,6 @@ function AssetList() {
           <div className="allocation-strategy-content">
             <div className="not-implemented-banner">
               <p>Content coming soon</p>
-            </div>
-          </div>
-        )}
-      </div>
-
-      <div className="allocation-strategy-section">
-        <div className="section-header">
-          <div className="section-title-with-toggle">
-            <h3>Manage Portfolio</h3>
-            <button 
-              className="section-toggle-button"
-              onClick={() => setManagePortfolioCollapsed(!managePortfolioCollapsed)}
-              title={managePortfolioCollapsed ? 'Expand section' : 'Collapse section'}
-            >
-              {managePortfolioCollapsed ? '▼' : '▲'}
-            </button>
-            <div className="section-summary-inline">
-              <span>Export and manage your complete portfolio data.</span>
-            </div>
-          </div>
-        </div>
-        {!managePortfolioCollapsed && (
-          <div className="allocation-strategy-content">
-            <div className="manage-portfolio-content">
-              <p>Export your complete portfolio including ETFs, transactions, assets, and settings.</p>
-              <button 
-                className="export-button"
-                onClick={exportToJSON}
-                title="Export complete portfolio snapshot including ETFs, transactions, assets, and settings"
-              >
-                Export Portfolio
-              </button>
             </div>
           </div>
         )}
