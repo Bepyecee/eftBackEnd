@@ -28,14 +28,19 @@ public class PortfolioSnapshot {
     @Enumerated(EnumType.STRING)
     private TriggerAction triggerAction;
 
+    @Column(columnDefinition = "TEXT")
+    private String changeDetails; // e.g., "ETF: VWCE", "Transaction: Buy 10 units of SPY"
+
     public PortfolioSnapshot() {
     }
 
-    public PortfolioSnapshot(User user, String versionId, String portfolioJson, TriggerAction triggerAction) {
+    public PortfolioSnapshot(User user, String versionId, String portfolioJson, TriggerAction triggerAction,
+            String changeDetails) {
         this.user = user;
         this.versionId = versionId;
         this.portfolioJson = portfolioJson;
         this.triggerAction = triggerAction;
+        this.changeDetails = changeDetails;
         this.createdAt = LocalDateTime.now();
     }
 
@@ -97,5 +102,13 @@ public class PortfolioSnapshot {
 
     public String getTriggerActionDisplay() {
         return triggerAction != null ? triggerAction.getDisplayName() : "Unknown";
+    }
+
+    public String getChangeDetails() {
+        return changeDetails;
+    }
+
+    public void setChangeDetails(String changeDetails) {
+        this.changeDetails = changeDetails;
     }
 }

@@ -44,7 +44,7 @@ public class PortfolioSnapshotService {
     /**
      * Create and save a portfolio snapshot
      */
-    public PortfolioSnapshot createSnapshot(String userEmail, TriggerAction triggerAction) {
+    public PortfolioSnapshot createSnapshot(String userEmail, TriggerAction triggerAction, String changeDetails) {
         User user = userService.getCurrentUser(userEmail);
         String versionId = generateVersionId();
 
@@ -53,7 +53,8 @@ public class PortfolioSnapshotService {
             Map<String, Object> portfolioData = buildPortfolioData(userEmail);
             String portfolioJson = objectMapper.writeValueAsString(portfolioData);
 
-            PortfolioSnapshot snapshot = new PortfolioSnapshot(user, versionId, portfolioJson, triggerAction);
+            PortfolioSnapshot snapshot = new PortfolioSnapshot(user, versionId, portfolioJson, triggerAction,
+                    changeDetails);
             return snapshotRepository.save(snapshot);
         } catch (Exception e) {
             throw new RuntimeException("Failed to create portfolio snapshot", e);
@@ -64,7 +65,7 @@ public class PortfolioSnapshotService {
      * Create a snapshot with a specific version ID (for manual exports)
      */
     public PortfolioSnapshot createSnapshotWithVersionId(String userEmail, String versionId, String portfolioJson,
-            TriggerAction triggerAction) {
+            TriggerAction triggerAction, String changeDetails) {
         User user = userService.getCurrentUser(userEmail);
 
         // Check if version already exists
@@ -73,10 +74,12 @@ public class PortfolioSnapshotService {
             PortfolioSnapshot existing = snapshotRepository.findByVersionId(versionId).get();
             existing.setPortfolioJson(portfolioJson);
             existing.setTriggerAction(triggerAction);
+            existing.setChangeDetails(changeDetails);
             return snapshotRepository.save(existing);
         }
 
-        PortfolioSnapshot snapshot = new PortfolioSnapshot(user, versionId, portfolioJson, triggerAction);
+        PortfolioSnapshot snapshot = new PortfolioSnapshot(user, versionId, portfolioJson, triggerAction,
+                changeDetails);
         return snapshotRepository.save(snapshot);
     }
 

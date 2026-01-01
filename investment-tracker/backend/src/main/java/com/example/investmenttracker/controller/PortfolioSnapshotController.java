@@ -45,6 +45,7 @@ public class PortfolioSnapshotController {
             Authentication authentication) {
         String userEmail = authentication.getName();
         String triggerActionStr = request.getOrDefault("triggerAction", "MANUAL_EXPORT");
+        String changeDetails = request.getOrDefault("changeDetails", "Manual snapshot");
 
         TriggerAction triggerAction;
         try {
@@ -53,7 +54,7 @@ public class PortfolioSnapshotController {
             triggerAction = TriggerAction.MANUAL_EXPORT;
         }
 
-        PortfolioSnapshot snapshot = snapshotService.createSnapshot(userEmail, triggerAction);
+        PortfolioSnapshot snapshot = snapshotService.createSnapshot(userEmail, triggerAction, changeDetails);
         return ResponseEntity.status(201).body(snapshot);
     }
 
@@ -64,6 +65,7 @@ public class PortfolioSnapshotController {
         String versionId = request.get("versionId");
         String portfolioJson = request.get("portfolioJson");
         String triggerActionStr = request.getOrDefault("triggerAction", "MANUAL_EXPORT");
+        String changeDetails = request.getOrDefault("changeDetails", "Manual export");
 
         TriggerAction triggerAction;
         try {
@@ -77,7 +79,7 @@ public class PortfolioSnapshotController {
         }
 
         PortfolioSnapshot snapshot = snapshotService.createSnapshotWithVersionId(userEmail, versionId, portfolioJson,
-                triggerAction);
+                triggerAction, changeDetails);
         return ResponseEntity.status(201).body(snapshot);
     }
 

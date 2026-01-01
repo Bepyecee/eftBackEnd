@@ -45,7 +45,9 @@ public class AssetController {
         Asset createdAsset = assetService.addAsset(asset, userEmail);
 
         try {
-            snapshotService.createSnapshot(userEmail, TriggerAction.ASSET_CREATED);
+            String details = String.format("%s: %.1f%%", createdAsset.getName(),
+                    createdAsset.getAllocationPercentage());
+            snapshotService.createSnapshot(userEmail, TriggerAction.ASSET_CREATED, details);
         } catch (Exception e) {
             System.err.println("Failed to create portfolio snapshot: " + e.getMessage());
         }
@@ -61,7 +63,9 @@ public class AssetController {
 
         if (updatedAsset != null) {
             try {
-                snapshotService.createSnapshot(userEmail, TriggerAction.ASSET_UPDATED);
+                String details = String.format("%s: %.1f%%", updatedAsset.getName(),
+                        updatedAsset.getAllocationPercentage());
+                snapshotService.createSnapshot(userEmail, TriggerAction.ASSET_UPDATED, details);
             } catch (Exception e) {
                 System.err.println("Failed to create portfolio snapshot: " + e.getMessage());
             }
@@ -73,11 +77,13 @@ public class AssetController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAsset(@PathVariable Long id, Authentication authentication) {
         String userEmail = authentication.getName();
+        Asset asset = assetService.getAssetById(id, userEmail);
         boolean isDeleted = assetService.deleteAsset(id, userEmail);
 
         if (isDeleted) {
             try {
-                snapshotService.createSnapshot(userEmail, TriggerAction.ASSET_DELETED);
+                String details = asset != null ? String.format("%s", asset.getName()) : "Unknown asset";
+                snapshotService.createSnapshot(userEmail, TriggerAction.ASSET_DELETED, details);
             } catch (Exception e) {
                 System.err.println("Failed to create portfolio snapshot: " + e.getMessage());
             }
