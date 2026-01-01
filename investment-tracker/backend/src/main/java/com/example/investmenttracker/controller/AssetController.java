@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.investmenttracker.model.Asset;
+import com.example.investmenttracker.model.TriggerAction;
 import com.example.investmenttracker.service.AssetService;
 import com.example.investmenttracker.service.PortfolioSnapshotService;
 
@@ -44,7 +45,7 @@ public class AssetController {
         Asset createdAsset = assetService.addAsset(asset, userEmail);
 
         try {
-            snapshotService.createSnapshot(userEmail, "ASSET_CREATED");
+            snapshotService.createSnapshot(userEmail, TriggerAction.ASSET_CREATED);
         } catch (Exception e) {
             System.err.println("Failed to create portfolio snapshot: " + e.getMessage());
         }
@@ -60,7 +61,7 @@ public class AssetController {
 
         if (updatedAsset != null) {
             try {
-                snapshotService.createSnapshot(userEmail, "ASSET_UPDATED");
+                snapshotService.createSnapshot(userEmail, TriggerAction.ASSET_UPDATED);
             } catch (Exception e) {
                 System.err.println("Failed to create portfolio snapshot: " + e.getMessage());
             }
@@ -76,7 +77,7 @@ public class AssetController {
 
         if (isDeleted) {
             try {
-                snapshotService.createSnapshot(userEmail, "ASSET_DELETED");
+                snapshotService.createSnapshot(userEmail, TriggerAction.ASSET_DELETED);
             } catch (Exception e) {
                 System.err.println("Failed to create portfolio snapshot: " + e.getMessage());
             }

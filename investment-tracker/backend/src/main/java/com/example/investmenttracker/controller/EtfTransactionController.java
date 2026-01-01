@@ -1,6 +1,7 @@
 package com.example.investmenttracker.controller;
 
 import com.example.investmenttracker.model.EtfTransaction;
+import com.example.investmenttracker.model.TriggerAction;
 import com.example.investmenttracker.service.EtfTransactionService;
 import com.example.investmenttracker.service.PortfolioSnapshotService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,7 @@ public class EtfTransactionController {
         // Create portfolio snapshot
         try {
             String userEmail = authentication.getName();
-            snapshotService.createSnapshot(userEmail, "TRANSACTION_ADDED");
+            snapshotService.createSnapshot(userEmail, TriggerAction.TRANSACTION_ADDED);
         } catch (Exception e) {
             // Log but don't fail the transaction creation
             System.err.println("Failed to create portfolio snapshot: " + e.getMessage());
@@ -64,7 +65,7 @@ public class EtfTransactionController {
         // Create portfolio snapshot
         try {
             String userEmail = authentication.getName();
-            snapshotService.createSnapshot(userEmail, "TRANSACTION_UPDATED");
+            snapshotService.createSnapshot(userEmail, TriggerAction.TRANSACTION_UPDATED);
         } catch (Exception e) {
             System.err.println("Failed to create portfolio snapshot: " + e.getMessage());
         }
@@ -79,7 +80,7 @@ public class EtfTransactionController {
         // Create portfolio snapshot
         try {
             String userEmail = authentication.getName();
-            snapshotService.createSnapshot(userEmail, "TRANSACTION_DELETED");
+            snapshotService.createSnapshot(userEmail, TriggerAction.TRANSACTION_DELETED);
         } catch (Exception e) {
             System.err.println("Failed to create portfolio snapshot: " + e.getMessage());
         }

@@ -238,6 +238,26 @@ function AssetList() {
     return `${day}/${month}/${year} ${hours}:${minutes}`;
   };
 
+  const formatTriggerAction = (triggerAction) => {
+    if (!triggerAction) return 'Unknown';
+    
+    // Map enum values to user-friendly display names
+    const displayNames = {
+      'ETF_CREATED': 'ETF Created',
+      'ETF_UPDATED': 'ETF Updated',
+      'ETF_DELETED': 'ETF Deleted',
+      'TRANSACTION_ADDED': 'Transaction Added',
+      'TRANSACTION_UPDATED': 'Transaction Updated',
+      'TRANSACTION_DELETED': 'Transaction Deleted',
+      'ASSET_CREATED': 'Asset Created',
+      'ASSET_UPDATED': 'Asset Updated',
+      'ASSET_DELETED': 'Asset Deleted',
+      'MANUAL_EXPORT': 'Manual Export'
+    };
+    
+    return displayNames[triggerAction] || triggerAction;
+  };
+
   const downloadVersion = async (version) => {
     try {
       const portfolioData = JSON.parse(version.portfolioJson);
@@ -370,7 +390,7 @@ function AssetList() {
                       <tr key={version.id}>
                         <td><code>{version.versionId}</code></td>
                         <td>{formatVersionDate(version.createdAt)}</td>
-                        <td>{version.triggerAction || 'UNKNOWN'}</td>
+                        <td>{formatTriggerAction(version.triggerAction)}</td>
                         <td>
                           <button 
                             className="download-button-small"

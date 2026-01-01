@@ -1,6 +1,7 @@
 package com.example.investmenttracker.service;
 
 import com.example.investmenttracker.model.PortfolioSnapshot;
+import com.example.investmenttracker.model.TriggerAction;
 import com.example.investmenttracker.model.User;
 import com.example.investmenttracker.persistence.PortfolioSnapshotRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -43,7 +44,7 @@ public class PortfolioSnapshotService {
     /**
      * Create and save a portfolio snapshot
      */
-    public PortfolioSnapshot createSnapshot(String userEmail, String triggerAction) {
+    public PortfolioSnapshot createSnapshot(String userEmail, TriggerAction triggerAction) {
         User user = userService.getCurrentUser(userEmail);
         String versionId = generateVersionId();
 
@@ -63,7 +64,7 @@ public class PortfolioSnapshotService {
      * Create a snapshot with a specific version ID (for manual exports)
      */
     public PortfolioSnapshot createSnapshotWithVersionId(String userEmail, String versionId, String portfolioJson,
-            String triggerAction) {
+            TriggerAction triggerAction) {
         User user = userService.getCurrentUser(userEmail);
 
         // Check if version already exists

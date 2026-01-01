@@ -1,6 +1,7 @@
 package com.example.investmenttracker.controller;
 
 import com.example.investmenttracker.model.Etf;
+import com.example.investmenttracker.model.TriggerAction;
 import com.example.investmenttracker.service.EtfService;
 import com.example.investmenttracker.service.PortfolioSnapshotService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,7 @@ public class EtfController {
         Etf createdEtf = etfService.createEtf(etf, userEmail);
 
         try {
-            snapshotService.createSnapshot(userEmail, "ETF_CREATED");
+            snapshotService.createSnapshot(userEmail, TriggerAction.ETF_CREATED);
         } catch (Exception e) {
             System.err.println("Failed to create portfolio snapshot: " + e.getMessage());
         }
@@ -56,7 +57,7 @@ public class EtfController {
         Etf updatedEtf = etfService.updateEtf(id, etf, userEmail);
 
         try {
-            snapshotService.createSnapshot(userEmail, "ETF_UPDATED");
+            snapshotService.createSnapshot(userEmail, TriggerAction.ETF_UPDATED);
         } catch (Exception e) {
             System.err.println("Failed to create portfolio snapshot: " + e.getMessage());
         }
@@ -70,7 +71,7 @@ public class EtfController {
         etfService.deleteEtf(id, userEmail);
 
         try {
-            snapshotService.createSnapshot(userEmail, "ETF_DELETED");
+            snapshotService.createSnapshot(userEmail, TriggerAction.ETF_DELETED);
         } catch (Exception e) {
             System.err.println("Failed to create portfolio snapshot: " + e.getMessage());
         }
