@@ -197,7 +197,8 @@ function AssetList() {
         await axiosInstance.post('/portfolio-snapshots/with-data', {
           versionId: identifier,
           portfolioJson: jsonString,
-          triggerAction: 'MANUAL_EXPORT'
+          triggerAction: 'MANUAL_EXPORT',
+          changeDetails: 'Manual portfolio export'
         });
         
         // Reload versions list
@@ -382,6 +383,7 @@ function AssetList() {
                       <th>Version ID</th>
                       <th>Created</th>
                       <th>Trigger</th>
+                      <th>Details</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
@@ -391,6 +393,7 @@ function AssetList() {
                         <td><code>{version.versionId}</code></td>
                         <td>{formatVersionDate(version.createdAt)}</td>
                         <td>{formatTriggerAction(version.triggerAction)}</td>
+                        <td>{version.changeDetails || '-'}</td>
                         <td>
                           <button 
                             className="download-button-small"

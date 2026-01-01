@@ -46,7 +46,12 @@ public class EtfTransactionController {
         // Create portfolio snapshot
         try {
             String userEmail = authentication.getName();
-            snapshotService.createSnapshot(userEmail, TriggerAction.TRANSACTION_ADDED);
+            String details = String.format("%s: %s %.3f units @ %s",
+                createdTransaction.getEtf().getTicker(),
+                createdTransaction.getTransactionType(),
+                createdTransaction.getUnitsPurchased(),
+                createdTransaction.getTransactionDate());
+            snapshotService.createSnapshot(userEmail, TriggerAction.TRANSACTION_ADDED, details);
         } catch (Exception e) {
             // Log but don't fail the transaction creation
             System.err.println("Failed to create portfolio snapshot: " + e.getMessage());
@@ -65,7 +70,12 @@ public class EtfTransactionController {
         // Create portfolio snapshot
         try {
             String userEmail = authentication.getName();
-            snapshotService.createSnapshot(userEmail, TriggerAction.TRANSACTION_UPDATED);
+            String details = String.format("%s: %s %.3f units @ %s",
+                updatedTransaction.getEtf().getTicker(),
+                updatedTransaction.getTransactionType(),
+                updatedTransaction.getUnitsPurchased(),
+                updatedTransaction.getTransactionDate());
+            snapshotService.createSnapshot(userEmail, TriggerAction.TRANSACTION_UPDATED, details);
         } catch (Exception e) {
             System.err.println("Failed to create portfolio snapshot: " + e.getMessage());
         }
@@ -75,12 +85,18 @@ public class EtfTransactionController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTransaction(@PathVariable Long id, Authentication authentication) {
+        EtfTransaction transaction = transactionService.getTransactionById(id).orElse(null);
         transactionService.deleteTransaction(id);
 
         // Create portfolio snapshot
         try {
             String userEmail = authentication.getName();
-            snapshotService.createSnapshot(userEmail, TriggerAction.TRANSACTION_DELETED);
+            String details = transaction != null ? 
+                String.format("%s: %s %.3f units",
+                    transaction.getEtf().getTicker(),
+                    transaction.getTransactionType(),
+                    transaction.getUnitsPurchased()) : "Unknown transaction";
+            snapshotService.createSnapshot(userEmail, TriggerAction.TRANSACTION_DELETED, details);
         } catch (Exception e) {
             System.err.println("Failed to create portfolio snapshot: " + e.getMessage());
         }

@@ -43,7 +43,8 @@ public class EtfController {
         Etf createdEtf = etfService.createEtf(etf, userEmail);
 
         try {
-            snapshotService.createSnapshot(userEmail, TriggerAction.ETF_CREATED);
+            String details = String.format("%s (%s)", createdEtf.getTicker(), createdEtf.getName());
+            snapshotService.createSnapshot(userEmail, TriggerAction.ETF_CREATED, details);
         } catch (Exception e) {
             System.err.println("Failed to create portfolio snapshot: " + e.getMessage());
         }
@@ -57,7 +58,8 @@ public class EtfController {
         Etf updatedEtf = etfService.updateEtf(id, etf, userEmail);
 
         try {
-            snapshotService.createSnapshot(userEmail, TriggerAction.ETF_UPDATED);
+            String details = String.format("%s (%s)", updatedEtf.getTicker(), updatedEtf.getName());
+            snapshotService.createSnapshot(userEmail, TriggerAction.ETF_UPDATED, details);
         } catch (Exception e) {
             System.err.println("Failed to create portfolio snapshot: " + e.getMessage());
         }
@@ -68,10 +70,12 @@ public class EtfController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEtf(@PathVariable Long id, Authentication authentication) {
         String userEmail = authentication.getName();
+        Etf etf = etfService.getEtfById(id, userEmail);
         etfService.deleteEtf(id, userEmail);
 
         try {
-            snapshotService.createSnapshot(userEmail, TriggerAction.ETF_DELETED);
+            String details = etf != null ? String.format("%s (%s)", etf.getTicker(), etf.getName()) : "Unknown ETF";
+            snapshotService.createSnapshot(userEmail, TriggerAction.ETF_DELETED, details);
         } catch (Exception e) {
             System.err.println("Failed to create portfolio snapshot: " + e.getMessage());
         }
