@@ -325,7 +325,7 @@ function AssetList() {
                 onClick={exportToJSON}
                 title="Export complete portfolio snapshot including ETFs, transactions, assets, and settings"
               >
-                📋 Export Portfolio (JSON)
+                Export Portfolio
               </button>
             </div>
           </div>
@@ -373,18 +373,18 @@ function AssetList() {
                         <td>{version.triggerAction || 'UNKNOWN'}</td>
                         <td>
                           <button 
-                            className="version-action-button download"
+                            className="download-button-small"
                             onClick={() => downloadVersion(version)}
                             title="Download this version"
                           >
-                            ⬇️ Download
+                            Download
                           </button>
                           <button 
-                            className="version-action-button delete"
+                            className="delete-button-small"
                             onClick={() => deleteVersion(version.id)}
                             title="Delete this version"
                           >
-                            🗑️ Delete
+                            Delete
                           </button>
                         </td>
                       </tr>
