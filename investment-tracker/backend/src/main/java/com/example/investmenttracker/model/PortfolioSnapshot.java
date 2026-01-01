@@ -25,12 +25,13 @@ public class PortfolioSnapshot {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    private String triggerAction; // e.g., "ETF_CREATED", "TRANSACTION_ADDED", "ASSET_UPDATED", "MANUAL_EXPORT"
+    @Enumerated(EnumType.STRING)
+    private TriggerAction triggerAction;
 
     public PortfolioSnapshot() {
     }
 
-    public PortfolioSnapshot(User user, String versionId, String portfolioJson, String triggerAction) {
+    public PortfolioSnapshot(User user, String versionId, String portfolioJson, TriggerAction triggerAction) {
         this.user = user;
         this.versionId = versionId;
         this.portfolioJson = portfolioJson;
@@ -86,11 +87,15 @@ public class PortfolioSnapshot {
         this.createdAt = createdAt;
     }
 
-    public String getTriggerAction() {
+    public TriggerAction getTriggerAction() {
         return triggerAction;
     }
 
-    public void setTriggerAction(String triggerAction) {
+    public void setTriggerAction(TriggerAction triggerAction) {
         this.triggerAction = triggerAction;
+    }
+
+    public String getTriggerActionDisplay() {
+        return triggerAction != null ? triggerAction.getDisplayName() : "Unknown";
     }
 }

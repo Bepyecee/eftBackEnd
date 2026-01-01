@@ -1,6 +1,7 @@
 package com.example.investmenttracker.controller;
 
 import com.example.investmenttracker.model.PortfolioSnapshot;
+import com.example.investmenttracker.model.TriggerAction;
 import com.example.investmenttracker.service.PortfolioSnapshotService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -43,7 +44,14 @@ public class PortfolioSnapshotController {
     public ResponseEntity<PortfolioSnapshot> createSnapshot(@RequestBody Map<String, String> request,
             Authentication authentication) {
         String userEmail = authentication.getName();
-        String triggerAction = request.getOrDefault("triggerAction", "MANUAL");
+        String triggerActionStr = request.getOrDefault("triggerAction", "MANUAL_EXPORT");
+
+        TriggerAction triggerAction;
+        try {
+            triggerAction = TriggerAction.valueOf(triggerActionStr);
+        } catch (IllegalArgumentException e) {
+            triggerAction = TriggerAction.MANUAL_EXPORT;
+        }
 
         PortfolioSnapshot snapshot = snapshotService.createSnapshot(userEmail, triggerAction);
         return ResponseEntity.status(201).body(snapshot);
@@ -55,7 +63,14 @@ public class PortfolioSnapshotController {
         String userEmail = authentication.getName();
         String versionId = request.get("versionId");
         String portfolioJson = request.get("portfolioJson");
-        String triggerAction = request.getOrDefault("triggerAction", "MANUAL_EXPORT");
+        String triggerActionStr = request.getOrDefault("triggerAction", "MANUAL_EXPORT");
+
+        TriggerAction triggerAction;
+        try {
+            triggerAction = TriggerAction.valueOf(triggerActionStr);
+        } catch (IllegalArgumentException e) {
+            triggerAction = TriggerAction.MANUAL_EXPORT;
+        }
 
         if (versionId == null || portfolioJson == null) {
             return ResponseEntity.badRequest().build();
