@@ -1,0 +1,134 @@
+package com.example.investmenttracker.service;
+
+import com.example.investmenttracker.model.PortfolioSnapshot;
+import com.example.investmenttracker.model.User;
+import com.example.investmenttracker.persistence.PortfolioSnapshotRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@Service
+@Transactional
+public class PortfolioSnapshotService {
+
+    @Autowired
+    private PortfolioSnapshotRepository snapshotRepository;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private EtfService etfService;
+
+    @Autowired
+    private AssetService assetService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    /**
+     * Generate a version identifier timestamp
+     */
+    public String generateVersionId() {
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+    }
+
+    /**
+     * Create and save a portfolio snapshot
+     */
+    public PortfolioSnapshot createSnapshot(String userEmail, String triggerAction) {
+        User user = userService.getCurrentUser(userEmail);
+        String versionId = generateVersionId();
+
+        try {
+            // Build portfolio data
+            Map<String, Object> portfolioData = buildPortfolioData(userEmail);
+            String portfolioJson = objectMapper.writeValueAsString(portfolioData);
+
+            PortfolioSnapshot snapshot = new PortfolioSnapshot(user, versionId, portfolioJson, triggerAction);
+            return snapshotRepository.save(snapshot);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create portfolio snapshot", e);
+        }
+    }
+
+    /**
+     * Create a snapshot with a specific version ID (for manual exports)
+     */
+    public PortfolioSnapshot createSnapshotWithVersionId(String userEmail, String versionId, String portfolioJson,
+            String triggerAction) {
+        User user = userService.getCurrentUser(userEmail);
+
+        // Check if version already exists
+        if (snapshotRepository.findByVersionId(versionId).isPresent()) {
+            // Update existing
+            PortfolioSnapshot existing = snapshotRepository.findByVersionId(versionId).get();
+            existing.setPortfolioJson(portfolioJson);
+            existing.setTriggerAction(triggerAction);
+            return snapshotRepository.save(existing);
+        }
+
+        PortfolioSnapshot snapshot = new PortfolioSnapshot(user, versionId, portfolioJson, triggerAction);
+        return snapshotRepository.save(snapshot);
+    }
+
+    /**
+     * Get all snapshots for a user
+     */
+    public List<PortfolioSnapshot> getUserSnapshots(String userEmail) {
+        User user = userService.getCurrentUser(userEmail);
+        return snapshotRepository.findByUserIdOrderByCreatedAtDesc(user.getId());
+    }
+
+    /**
+     * Get a specific snapshot by ID
+     */
+    public PortfolioSnapshot getSnapshotById(Long id, String userEmail) {
+        User user = userService.getCurrentUser(userEmail);
+        return snapshotRepository.findByIdAndUserId(id, user.getId()).orElse(null);
+    }
+
+    /**
+     * Get a snapshot by version ID
+     */
+    public PortfolioSnapshot getSnapshotByVersionId(String versionId) {
+        return snapshotRepository.findByVersionId(versionId).orElse(null);
+    }
+
+    /**
+     * Build portfolio data for snapshot
+     */
+    private Map<String, Object> buildPortfolioData(String userEmail) {
+        Map<String, Object> data = new HashMap<>();
+
+        // Get all ETFs with their transactions
+        data.put("etfs", etfService.getAllEtfs(userEmail));
+
+        // Get all assets
+        data.put("assets", assetService.getAllAssets(userEmail));
+
+        // Add metadata
+        Map<String, Object> metadata = new HashMap<>();
+        metadata.put("userEmail", userEmail);
+        metadata.put("timestamp", LocalDateTime.now().toString());
+        data.put("metadata", metadata);
+
+        return data;
+    }
+
+    /**
+     * Delete a snapshot
+     */
+    public void deleteSnapshot(Long id, String userEmail) {
+        User user = userService.getCurrentUser(userEmail);
+        snapshotRepository.findByIdAndUserId(id, user.getId())
+                .ifPresent(snapshotRepository::delete);
+    }
+}

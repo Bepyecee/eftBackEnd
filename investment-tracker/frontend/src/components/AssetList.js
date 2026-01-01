@@ -1,12 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import etfService from '../services/etfService';
 import etfPriceService from '../services/etfPriceService';
-import messages from '../constants/messages';
+import { axiosInstance } from '../services/authService';
 import './AssetList.css';
 
 function AssetList() {
   const [allocationStrategyCollapsed, setAllocationStrategyCollapsed] = useState(false);
   const [managePortfolioCollapsed, setManagePortfolioCollapsed] = useState(false);
+  const [portfolioVersionsCollapsed, setPortfolioVersionsCollapsed] = useState(false);
+  const [portfolioVersions, setPortfolioVersions] = useState([]);
+  const [loadingVersions, setLoadingVersions] = useState(false);
+
+  useEffect(() => {
+    loadPortfolioVersions();
+    
+    // Poll for new versions every 5 seconds
+    const interval = setInterval(() => {
+      loadPortfolioVersions();
+    }, 5000);
+    
+    return () => clearInterval(interval);
+  }, []);
+
+  const loadPortfolioVersions = async () => {
+    try {
+      setLoadingVersions(true);
+      console.log('Loading portfolio versions...');
+      
+      const response = await axiosInstance.get('/portfolio-snapshots');
+      console.log('Loaded versions:', response.data);
+      setPortfolioVersions(response.data);
+    } catch (error) {
+      console.error('Error loading portfolio versions:', error);
+    } finally {
+      setLoadingVersions(false);
+    }
+  };
 
   const generateExportIdentifier = () => {
     const now = new Date();
@@ -163,6 +192,21 @@ function AssetList() {
       // Convert to JSON string
       const jsonString = JSON.stringify(portfolioExport, null, 2);
       
+      // Save to database
+      try {
+        await axiosInstance.post('/portfolio-snapshots/with-data', {
+          versionId: identifier,
+          portfolioJson: jsonString,
+          triggerAction: 'MANUAL_EXPORT'
+        });
+        
+        // Reload versions list
+        await loadPortfolioVersions();
+      } catch (dbError) {
+        console.error('Error saving to database:', dbError);
+        // Continue with download even if database save fails
+      }
+      
       // Create blob and download
       const blob = new Blob([jsonString], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
@@ -180,6 +224,52 @@ function AssetList() {
     } catch (error) {
       console.error('Error exporting portfolio:', error);
       alert('Failed to export portfolio. Please try again.');
+    }
+  };
+
+  const formatVersionDate = (dateString) => {
+    if (!dateString) return '-';
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
+  };
+
+  const downloadVersion = async (version) => {
+    try {
+      const portfolioData = JSON.parse(version.portfolioJson);
+      const jsonString = JSON.stringify(portfolioData, null, 2);
+      
+      const blob = new Blob([jsonString], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Portfolio_Export_${version.versionId}.json`;
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error downloading version:', error);
+      alert('Failed to download portfolio version.');
+    }
+  };
+
+  const deleteVersion = async (versionId) => {
+    if (!window.confirm('Are you sure you want to delete this portfolio version?')) {
+      return;
+    }
+    
+    try {
+      await axiosInstance.delete(`/portfolio-snapshots/${versionId}`);
+      await loadPortfolioVersions();
+    } catch (error) {
+      console.error('Error deleting version:', error);
+      alert('Failed to delete portfolio version.');
     }
   };
 
@@ -237,6 +327,71 @@ function AssetList() {
               >
                 📋 Export Portfolio (JSON)
               </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="allocation-strategy-section">
+        <div className="section-header">
+          <div className="section-title-with-toggle">
+            <h3>Portfolio Versions</h3>
+            <button 
+              className="section-toggle-button"
+              onClick={() => setPortfolioVersionsCollapsed(!portfolioVersionsCollapsed)}
+              title={portfolioVersionsCollapsed ? 'Expand section' : 'Collapse section'}
+            >
+              {portfolioVersionsCollapsed ? '▼' : '▲'}
+            </button>
+            <div className="section-summary-inline">
+              <span>View and manage historical portfolio snapshots ({portfolioVersions.length} versions)</span>
+            </div>
+          </div>
+        </div>
+        {!portfolioVersionsCollapsed && (
+          <div className="allocation-strategy-content">
+            <div className="portfolio-versions-content">
+              {loadingVersions ? (
+                <p>Loading versions...</p>
+              ) : portfolioVersions.length === 0 ? (
+                <p>No portfolio versions saved yet. Export your portfolio to create the first version.</p>
+              ) : (
+                <table className="versions-table">
+                  <thead>
+                    <tr>
+                      <th>Version ID</th>
+                      <th>Created</th>
+                      <th>Trigger</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {portfolioVersions.map(version => (
+                      <tr key={version.id}>
+                        <td><code>{version.versionId}</code></td>
+                        <td>{formatVersionDate(version.createdAt)}</td>
+                        <td>{version.triggerAction || 'UNKNOWN'}</td>
+                        <td>
+                          <button 
+                            className="version-action-button download"
+                            onClick={() => downloadVersion(version)}
+                            title="Download this version"
+                          >
+                            ⬇️ Download
+                          </button>
+                          <button 
+                            className="version-action-button delete"
+                            onClick={() => deleteVersion(version.id)}
+                            title="Delete this version"
+                          >
+                            🗑️ Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
           </div>
         )}

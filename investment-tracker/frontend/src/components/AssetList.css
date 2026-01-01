@@ -121,6 +121,91 @@
   transform: translateY(0);
 }
 
+/* Portfolio Versions Section */
+.portfolio-versions-content {
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.portfolio-versions-content p {
+  color: #666;
+  margin: 0;
+}
+
+.versions-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.versions-table thead {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.versions-table th {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.versions-table tbody tr {
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s;
+}
+
+.versions-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.versions-table td {
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+}
+
+.versions-table code {
+  background: #f0f0f0;
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+}
+
+.version-action-button {
+  padding: 0.4rem 0.8rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+  margin-right: 0.5rem;
+}
+
+.version-action-button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.version-action-button:active {
+  transform: translateY(0);
+}
+
+.version-action-button.download {
+  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+  color: white;
+}
+
+.version-action-button.delete {
+  background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+  color: white;
+}
+
 .not-implemented-banner {
   background: white;
   border: 1px solid #e0e0e0;
@@ -235,6 +320,53 @@
 
 [data-theme="trading-terminal"] .manage-portfolio-content .export-button:hover {
   box-shadow: 0 4px 12px rgba(0, 188, 212, 0.4);
+}
+
+[data-theme="trading-terminal"] .portfolio-versions-content {
+  background: #131722;
+  border: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .portfolio-versions-content p {
+  color: #787b86;
+}
+
+[data-theme="trading-terminal"] .versions-table {
+  background: #1e222d;
+  border: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .versions-table thead {
+  background: #131722;
+}
+
+[data-theme="trading-terminal"] .versions-table th {
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .versions-table tbody tr {
+  border-bottom: 1px solid #2a2e39;
+}
+
+[data-theme="trading-terminal"] .versions-table tbody tr:hover {
+  background-color: #2a2e39;
+}
+
+[data-theme="trading-terminal"] .versions-table td {
+  color: #d1d4dc;
+}
+
+[data-theme="trading-terminal"] .versions-table code {
+  background: #2a2e39;
+  color: #00bcd4;
+}
+
+[data-theme="trading-terminal"] .version-action-button.download {
+  background: linear-gradient(135deg, #00bcd4 0%, #0097a7 100%);
+}
+
+[data-theme="trading-terminal"] .version-action-button.delete {
+  background: linear-gradient(135deg, #ff5252 0%, #e53935 100%);
 }
 
 [data-theme="trading-terminal"] .not-implemented-banner p {
