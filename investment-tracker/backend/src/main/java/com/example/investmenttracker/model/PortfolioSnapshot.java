@@ -34,7 +34,8 @@ public class PortfolioSnapshot {
     public PortfolioSnapshot() {
     }
 
-    public PortfolioSnapshot(User user, String versionId, String portfolioJson, TriggerAction triggerAction, String changeDetails) {
+    public PortfolioSnapshot(User user, String versionId, String portfolioJson, TriggerAction triggerAction,
+            String changeDetails) {
         this.user = user;
         this.versionId = versionId;
         this.portfolioJson = portfolioJson;

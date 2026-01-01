@@ -47,10 +47,10 @@ public class EtfTransactionController {
         try {
             String userEmail = authentication.getName();
             String details = String.format("%s: %s %.3f units @ %s",
-                createdTransaction.getEtf().getTicker(),
-                createdTransaction.getTransactionType(),
-                createdTransaction.getUnitsPurchased(),
-                createdTransaction.getTransactionDate());
+                    createdTransaction.getEtf().getTicker(),
+                    createdTransaction.getTransactionType(),
+                    createdTransaction.getUnitsPurchased(),
+                    createdTransaction.getTransactionDate());
             snapshotService.createSnapshot(userEmail, TriggerAction.TRANSACTION_ADDED, details);
         } catch (Exception e) {
             // Log but don't fail the transaction creation
@@ -71,10 +71,10 @@ public class EtfTransactionController {
         try {
             String userEmail = authentication.getName();
             String details = String.format("%s: %s %.3f units @ %s",
-                updatedTransaction.getEtf().getTicker(),
-                updatedTransaction.getTransactionType(),
-                updatedTransaction.getUnitsPurchased(),
-                updatedTransaction.getTransactionDate());
+                    updatedTransaction.getEtf().getTicker(),
+                    updatedTransaction.getTransactionType(),
+                    updatedTransaction.getUnitsPurchased(),
+                    updatedTransaction.getTransactionDate());
             snapshotService.createSnapshot(userEmail, TriggerAction.TRANSACTION_UPDATED, details);
         } catch (Exception e) {
             System.err.println("Failed to create portfolio snapshot: " + e.getMessage());
@@ -91,8 +91,7 @@ public class EtfTransactionController {
         // Create portfolio snapshot
         try {
             String userEmail = authentication.getName();
-            String details = transaction != null ? 
-                String.format("%s: %s %.3f units",
+            String details = transaction != null ? String.format("%s: %s %.3f units",
                     transaction.getEtf().getTicker(),
                     transaction.getTransactionType(),
                     transaction.getUnitsPurchased()) : "Unknown transaction";

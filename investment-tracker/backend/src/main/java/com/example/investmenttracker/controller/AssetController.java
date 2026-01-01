@@ -45,7 +45,8 @@ public class AssetController {
         Asset createdAsset = assetService.addAsset(asset, userEmail);
 
         try {
-            String details = String.format("%s: %.1f%%", createdAsset.getName(), createdAsset.getAllocationPercentage());
+            String details = String.format("%s: %.1f%%", createdAsset.getName(),
+                    createdAsset.getAllocationPercentage());
             snapshotService.createSnapshot(userEmail, TriggerAction.ASSET_CREATED, details);
         } catch (Exception e) {
             System.err.println("Failed to create portfolio snapshot: " + e.getMessage());
@@ -62,7 +63,8 @@ public class AssetController {
 
         if (updatedAsset != null) {
             try {
-                String details = String.format("%s: %.1f%%", updatedAsset.getName(), updatedAsset.getAllocationPercentage());
+                String details = String.format("%s: %.1f%%", updatedAsset.getName(),
+                        updatedAsset.getAllocationPercentage());
                 snapshotService.createSnapshot(userEmail, TriggerAction.ASSET_UPDATED, details);
             } catch (Exception e) {
                 System.err.println("Failed to create portfolio snapshot: " + e.getMessage());

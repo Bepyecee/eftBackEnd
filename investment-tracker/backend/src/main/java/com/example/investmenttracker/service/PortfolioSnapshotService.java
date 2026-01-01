@@ -53,7 +53,8 @@ public class PortfolioSnapshotService {
             Map<String, Object> portfolioData = buildPortfolioData(userEmail);
             String portfolioJson = objectMapper.writeValueAsString(portfolioData);
 
-            PortfolioSnapshot snapshot = new PortfolioSnapshot(user, versionId, portfolioJson, triggerAction, changeDetails);
+            PortfolioSnapshot snapshot = new PortfolioSnapshot(user, versionId, portfolioJson, triggerAction,
+                    changeDetails);
             return snapshotRepository.save(snapshot);
         } catch (Exception e) {
             throw new RuntimeException("Failed to create portfolio snapshot", e);
@@ -77,7 +78,8 @@ public class PortfolioSnapshotService {
             return snapshotRepository.save(existing);
         }
 
-        PortfolioSnapshot snapshot = new PortfolioSnapshot(user, versionId, portfolioJson, triggerAction, changeDetails);
+        PortfolioSnapshot snapshot = new PortfolioSnapshot(user, versionId, portfolioJson, triggerAction,
+                changeDetails);
         return snapshotRepository.save(snapshot);
     }
 
