@@ -45,7 +45,7 @@ public class PortfolioSnapshotController {
             Authentication authentication) {
         String userEmail = authentication.getName();
         String triggerActionStr = request.getOrDefault("triggerAction", "MANUAL_EXPORT");
-        
+
         TriggerAction triggerAction;
         try {
             triggerAction = TriggerAction.valueOf(triggerActionStr);
@@ -64,7 +64,7 @@ public class PortfolioSnapshotController {
         String versionId = request.get("versionId");
         String portfolioJson = request.get("portfolioJson");
         String triggerActionStr = request.getOrDefault("triggerAction", "MANUAL_EXPORT");
-        
+
         TriggerAction triggerAction;
         try {
             triggerAction = TriggerAction.valueOf(triggerActionStr);
