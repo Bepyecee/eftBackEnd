@@ -9,6 +9,7 @@ function AssetList() {
   const [portfolioVersionsCollapsed, setPortfolioVersionsCollapsed] = useState(false);
   const [portfolioVersions, setPortfolioVersions] = useState([]);
   const [loadingVersions, setLoadingVersions] = useState(false);
+  const [versionsSortConfig, setVersionsSortConfig] = useState({ key: 'createdAt', direction: 'desc' });
 
   useEffect(() => {
     loadPortfolioVersions();
@@ -258,6 +259,48 @@ function AssetList() {
     return displayNames[triggerAction] || triggerAction;
   };
 
+  const handleVersionsSort = (key) => {
+    let direction = 'asc';
+    if (versionsSortConfig.key === key && versionsSortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setVersionsSortConfig({ key, direction });
+  };
+
+  const getSortedVersions = () => {
+    if (!versionsSortConfig.key) return portfolioVersions;
+
+    const sorted = [...portfolioVersions].sort((a, b) => {
+      let aValue = a[versionsSortConfig.key];
+      let bValue = b[versionsSortConfig.key];
+
+      // Handle date comparison
+      if (versionsSortConfig.key === 'createdAt') {
+        aValue = new Date(aValue).getTime();
+        bValue = new Date(bValue).getTime();
+      }
+
+      // Handle null/undefined values
+      if (aValue == null) aValue = '';
+      if (bValue == null) bValue = '';
+
+      // Convert to lowercase for string comparison
+      if (typeof aValue === 'string') aValue = aValue.toLowerCase();
+      if (typeof bValue === 'string') bValue = bValue.toLowerCase();
+
+      if (aValue < bValue) return versionsSortConfig.direction === 'asc' ? -1 : 1;
+      if (aValue > bValue) return versionsSortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    return sorted;
+  };
+
+  const getVersionsSortIndicator = (columnKey) => {
+    if (versionsSortConfig.key !== columnKey) return ' ↕';
+    return versionsSortConfig.direction === 'asc' ? ' ↑' : ' ↓';
+  };
+
   const downloadVersion = async (version) => {
     try {
       const portfolioData = JSON.parse(version.portfolioJson);
@@ -347,15 +390,23 @@ function AssetList() {
                 <table className="versions-table">
                   <thead>
                     <tr>
-                      <th>Version ID</th>
-                      <th>Created</th>
-                      <th>Trigger</th>
-                      <th>Details</th>
+                      <th className="sortable" onClick={() => handleVersionsSort('versionId')}>
+                        Version ID{getVersionsSortIndicator('versionId')}
+                      </th>
+                      <th className="sortable" onClick={() => handleVersionsSort('createdAt')}>
+                        Created{getVersionsSortIndicator('createdAt')}
+                      </th>
+                      <th className="sortable" onClick={() => handleVersionsSort('triggerAction')}>
+                        Trigger{getVersionsSortIndicator('triggerAction')}
+                      </th>
+                      <th className="sortable" onClick={() => handleVersionsSort('changeDetails')}>
+                        Details{getVersionsSortIndicator('changeDetails')}
+                      </th>
                       <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {portfolioVersions.map(version => (
+                    {getSortedVersions().map(version => (
                       <tr key={version.id}>
                         <td><code>{version.versionId}</code></td>
                         <td>{formatVersionDate(version.createdAt)}</td>

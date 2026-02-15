@@ -150,6 +150,16 @@
   color: #333;
 }
 
+.versions-table thead th.sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.15s;
+}
+
+.versions-table thead th.sortable:hover {
+  background-color: #e8e8e8;
+}
+
 .versions-table tbody tr {
   border-bottom: 1px solid #f0f0f0;
   transition: background-color 0.2s;
