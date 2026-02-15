@@ -62,7 +62,7 @@ function Login() {
         </form>
         
         <div className="divider">
-          <span>OR</span>
+          <span>{messages.LOGIN.OR_DIVIDER}</span>
         </div>
         
         <button onClick={handleGoogleLogin} className="google-login-button">
@@ -73,11 +73,11 @@ function Login() {
             <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
             <path fill="none" d="M0 0h48v48H0z"/>
           </svg>
-          Sign in with Google
+          {messages.LOGIN.GOOGLE_SIGN_IN}
         </button>
         
         <div className="dev-credentials">
-          <small>Dev credentials: admin / abc123</small>
+          <small>{messages.LOGIN.DEV_CREDENTIALS}</small>
         </div>
       </div>
     </div>

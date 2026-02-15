@@ -31,7 +31,7 @@ function Settings() {
       setFormData(data);
       setError('');
     } catch (err) {
-      setError('Failed to load settings');
+      setError(messages.SETTINGS.LOAD_ERROR);
       console.error('Error loading settings:', err);
     } finally {
       setLoading(false);
@@ -54,10 +54,10 @@ function Settings() {
       setError('');
       
       await settingsService.updateSettings(formData);
-      setSuccess('Settings saved successfully! Some changes may require application restart.');
+      setSuccess(messages.SETTINGS.SAVE_SUCCESS);
       await loadSettings();
     } catch (err) {
-      setError('Failed to save settings');
+      setError(messages.SETTINGS.SAVE_ERROR);
       console.error('Error saving settings:', err);
     } finally {
       setLoading(false);
@@ -90,7 +90,7 @@ function Settings() {
   };
 
   if (loading && !settings) {
-    return <div className="loading">Loading settings...</div>;
+    return <div className="loading">{messages.GENERIC.LOADING}</div>;
   }
 
   return (
@@ -106,17 +106,17 @@ function Settings() {
         <div className="settings-section">
           <div className="section-header">
             <div className="section-title-with-toggle">
-              <h3>Appearance</h3>
+              <h3>{messages.SETTINGS.APPEARANCE_TITLE}</h3>
               <button 
                 className="section-toggle-button"
                 onClick={() => toggleSection('appearance')}
-                title={expandedSections.appearance ? 'Collapse section' : 'Expand section'}
+                title={expandedSections.appearance ? messages.SETTINGS.COLLAPSE_TOOLTIP : messages.SETTINGS.EXPAND_TOOLTIP}
                 type="button"
               >
                 {expandedSections.appearance ? '▲' : '▼'}
               </button>
               <div className="section-summary-inline">
-                <span>Customize the visual theme of the application.</span>
+                <span>{messages.SETTINGS.APPEARANCE_DESC}</span>
               </div>
             </div>
           </div>
@@ -124,9 +124,9 @@ function Settings() {
             <>
               <div className="form-grid">
                 <div className="form-group full-width">
-                  <label>Theme</label>
+                  <label>{messages.SETTINGS.THEME}</label>
                   <div className="theme-toggle">
-                    <span className={`toggle-label ${theme === 'default' ? 'active' : ''}`}>Light</span>
+                    <span className={`toggle-label ${theme === 'default' ? 'active' : ''}`}>{messages.SETTINGS.THEME_LIGHT}</span>
                     <label className="toggle-switch">
                       <input 
                         type="checkbox" 
@@ -135,7 +135,7 @@ function Settings() {
                       />
                       <span className="toggle-slider"></span>
                     </label>
-                    <span className={`toggle-label ${theme === 'trading-terminal' ? 'active' : ''}`}>Dark</span>
+                    <span className={`toggle-label ${theme === 'trading-terminal' ? 'active' : ''}`}>{messages.SETTINGS.THEME_DARK}</span>
                   </div>
                 </div>
               </div>
@@ -146,17 +146,17 @@ function Settings() {
         <div className="settings-section">
           <div className="section-header">
             <div className="section-title-with-toggle">
-              <h3>Yahoo Finance Configuration</h3>
+              <h3>{messages.SETTINGS.YAHOO_TITLE}</h3>
               <button 
                 className="section-toggle-button"
                 onClick={() => toggleSection('yahooFinance')}
-                title={expandedSections.yahooFinance ? 'Collapse section' : 'Expand section'}
+                title={expandedSections.yahooFinance ? messages.SETTINGS.COLLAPSE_TOOLTIP : messages.SETTINGS.EXPAND_TOOLTIP}
                 type="button"
               >
                 {expandedSections.yahooFinance ? '▲' : '▼'}
               </button>
               <div className="section-summary-inline">
-                <span>Configure how the application fetches and caches stock prices from Yahoo Finance.</span>
+                <span>{messages.SETTINGS.YAHOO_DESC}</span>
               </div>
             </div>
           </div>
@@ -164,7 +164,7 @@ function Settings() {
             <>
               <div className="form-grid">
             <div className="form-group">
-              <label htmlFor="yahooFinanceTimeout">API Timeout (seconds)</label>
+              <label htmlFor="yahooFinanceTimeout">{messages.SETTINGS.YAHOO_TIMEOUT}</label>
               <input
                 type="number"
                 id="yahooFinanceTimeout"
@@ -177,7 +177,7 @@ function Settings() {
             </div>
 
             <div className="form-group">
-              <label htmlFor="yahooFinanceCacheExpirationMinutes">Cache Expiration (minutes)</label>
+              <label htmlFor="yahooFinanceCacheExpirationMinutes">{messages.SETTINGS.YAHOO_CACHE_EXPIRY}</label>
               <input
                 type="number"
                 id="yahooFinanceCacheExpirationMinutes"
@@ -190,7 +190,7 @@ function Settings() {
             </div>
 
             <div className="form-group">
-              <label htmlFor="yahooFinanceCacheMaxSize">Cache Max Size</label>
+              <label htmlFor="yahooFinanceCacheMaxSize">{messages.SETTINGS.YAHOO_CACHE_MAX}</label>
               <input
                 type="number"
                 id="yahooFinanceCacheMaxSize"
@@ -203,14 +203,14 @@ function Settings() {
             </div>
 
             <div className="form-group">
-              <label htmlFor="yahooFinanceDefaultEuropeanSuffix">Default European Suffix</label>
+              <label htmlFor="yahooFinanceDefaultEuropeanSuffix">{messages.SETTINGS.YAHOO_SUFFIX}</label>
               <input
                 type="text"
                 id="yahooFinanceDefaultEuropeanSuffix"
                 name="yahooFinanceDefaultEuropeanSuffix"
                 value={formData.yahooFinanceDefaultEuropeanSuffix || ''}
                 onChange={handleChange}
-                placeholder=".DE"
+                placeholder={messages.SETTINGS.YAHOO_SUFFIX_PLACEHOLDER}
               />
             </div>
           </div>
@@ -221,17 +221,17 @@ function Settings() {
         <div className="settings-section">
           <div className="section-header">
             <div className="section-title-with-toggle">
-              <h3>Logging Configuration</h3>
+              <h3>{messages.SETTINGS.LOGGING_TITLE}</h3>
               <button 
                 className="section-toggle-button"
                 onClick={() => toggleSection('logging')}
-                title={expandedSections.logging ? 'Collapse section' : 'Expand section'}
+                title={expandedSections.logging ? messages.SETTINGS.COLLAPSE_TOOLTIP : messages.SETTINGS.EXPAND_TOOLTIP}
                 type="button"
               >
                 {expandedSections.logging ? '▲' : '▼'}
               </button>
               <div className="section-summary-inline">
-                <span>Control the verbosity of application logging. Changes require application restart.</span>
+                <span>{messages.SETTINGS.LOGGING_DESC}</span>
               </div>
             </div>
           </div>
@@ -239,7 +239,7 @@ function Settings() {
             <>
               <div className="form-grid">
             <div className="form-group">
-              <label htmlFor="loggingLevelRoot">Root Logging Level</label>
+              <label htmlFor="loggingLevelRoot">{messages.SETTINGS.LOGGING_ROOT}</label>
               <select
                 id="loggingLevelRoot"
                 name="loggingLevelRoot"
@@ -255,7 +255,7 @@ function Settings() {
             </div>
 
             <div className="form-group">
-              <label htmlFor="loggingLevelSpring">Spring Framework Level</label>
+              <label htmlFor="loggingLevelSpring">{messages.SETTINGS.LOGGING_SPRING}</label>
               <select
                 id="loggingLevelSpring"
                 name="loggingLevelSpring"
@@ -271,7 +271,7 @@ function Settings() {
             </div>
 
             <div className="form-group">
-              <label htmlFor="loggingLevelApp">Application Level</label>
+              <label htmlFor="loggingLevelApp">{messages.SETTINGS.LOGGING_APP}</label>
               <select
                 id="loggingLevelApp"
                 name="loggingLevelApp"
@@ -293,17 +293,17 @@ function Settings() {
         <div className="settings-section">
           <div className="section-header">
             <div className="section-title-with-toggle">
-              <h3>Cache Configuration</h3>
+              <h3>{messages.SETTINGS.CACHE_TITLE}</h3>
               <button 
                 className="section-toggle-button"
                 onClick={() => toggleSection('cache')}
-                title={expandedSections.cache ? 'Collapse section' : 'Expand section'}
+                title={expandedSections.cache ? messages.SETTINGS.COLLAPSE_TOOLTIP : messages.SETTINGS.EXPAND_TOOLTIP}
                 type="button"
               >
                 {expandedSections.cache ? '▲' : '▼'}
               </button>
               <div className="section-summary-inline">
-                <span>Configure caching behavior. Changes require application restart.</span>
+                <span>{messages.SETTINGS.CACHE_DESC}</span>
               </div>
             </div>
           </div>
@@ -311,30 +311,30 @@ function Settings() {
             <>
               <div className="form-grid">
                 <div className="form-group">
-                  <label htmlFor="cacheType">Cache Type</label>
+                  <label htmlFor="cacheType">{messages.SETTINGS.CACHE_TYPE}</label>
                   <select
                     id="cacheType"
                     name="cacheType"
                     value={formData.cacheType || ''}
                     onChange={handleChange}
                   >
-                    <option value="caffeine">Caffeine</option>
-                    <option value="simple">Simple</option>
-                    <option value="none">None</option>
+                    <option value="caffeine">{messages.SETTINGS.CACHE_CAFFEINE}</option>
+                    <option value="simple">{messages.SETTINGS.CACHE_SIMPLE}</option>
+                    <option value="none">{messages.SETTINGS.CACHE_NONE}</option>
                   </select>
                 </div>
 
                 <div className="form-group full-width">
-                  <label htmlFor="caffeineSpec">Caffeine Specification</label>
+                  <label htmlFor="caffeineSpec">{messages.SETTINGS.CACHE_SPEC}</label>
                   <input
                     type="text"
                     id="caffeineSpec"
                     name="caffeineSpec"
                     value={formData.caffeineSpec || ''}
                     onChange={handleChange}
-                    placeholder="maximumSize=100,expireAfterWrite=30m"
+                    placeholder={messages.SETTINGS.CACHE_SPEC_PLACEHOLDER}
                   />
-                  <small>Format: maximumSize=X,expireAfterWrite=Ym</small>
+                  <small>{messages.SETTINGS.CACHE_SPEC_HELP}</small>
                 </div>
               </div>
             </>
@@ -344,17 +344,17 @@ function Settings() {
         <div className="settings-section">
           <div className="section-header">
             <div className="section-title-with-toggle">
-              <h3>Tax Settings</h3>
+              <h3>{messages.SETTINGS.TAX_TITLE}</h3>
               <button 
                 className="section-toggle-button"
                 onClick={() => toggleSection('tax')}
-                title={expandedSections.tax ? 'Collapse section' : 'Expand section'}
+                title={expandedSections.tax ? messages.SETTINGS.COLLAPSE_TOOLTIP : messages.SETTINGS.EXPAND_TOOLTIP}
                 type="button"
               >
                 {expandedSections.tax ? '▲' : '▼'}
               </button>
               <div className="section-summary-inline">
-                <span>Configure tax calculation parameters.</span>
+                <span>{messages.SETTINGS.TAX_DESC}</span>
               </div>
             </div>
           </div>
@@ -362,7 +362,7 @@ function Settings() {
             <>
               <div className="form-grid">
                 <div className="form-group">
-                  <label htmlFor="etfExitTaxPercentage">ETF Exit Tax Percentage (%)</label>
+                  <label htmlFor="etfExitTaxPercentage">{messages.SETTINGS.TAX_EXIT_PERCENTAGE}</label>
                   <input
                     type="number"
                     id="etfExitTaxPercentage"
@@ -374,7 +374,7 @@ function Settings() {
                     min="0"
                     max="100"
                   />
-                  <small>Percentage applied to calculate exit tax on ETF deemed/actual disposal</small>
+                  <small>{messages.SETTINGS.TAX_EXIT_HELP}</small>
                 </div>
               </div>
             </>
@@ -383,10 +383,10 @@ function Settings() {
 
         <div className="form-actions">
           <button type="button" className="cancel-button" onClick={handleReset} disabled={loading}>
-            Reset
+            {messages.SETTINGS.RESET}
           </button>
           <button type="submit" className="submit-button" disabled={loading}>
-            {loading ? 'Saving...' : 'Save Settings'}
+            {loading ? messages.SETTINGS.SAVING : messages.GENERIC.SAVE}
           </button>
         </div>
       </form>

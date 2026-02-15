@@ -29,7 +29,7 @@ function Dashboard() {
       <div className="dashboard-header">
         <h1>
           {currentUser 
-            ? `Welcome, ${currentUser.name || currentUser.email}!` 
+            ? messages.DASHBOARD_EXTRA.WELCOME_USER(currentUser.name || currentUser.email) 
             : messages.DASHBOARD.WELCOME}
         </h1>
         <p>{messages.DASHBOARD.OVERVIEW}</p>

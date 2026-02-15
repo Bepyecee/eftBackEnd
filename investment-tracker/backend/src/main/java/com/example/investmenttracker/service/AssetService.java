@@ -4,8 +4,9 @@ import com.example.investmenttracker.model.Asset;
 import com.example.investmenttracker.model.User;
 import com.example.investmenttracker.persistence.JpaAssetRepository;
 import com.example.investmenttracker.storage.FileStorage;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -13,24 +14,28 @@ import java.util.stream.Collectors;
 
 @Service
 public class AssetService {
+
     private final FileStorage fileStorage;
+    private final UserService userService;
+    private final JpaAssetRepository jpaAssetRepository;
     private final List<Asset> cache = new ArrayList<>();
 
-    @Autowired(required = false)
-    private JpaAssetRepository jpaAssetRepository;
-
-    @Autowired
-    private UserService userService;
-
-    public AssetService(FileStorage fileStorage) {
+    public AssetService(FileStorage fileStorage,
+            UserService userService,
+            @Nullable JpaAssetRepository jpaAssetRepository) {
         this.fileStorage = fileStorage;
+        this.userService = userService;
+        this.jpaAssetRepository = jpaAssetRepository;
+    }
+
+    private boolean isUsingJpa() {
+        return jpaAssetRepository != null;
     }
 
     public List<Asset> getAllAssets(String userEmail) {
         User user = userService.getCurrentUser(userEmail);
 
-        // Use JPA repository if available
-        if (jpaAssetRepository != null) {
+        if (isUsingJpa()) {
             return jpaAssetRepository.findByUserId(user.getId());
         }
 
@@ -48,7 +53,7 @@ public class AssetService {
     public Asset getAssetById(Long id, String userEmail) {
         User user = userService.getCurrentUser(userEmail);
 
-        if (jpaAssetRepository != null) {
+        if (isUsingJpa()) {
             return jpaAssetRepository.findByIdAndUserId(id, user.getId()).orElse(null);
         }
 
@@ -62,7 +67,7 @@ public class AssetService {
         User user = userService.findOrCreateUser(userEmail, "local", userEmail);
         asset.setUser(user);
 
-        if (jpaAssetRepository != null) {
+        if (isUsingJpa()) {
             return jpaAssetRepository.save(asset);
         }
 
@@ -76,7 +81,7 @@ public class AssetService {
     public Asset updateAsset(Long id, Asset asset, String userEmail) {
         User user = userService.getCurrentUser(userEmail);
 
-        if (jpaAssetRepository != null) {
+        if (isUsingJpa()) {
             Asset existing = jpaAssetRepository.findByIdAndUserId(id, user.getId()).orElse(null);
             if (existing == null) {
                 return null;
@@ -101,7 +106,7 @@ public class AssetService {
     public boolean deleteAsset(Long assetId, String userEmail) {
         User user = userService.getCurrentUser(userEmail);
 
-        if (jpaAssetRepository != null) {
+        if (isUsingJpa()) {
             Asset asset = jpaAssetRepository.findByIdAndUserId(assetId, user.getId()).orElse(null);
             if (asset == null) {
                 return false;

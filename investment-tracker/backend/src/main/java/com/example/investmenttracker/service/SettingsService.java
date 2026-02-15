@@ -1,7 +1,8 @@
 package com.example.investmenttracker.service;
 
 import com.example.investmenttracker.model.ApplicationSettings;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.PropertiesPropertySource;
@@ -15,6 +16,11 @@ import java.util.Properties;
 
 @Service
 public class SettingsService {
+
+    private static final Logger logger = LoggerFactory.getLogger(SettingsService.class);
+    private static final String LOCAL_PROPERTIES_PATH = "src/main/resources/application-local.properties";
+
+    private final ConfigurableEnvironment environment;
 
     @Value("${yahoo.finance.timeout:10}")
     private Integer yahooFinanceTimeout;
@@ -46,10 +52,9 @@ public class SettingsService {
     @Value("${tax.etf-exit-tax-percentage:38.0}")
     private Double etfExitTaxPercentage;
 
-    @Autowired
-    private ConfigurableEnvironment environment;
-
-    private static final String LOCAL_PROPERTIES_PATH = "src/main/resources/application-local.properties";
+    public SettingsService(ConfigurableEnvironment environment) {
+        this.environment = environment;
+    }
 
     public ApplicationSettings getSettings() {
         ApplicationSettings settings = new ApplicationSettings();
@@ -76,67 +81,48 @@ public class SettingsService {
     }
 
     public ApplicationSettings updateSettings(ApplicationSettings settings) throws IOException {
-        Properties props = new Properties();
+        Properties props = loadExistingProperties();
 
-        // Load existing properties from application-local.properties
+        // Update all non-null settings
+        setIfPresent(props, "yahoo.finance.timeout", settings.getYahooFinanceTimeout());
+        setIfPresent(props, "yahoo.finance.cache-expiration-minutes", settings.getYahooFinanceCacheExpirationMinutes());
+        setIfPresent(props, "yahoo.finance.cache-max-size", settings.getYahooFinanceCacheMaxSize());
+        setIfPresent(props, "yahoo.finance.default-european-suffix", settings.getYahooFinanceDefaultEuropeanSuffix());
+        setIfPresent(props, "logging.level.root", settings.getLoggingLevelRoot());
+        setIfPresent(props, "logging.level.org.springframework", settings.getLoggingLevelSpring());
+        setIfPresent(props, "logging.level.com.example.investmenttracker", settings.getLoggingLevelApp());
+        setIfPresent(props, "spring.cache.type", settings.getCacheType());
+        setIfPresent(props, "spring.cache.caffeine.spec", settings.getCaffeineSpec());
+        setIfPresent(props, "tax.etf-exit-tax-percentage", settings.getEtfExitTaxPercentage());
+
+        saveProperties(props);
+        updateEnvironment(props);
+
+        return getSettings();
+    }
+
+    private Properties loadExistingProperties() {
+        Properties props = new Properties();
         try {
             if (Files.exists(Paths.get(LOCAL_PROPERTIES_PATH))) {
                 props.load(Files.newInputStream(Paths.get(LOCAL_PROPERTIES_PATH)));
             }
         } catch (IOException e) {
-            // If file doesn't exist, start with empty properties
+            logger.warn("Could not load existing properties, starting fresh: {}", e.getMessage());
         }
+        return props;
+    }
 
-        // Update Yahoo Finance settings
-        if (settings.getYahooFinanceTimeout() != null) {
-            props.setProperty("yahoo.finance.timeout", settings.getYahooFinanceTimeout().toString());
+    private void setIfPresent(Properties props, String key, Object value) {
+        if (value != null) {
+            props.setProperty(key, value.toString());
         }
-        if (settings.getYahooFinanceCacheExpirationMinutes() != null) {
-            props.setProperty("yahoo.finance.cache-expiration-minutes",
-                    settings.getYahooFinanceCacheExpirationMinutes().toString());
-        }
-        if (settings.getYahooFinanceCacheMaxSize() != null) {
-            props.setProperty("yahoo.finance.cache-max-size", settings.getYahooFinanceCacheMaxSize().toString());
-        }
-        if (settings.getYahooFinanceDefaultEuropeanSuffix() != null) {
-            props.setProperty("yahoo.finance.default-european-suffix",
-                    settings.getYahooFinanceDefaultEuropeanSuffix());
-        }
+    }
 
-        // Update Logging settings
-        if (settings.getLoggingLevelRoot() != null) {
-            props.setProperty("logging.level.root", settings.getLoggingLevelRoot());
-        }
-        if (settings.getLoggingLevelSpring() != null) {
-            props.setProperty("logging.level.org.springframework", settings.getLoggingLevelSpring());
-        }
-        if (settings.getLoggingLevelApp() != null) {
-            props.setProperty("logging.level.com.example.investmenttracker", settings.getLoggingLevelApp());
-        }
-
-        // Update Cache settings
-        if (settings.getCacheType() != null) {
-            props.setProperty("spring.cache.type", settings.getCacheType());
-        }
-        if (settings.getCaffeineSpec() != null) {
-            props.setProperty("spring.cache.caffeine.spec", settings.getCaffeineSpec());
-        }
-
-        // Update Tax settings
-        if (settings.getEtfExitTaxPercentage() != null) {
-            props.setProperty("tax.etf-exit-tax-percentage", settings.getEtfExitTaxPercentage().toString());
-        }
-
-        // Save to application-local.properties
+    private void saveProperties(Properties props) throws IOException {
         try (FileOutputStream out = new FileOutputStream(LOCAL_PROPERTIES_PATH)) {
             props.store(out, "Updated by Settings API");
         }
-
-        // Note: Changes will take effect on next application restart
-        // To apply immediately, you would need to update the Environment dynamically
-        updateEnvironment(props);
-
-        return getSettings();
     }
 
     private void updateEnvironment(Properties props) {

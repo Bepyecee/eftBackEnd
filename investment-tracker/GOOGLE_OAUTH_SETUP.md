@@ -1,86 +1,64 @@
-# Google OAuth2 Authentication Setup
+# Google OAuth2 Setup
 
-This application now supports Google OAuth2 authentication in addition to traditional username/password login.
+## 1. Create Credentials
 
-## Setup Instructions
+1. Open [Google Cloud Console](https://console.cloud.google.com/)
+2. Create or select a project
+3. **APIs & Services → Library** → enable **Google Identity Services** (the legacy Google+ API is no longer required)
+4. **APIs & Services → Credentials → Create Credentials → OAuth 2.0 Client ID**
+5. Configure the **OAuth consent screen** if prompted:
+   - User type: External
+   - Scopes: `profile`, `email`
+6. Client settings:
 
-### 1. Create Google OAuth2 Credentials
+| Field | Value |
+|-------|-------|
+| Application type | Web application |
+| Authorized JS origins | `http://localhost:3000`, `http://localhost:8080` |
+| Authorized redirect URIs | `http://localhost:8080/login/oauth2/code/google` |
 
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project or select an existing one
-3. Enable the Google+ API:
-   - Go to "APIs & Services" > "Library"
-   - Search for "Google+ API"
-   - Click "Enable"
+7. Copy the **Client ID** and **Client Secret**
 
-4. Create OAuth2 credentials:
-   - Go to "APIs & Services" > "Credentials"
-   - Click "Create Credentials" > "OAuth 2.0 Client ID"
-   - If prompted, configure the OAuth consent screen:
-     - Choose "External" user type
-     - Fill in required fields (App name, User support email, Developer contact)
-     - Add scopes: `profile` and `email`
-     - Save and continue
-   
-5. Configure the OAuth2 Client:
-   - Application type: "Web application"
-   - Name: "Investment Tracker" (or your preferred name)
-   - Authorized JavaScript origins:
-     - `http://localhost:3000`
-     - `http://localhost:8080`
-   - Authorized redirect URIs:
-     - `http://localhost:8080/login/oauth2/code/google`
-   - Click "Create"
-   
-6. Copy the generated Client ID and Client Secret
+## 2. Configure Backend
 
-### 2. Configure the Backend
-
-Update the `backend/src/main/resources/application.properties` file:
+Add your credentials to `backend/src/main/resources/application-local.properties`:
 
 ```properties
-spring.security.oauth2.client.registration.google.client-id=YOUR_ACTUAL_CLIENT_ID_HERE
-spring.security.oauth2.client.registration.google.client-secret=YOUR_ACTUAL_CLIENT_SECRET_HERE
+spring.security.oauth2.client.registration.google.client-id=YOUR_CLIENT_ID
+spring.security.oauth2.client.registration.google.client-secret=YOUR_CLIENT_SECRET
 ```
 
-Replace `YOUR_ACTUAL_CLIENT_ID_HERE` and `YOUR_ACTUAL_CLIENT_SECRET_HERE` with the credentials you obtained from Google Cloud Console.
+> **Never commit real credentials.** Use environment variables or a `.properties.example` file.
 
-### 3. Start the Application
+## 3. Auth Flow
 
-1. Start the backend:
-   ```bash
-   cd backend
-   mvn spring-boot:run
-   ```
+```
+Browser → "Sign in with Google" → /oauth2/authorization/google (backend)
+  → Google login page → callback to backend
+  → OAuth2LoginSuccessHandler generates JWT
+  → redirect to /oauth2/callback?token=<jwt> (frontend)
+  → token stored in localStorage → dashboard
+```
 
-2. Start the frontend:
-   ```bash
-   cd frontend
-   npm start
-   ```
+## 4. Verify
 
-### 4. Test Google Login
+1. Start backend (`mvn spring-boot:run`) and frontend (`npm start`)
+2. Go to `http://localhost:3000/login` → click **Sign in with Google**
+3. After Google authentication you should land on the dashboard
 
-1. Navigate to `http://localhost:3000/login`
-2. Click the "Sign in with Google" button
-3. You'll be redirected to Google's login page
-4. After successful authentication, you'll be redirected back to the application dashboard
+## Troubleshooting
 
-## How It Works
+| Problem | Fix |
+|---------|-----|
+| `redirect_uri_mismatch` | Ensure the redirect URI in Google Console matches exactly |
+| Token not stored | Check browser console for CORS or network errors |
+| 401 after login | JWT secret may differ between restarts — set a fixed `jwt.secret` in properties |
 
-1. **Frontend**: When user clicks "Sign in with Google", they're redirected to `/oauth2/authorization/google` on the backend
-2. **Backend**: Spring Security handles the OAuth2 flow with Google
-3. **Google**: User authenticates with Google
-4. **Backend**: After successful authentication, the `OAuth2LoginSuccessHandler` generates a JWT token
-5. **Frontend**: User is redirected to `/oauth2/callback` with the JWT token in the URL
-6. **Frontend**: The token is stored in localStorage and user is redirected to the dashboard
+## Production Checklist
 
-## Security Notes
-
-- The OAuth2 client secret should be kept secure and never committed to version control
-- For production, use environment variables or a secure configuration management system
-- Consider using BCryptPasswordEncoder instead of NoOpPasswordEncoder for traditional login
-- Update CORS and redirect URLs for your production domain
+- Store secrets via environment variables or a vault
+- Update origins and redirect URIs to your production domain
+- Use BCrypt for any traditional password accounts
 
 ## Troubleshooting
 

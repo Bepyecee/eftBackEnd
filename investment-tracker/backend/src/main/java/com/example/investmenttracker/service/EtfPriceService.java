@@ -21,6 +21,9 @@ import java.util.stream.Collectors;
 public class EtfPriceService {
 
     private static final Logger logger = LoggerFactory.getLogger(EtfPriceService.class);
+    private static final String DEFAULT_CURRENCY = "EUR";
+    private static final String PRICE_SOURCE = "Yahoo Finance";
+    private static final int CACHE_FRESHNESS_MINUTES = 30;
 
     private final EtfPriceRepository etfPriceRepository;
     private final YahooFinanceService yahooFinanceService;
@@ -105,17 +108,17 @@ public class EtfPriceService {
             if (response == null || response.getChart() == null ||
                     response.getChart().getResult() == null ||
                     response.getChart().getResult().isEmpty()) {
-                throw new RuntimeException("Invalid response from API for ticker: " + ticker);
+                throw new RuntimeException("price.invalid.response: " + ticker);
             }
 
             YahooFinanceResponse.Meta meta = response.getChart().getResult().get(0).getMeta();
 
             if (meta == null || meta.getRegularMarketPrice() == null) {
-                throw new RuntimeException("No price data available for ticker: " + ticker);
+                throw new RuntimeException("price.no.data: " + ticker);
             }
 
             BigDecimal price = BigDecimal.valueOf(meta.getRegularMarketPrice());
-            String currency = meta.getCurrency() != null ? meta.getCurrency() : "EUR";
+            String currency = meta.getCurrency() != null ? meta.getCurrency() : DEFAULT_CURRENCY;
             LocalDateTime now = LocalDateTime.now();
 
             // Save or update in database
@@ -126,7 +129,7 @@ public class EtfPriceService {
             etfPrice.setPrice(price);
             etfPrice.setCurrency(currency);
             etfPrice.setLastUpdated(now);
-            etfPrice.setSource("Yahoo Finance");
+            etfPrice.setSource(PRICE_SOURCE);
 
             etfPrice = etfPriceRepository.save(etfPrice);
             logger.info("Saved price for {}: {} {}", ticker, price, currency);
@@ -135,13 +138,13 @@ public class EtfPriceService {
 
         } catch (Exception e) {
             logger.error("Error fetching and saving price for {}: {}", ticker, e.getMessage());
-            throw new RuntimeException("Failed to fetch price for " + ticker, e);
+            throw new RuntimeException("price.fetch.failed: " + ticker, e);
         }
     }
 
     private boolean isFresh(LocalDateTime lastUpdated) {
         // Consider price fresh if updated within last 30 minutes
-        return lastUpdated.isAfter(LocalDateTime.now().minusMinutes(30));
+        return lastUpdated.isAfter(LocalDateTime.now().minusMinutes(CACHE_FRESHNESS_MINUTES));
     }
 
     private EtfPriceResponse toResponse(EtfPrice etfPrice) {

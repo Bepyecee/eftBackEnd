@@ -1,25 +1,12 @@
-import axios from 'axios';
-
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080/api';
+import { axiosInstance } from './authService';
 
 export const getCurrentUser = async () => {
-    try {
-        const token = localStorage.getItem('token');
-        const response = await axios.get(`${API_URL}/user/me`, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching current user:', error);
-        throw error;
-    }
+  const response = await axiosInstance.get('/user/me');
+  return response.data;
 };
 
 const userService = {
-    getCurrentUser
+  getCurrentUser,
 };
 
 export default userService;

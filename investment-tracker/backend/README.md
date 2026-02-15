@@ -1,24 +1,63 @@
-# Investment Tracker Backend
+# Investment Tracker — Backend
 
-## Overview
-This is the backend for a simple self-hosted Investment Tracker written with Java 21 and Spring Boot.
-It exposes REST endpoints to manage ETFs and assets. Persistence is file-based by default (see `etfs.json`).
+Spring Boot REST API for managing ETF portfolios, assets, transactions, and live price data.
 
-## Key Behaviors
-- Validation: ETFs require `ticker` and `type` fields. Missing required fields return HTTP 400 with a structured `ApiError` JSON payload.
-- Conflicts: Attempts to create or update an ETF that violates uniqueness (duplicate ticker or id) return HTTP 409 with a helpful message.
-- Messages: Error text is externalized in `src/main/resources/messages.properties` and resolved by the application's `MessageSource`.
+## Quick Start
 
-## Storage
-- Default storage file: `etfs.json` in the backend working directory (`c:\Gav\workspaces\itr\investment-tracker\backend\etfs.json` when running from this repo).
-- The `FileStorage` component reads/writes this file as a JSON array. Consider switching to H2 or adding audit fields for production use.
-
-## Error format
-When an error occurs the API returns JSON like:
-
+```bash
+mvn spring-boot:run
+# API available at http://localhost:8080/api
+# Swagger UI at http://localhost:8080/swagger-ui.html
 ```
+
+Default credentials: `admin` / `abc123`
+
+## Architecture
+
+| Layer | Responsibility |
+|-------|---------------|
+| `controller/` | REST endpoints — delegates to services, returns HTTP responses |
+| `service/` | Business logic — validation, orchestration |
+| `model/` | JPA entities, enums, DTOs |
+| `persistence/` | Spring Data JPA repositories |
+| `security/` | JWT authentication, OAuth2, request filters |
+| `exception/` | Global error handling with `@ControllerAdvice` |
+| `config/` | Yahoo Finance properties, cache configuration |
+
+### Key Design Decisions
+
+- **Constructor injection** everywhere — no `@Autowired` field injection
+- **Externalized messages** — all user-facing strings in `messages.properties`
+- **Profile-based config** — `local`, `dev`, `h2`, `postgres` profiles
+- **Global CORS** — configured in `SecurityConfig`, not per-controller
+
+## Configuration
+
+| File | Purpose |
+|------|---------|
+| `application.properties` | Server port, active profiles, JWT config |
+| `application-local.properties` | Local overrides (dev credentials, DB path) |
+| `application-h2.properties` | H2 file-based database |
+| `application-postgres.properties` | PostgreSQL connection |
+| `messages.properties` | All error/success message strings |
+
+## API Overview
+
+| Endpoint | Methods | Description |
+|----------|---------|-------------|
+| `/api/auth/login` | POST | JWT authentication |
+| `/api/etfs` | GET, POST, PUT, DELETE | ETF management |
+| `/api/etfs/{id}/transactions` | GET, POST, PUT, DELETE | Transaction management |
+| `/api/assets` | GET, POST, PUT, DELETE | Asset management |
+| `/api/etf-prices` | GET, POST | Yahoo Finance price data |
+| `/api/settings` | GET, PUT | Application settings |
+| `/api/portfolio/snapshots` | GET, POST, DELETE | Portfolio versioning |
+
+## Error Format
+
+```json
 {
-  "timestamp": "2025-11-29T15:00:00Z",
+  "timestamp": "2025-01-15T10:00:00Z",
   "status": 409,
   "error": "Conflict",
   "message": "An ETF with ticker ABC already exists.",
@@ -26,33 +65,8 @@ When an error occurs the API returns JSON like:
 }
 ```
 
-## Running locally (Maven)
-1. Build:
+## Running Tests
 
 ```bash
-cd backend
-mvn -U package
+mvn test
 ```
-
-2. Run:
-
-```bash
-mvn spring-boot:run
-```
-
-3. Run tests:
-
-```bash
-mvn -U test
-```
-
-## Validation rules (ETFs)
-- `ticker` — required (non-empty string).
-- `type` — required (enum: `BOND` or `EQUITY`).
-- Duplicate `ticker` or `id` will produce a 409 Conflict and a human-readable message resolved from `messages.properties`.
-
-## Notes & Next steps
-- For a timeline/audit trail: add `createdAt`/`updatedAt` fields or migrate persistence to an embedded DB (H2) with JPA auditing.
-- Messages are externalized and ready for localization.
-
-Contributions welcome — open an issue or PR with suggested changes.

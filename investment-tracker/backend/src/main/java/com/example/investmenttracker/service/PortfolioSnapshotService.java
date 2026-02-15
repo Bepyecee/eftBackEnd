@@ -5,7 +5,8 @@ import com.example.investmenttracker.model.TriggerAction;
 import com.example.investmenttracker.model.User;
 import com.example.investmenttracker.persistence.PortfolioSnapshotRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,26 +20,32 @@ import java.util.Map;
 @Transactional
 public class PortfolioSnapshotService {
 
-    @Autowired
-    private PortfolioSnapshotRepository snapshotRepository;
+    private static final Logger logger = LoggerFactory.getLogger(PortfolioSnapshotService.class);
+    private static final String VERSION_FORMAT = "yyyyMMddHHmmss";
 
-    @Autowired
-    private UserService userService;
+    private final PortfolioSnapshotRepository snapshotRepository;
+    private final UserService userService;
+    private final EtfService etfService;
+    private final AssetService assetService;
+    private final ObjectMapper objectMapper;
 
-    @Autowired
-    private EtfService etfService;
-
-    @Autowired
-    private AssetService assetService;
-
-    @Autowired
-    private ObjectMapper objectMapper;
+    public PortfolioSnapshotService(PortfolioSnapshotRepository snapshotRepository,
+            UserService userService,
+            EtfService etfService,
+            AssetService assetService,
+            ObjectMapper objectMapper) {
+        this.snapshotRepository = snapshotRepository;
+        this.userService = userService;
+        this.etfService = etfService;
+        this.assetService = assetService;
+        this.objectMapper = objectMapper;
+    }
 
     /**
      * Generate a version identifier timestamp
      */
     public String generateVersionId() {
-        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern(VERSION_FORMAT));
     }
 
     /**
@@ -49,7 +56,6 @@ public class PortfolioSnapshotService {
         String versionId = generateVersionId();
 
         try {
-            // Build portfolio data
             Map<String, Object> portfolioData = buildPortfolioData(userEmail);
             String portfolioJson = objectMapper.writeValueAsString(portfolioData);
 
@@ -57,7 +63,8 @@ public class PortfolioSnapshotService {
                     changeDetails);
             return snapshotRepository.save(snapshot);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to create portfolio snapshot", e);
+            logger.error("Failed to create portfolio snapshot for user {}: {}", userEmail, e.getMessage());
+            throw new RuntimeException("snapshot.failed", e);
         }
     }
 

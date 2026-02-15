@@ -1,26 +1,15 @@
-import axios from 'axios';
-
-const API_URL = 'http://localhost:8080/api/settings';
+import { axiosInstance } from './authService';
 
 const settingsService = {
   getSettings: async () => {
-    const response = await axios.get(API_URL, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      }
-    });
+    const response = await axiosInstance.get('/settings');
     return response.data;
   },
 
   updateSettings: async (settings) => {
-    const response = await axios.put(API_URL, settings, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        'Content-Type': 'application/json'
-      }
-    });
+    const response = await axiosInstance.put('/settings', settings);
     return response.data;
-  }
+  },
 };
 
 export default settingsService;

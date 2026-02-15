@@ -13,7 +13,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/etf-prices")
-@CrossOrigin(origins = "http://localhost:3000")
 public class EtfPriceController {
 
     private static final Logger logger = LoggerFactory.getLogger(EtfPriceController.class);
@@ -33,7 +32,7 @@ public class EtfPriceController {
         } catch (Exception e) {
             logger.error("Error getting price for {}: {}", ticker, e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Failed to fetch price: " + e.getMessage()));
+                    .body(Map.of("error", "price.fetch.failed: " + ticker));
         }
     }
 
@@ -46,7 +45,7 @@ public class EtfPriceController {
         } catch (Exception e) {
             logger.error("Error getting all prices: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Failed to fetch prices: " + e.getMessage()));
+                    .body(Map.of("error", "price.fetch.all.failed"));
         }
     }
 
@@ -59,7 +58,7 @@ public class EtfPriceController {
         } catch (Exception e) {
             logger.error("Error refreshing price for {}: {}", ticker, e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Failed to refresh price: " + e.getMessage()));
+                    .body(Map.of("error", "price.refresh.failed: " + ticker));
         }
     }
 
@@ -72,8 +71,8 @@ public class EtfPriceController {
             if (prices.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
                         .body(Map.of(
-                                "error", "No prices available",
-                                "message", "Unable to fetch prices for any of the requested tickers"));
+                                "error", "price.unavailable",
+                                "message", "price.unable.to.fetch"));
             }
 
             if (prices.size() < tickers.size()) {
@@ -87,7 +86,7 @@ public class EtfPriceController {
         } catch (Exception e) {
             logger.error("Error refreshing prices: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Failed to refresh prices: " + e.getMessage()));
+                    .body(Map.of("error", "price.fetch.all.failed"));
         }
     }
 }

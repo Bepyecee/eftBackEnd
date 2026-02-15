@@ -121,7 +121,7 @@ function AssetForm() {
             required
             placeholder={messages.ASSET.ALLOCATION_PLACEHOLDER}
           />
-          <small>Enter a value between 0 and 100</small>
+          <small>{messages.ASSET_FORM.ALLOCATION_HELP}</small>
         </div>
 
         <div className="form-actions">
