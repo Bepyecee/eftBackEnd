@@ -21,8 +21,8 @@ public class AssetService {
     private final List<Asset> cache = new ArrayList<>();
 
     public AssetService(FileStorage fileStorage,
-                        UserService userService,
-                        @Nullable JpaAssetRepository jpaAssetRepository) {
+            UserService userService,
+            @Nullable JpaAssetRepository jpaAssetRepository) {
         this.fileStorage = fileStorage;
         this.userService = userService;
         this.jpaAssetRepository = jpaAssetRepository;

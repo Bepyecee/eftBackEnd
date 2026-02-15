@@ -30,10 +30,10 @@ public class PortfolioSnapshotService {
     private final ObjectMapper objectMapper;
 
     public PortfolioSnapshotService(PortfolioSnapshotRepository snapshotRepository,
-                                     UserService userService,
-                                     EtfService etfService,
-                                     AssetService assetService,
-                                     ObjectMapper objectMapper) {
+            UserService userService,
+            EtfService etfService,
+            AssetService assetService,
+            ObjectMapper objectMapper) {
         this.snapshotRepository = snapshotRepository;
         this.userService = userService;
         this.etfService = etfService;
