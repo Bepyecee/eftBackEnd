@@ -1,6 +1,5 @@
 package com.example.investmenttracker.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -24,11 +23,13 @@ import java.util.Arrays;
 @Profile("!test")
 public class SecurityConfig {
 
-    @Autowired
-    private JwtRequestFilter jwtRequestFilter;
+    private final JwtRequestFilter jwtRequestFilter;
+    private final OAuth2LoginSuccessHandler oauth2LoginSuccessHandler;
 
-    @Autowired
-    private OAuth2LoginSuccessHandler oauth2LoginSuccessHandler;
+    public SecurityConfig(JwtRequestFilter jwtRequestFilter, OAuth2LoginSuccessHandler oauth2LoginSuccessHandler) {
+        this.jwtRequestFilter = jwtRequestFilter;
+        this.oauth2LoginSuccessHandler = oauth2LoginSuccessHandler;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

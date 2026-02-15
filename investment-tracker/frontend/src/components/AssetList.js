@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import etfService from '../services/etfService';
 import etfPriceService from '../services/etfPriceService';
 import { axiosInstance } from '../services/authService';
+import messages from '../constants/messages';
 import './AssetList.css';
 
 function AssetList() {
@@ -198,7 +199,7 @@ function AssetList() {
           versionId: identifier,
           portfolioJson: jsonString,
           triggerAction: 'MANUAL_EXPORT',
-          changeDetails: 'Manual portfolio export'
+          changeDetails: messages.PORTFOLIO.MANUAL_EXPORT
         });
         
         // Reload versions list
@@ -224,7 +225,7 @@ function AssetList() {
       URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Error exporting portfolio:', error);
-      alert('Failed to export portfolio. Please try again.');
+      alert(messages.PORTFOLIO.EXPORT_FAILED);
     }
   };
 
@@ -240,23 +241,8 @@ function AssetList() {
   };
 
   const formatTriggerAction = (triggerAction) => {
-    if (!triggerAction) return 'Unknown';
-    
-    // Map enum values to user-friendly display names
-    const displayNames = {
-      'ETF_CREATED': 'ETF Created',
-      'ETF_UPDATED': 'ETF Updated',
-      'ETF_DELETED': 'ETF Deleted',
-      'TRANSACTION_ADDED': 'Transaction Added',
-      'TRANSACTION_UPDATED': 'Transaction Updated',
-      'TRANSACTION_DELETED': 'Transaction Deleted',
-      'ASSET_CREATED': 'Asset Created',
-      'ASSET_UPDATED': 'Asset Updated',
-      'ASSET_DELETED': 'Asset Deleted',
-      'MANUAL_EXPORT': 'Manual Export'
-    };
-    
-    return displayNames[triggerAction] || triggerAction;
+    if (!triggerAction) return messages.PORTFOLIO.TRIGGER_ACTIONS.UNKNOWN;
+    return messages.PORTFOLIO.TRIGGER_ACTIONS[triggerAction] || triggerAction;
   };
 
   const handleVersionsSort = (key) => {
@@ -318,12 +304,12 @@ function AssetList() {
       URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Error downloading version:', error);
-      alert('Failed to download portfolio version.');
+      alert(messages.PORTFOLIO.DELETE_VERSION_FAILED);
     }
   };
 
   const deleteVersion = async (versionId) => {
-    if (!window.confirm('Are you sure you want to delete this portfolio version?')) {
+    if (!window.confirm(messages.PORTFOLIO.DELETE_VERSION_CONFIRM)) {
       return;
     }
     
@@ -332,7 +318,7 @@ function AssetList() {
       await loadPortfolioVersions();
     } catch (error) {
       console.error('Error deleting version:', error);
-      alert('Failed to delete portfolio version.');
+      alert(messages.PORTFOLIO.DELETE_VERSION_FAILED);
     }
   };
 
@@ -341,23 +327,23 @@ function AssetList() {
       <div className="allocation-strategy-section">
         <div className="section-header">
           <div className="section-title-with-toggle">
-            <h3>Allocation Strategy</h3>
+            <h3>{messages.PORTFOLIO.ALLOCATION_TITLE}</h3>
             <button 
               className="section-toggle-button"
               onClick={() => setAllocationStrategyCollapsed(!allocationStrategyCollapsed)}
-              title={allocationStrategyCollapsed ? 'Expand section' : 'Collapse section'}
+              title={allocationStrategyCollapsed ? messages.SETTINGS.EXPAND_TOOLTIP : messages.SETTINGS.COLLAPSE_TOOLTIP}
             >
               {allocationStrategyCollapsed ? '▼' : '▲'}
             </button>
             <div className="section-summary-inline">
-              <span>Define your investment allocation strategy across different asset classes, risk profiles, and geographical regions.</span>
+              <span>{messages.PORTFOLIO.ALLOCATION_DESC}</span>
             </div>
           </div>
         </div>
         {!allocationStrategyCollapsed && (
           <div className="allocation-strategy-content">
             <div className="not-implemented-banner">
-              <p>Content coming soon</p>
+              <p>{messages.PORTFOLIO.CONTENT_COMING_SOON}</p>
             </div>
           </div>
         )}
@@ -366,16 +352,16 @@ function AssetList() {
       <div className="allocation-strategy-section">
         <div className="section-header">
           <div className="section-title-with-toggle">
-            <h3>Portfolio Versions</h3>
+            <h3>{messages.PORTFOLIO.VERSIONS_TITLE}</h3>
             <button 
               className="section-toggle-button"
               onClick={() => setPortfolioVersionsCollapsed(!portfolioVersionsCollapsed)}
-              title={portfolioVersionsCollapsed ? 'Expand section' : 'Collapse section'}
+              title={portfolioVersionsCollapsed ? messages.SETTINGS.EXPAND_TOOLTIP : messages.SETTINGS.COLLAPSE_TOOLTIP}
             >
               {portfolioVersionsCollapsed ? '▼' : '▲'}
             </button>
             <div className="section-summary-inline">
-              <span>View and manage historical portfolio snapshots ({portfolioVersions.length} versions)</span>
+              <span>{messages.PORTFOLIO.VERSIONS_DESC(portfolioVersions.length)}</span>
             </div>
           </div>
         </div>
@@ -383,26 +369,26 @@ function AssetList() {
           <div className="allocation-strategy-content">
             <div className="portfolio-versions-content">
               {loadingVersions ? (
-                <p>Loading versions...</p>
+                <p>{messages.PORTFOLIO.LOADING_VERSIONS}</p>
               ) : portfolioVersions.length === 0 ? (
-                <p>No portfolio versions saved yet. Export your portfolio to create the first version.</p>
+                <p>{messages.PORTFOLIO.NO_VERSIONS}</p>
               ) : (
                 <table className="versions-table">
                   <thead>
                     <tr>
                       <th className="sortable" onClick={() => handleVersionsSort('versionId')}>
-                        Version ID{getVersionsSortIndicator('versionId')}
+                        {messages.PORTFOLIO.VERSION_ID}{getVersionsSortIndicator('versionId')}
                       </th>
                       <th className="sortable" onClick={() => handleVersionsSort('createdAt')}>
-                        Created{getVersionsSortIndicator('createdAt')}
+                        {messages.PORTFOLIO.CREATED}{getVersionsSortIndicator('createdAt')}
                       </th>
                       <th className="sortable" onClick={() => handleVersionsSort('triggerAction')}>
-                        Trigger{getVersionsSortIndicator('triggerAction')}
+                        {messages.PORTFOLIO.TRIGGER}{getVersionsSortIndicator('triggerAction')}
                       </th>
                       <th className="sortable" onClick={() => handleVersionsSort('changeDetails')}>
-                        Details{getVersionsSortIndicator('changeDetails')}
+                        {messages.PORTFOLIO.DETAILS}{getVersionsSortIndicator('changeDetails')}
                       </th>
-                      <th>Actions</th>
+                      <th>{messages.PORTFOLIO.ACTIONS}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -416,16 +402,16 @@ function AssetList() {
                           <button 
                             className="download-button-small"
                             onClick={() => downloadVersion(version)}
-                            title="Download this version"
+                            title={messages.PORTFOLIO.DOWNLOAD}
                           >
-                            Download
+                            {messages.PORTFOLIO.DOWNLOAD}
                           </button>
                           <button 
                             className="delete-button-small"
                             onClick={() => deleteVersion(version.id)}
-                            title="Delete this version"
+                            title={messages.GENERIC.DELETE}
                           >
-                            Delete
+                            {messages.GENERIC.DELETE}
                           </button>
                         </td>
                       </tr>

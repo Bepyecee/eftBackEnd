@@ -2,7 +2,6 @@ package com.example.investmenttracker.controller;
 
 import com.example.investmenttracker.model.ApplicationSettings;
 import com.example.investmenttracker.service.SettingsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,11 +9,13 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/settings")
-@CrossOrigin(origins = "*")
 public class SettingsController {
 
-    @Autowired
-    private SettingsService settingsService;
+    private final SettingsService settingsService;
+
+    public SettingsController(SettingsService settingsService) {
+        this.settingsService = settingsService;
+    }
 
     @GetMapping
     public ResponseEntity<ApplicationSettings> getSettings() {

@@ -25,6 +25,6 @@ public class DevUserDetailsService implements UserDetailsService {
         if (devUsername.equals(username)) {
             return new User(devUsername, devPassword, new ArrayList<>());
         }
-        throw new UsernameNotFoundException("User not found: " + username);
+        throw new UsernameNotFoundException("user.not.found: " + username);
     }
 }

@@ -4,7 +4,8 @@ import com.example.investmenttracker.model.Etf;
 import com.example.investmenttracker.model.TriggerAction;
 import com.example.investmenttracker.service.EtfService;
 import com.example.investmenttracker.service.PortfolioSnapshotService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -15,13 +16,14 @@ import java.util.List;
 @RequestMapping("/api/etfs")
 public class EtfController {
 
+    private static final Logger logger = LoggerFactory.getLogger(EtfController.class);
+
     private final EtfService etfService;
+    private final PortfolioSnapshotService snapshotService;
 
-    @Autowired
-    private PortfolioSnapshotService snapshotService;
-
-    public EtfController(EtfService etfService) {
+    public EtfController(EtfService etfService, PortfolioSnapshotService snapshotService) {
         this.etfService = etfService;
+        this.snapshotService = snapshotService;
     }
 
     @GetMapping
@@ -41,14 +43,8 @@ public class EtfController {
     public ResponseEntity<Etf> createEtf(@RequestBody Etf etf, Authentication authentication) {
         String userEmail = authentication.getName();
         Etf createdEtf = etfService.createEtf(etf, userEmail);
-
-        try {
-            String details = String.format("%s (%s)", createdEtf.getTicker(), createdEtf.getName());
-            snapshotService.createSnapshot(userEmail, TriggerAction.ETF_CREATED, details);
-        } catch (Exception e) {
-            System.err.println("Failed to create portfolio snapshot: " + e.getMessage());
-        }
-
+        createSnapshotSafely(userEmail, TriggerAction.ETF_CREATED,
+                String.format("%s (%s)", createdEtf.getTicker(), createdEtf.getName()));
         return ResponseEntity.status(201).body(createdEtf);
     }
 
@@ -56,14 +52,8 @@ public class EtfController {
     public ResponseEntity<Etf> updateEtf(@PathVariable Long id, @RequestBody Etf etf, Authentication authentication) {
         String userEmail = authentication.getName();
         Etf updatedEtf = etfService.updateEtf(id, etf, userEmail);
-
-        try {
-            String details = String.format("%s (%s)", updatedEtf.getTicker(), updatedEtf.getName());
-            snapshotService.createSnapshot(userEmail, TriggerAction.ETF_UPDATED, details);
-        } catch (Exception e) {
-            System.err.println("Failed to create portfolio snapshot: " + e.getMessage());
-        }
-
+        createSnapshotSafely(userEmail, TriggerAction.ETF_UPDATED,
+                String.format("%s (%s)", updatedEtf.getTicker(), updatedEtf.getName()));
         return ResponseEntity.ok(updatedEtf);
     }
 
@@ -72,14 +62,16 @@ public class EtfController {
         String userEmail = authentication.getName();
         Etf etf = etfService.getEtfById(id, userEmail);
         etfService.deleteEtf(id, userEmail);
-
-        try {
-            String details = etf != null ? String.format("%s (%s)", etf.getTicker(), etf.getName()) : "Unknown ETF";
-            snapshotService.createSnapshot(userEmail, TriggerAction.ETF_DELETED, details);
-        } catch (Exception e) {
-            System.err.println("Failed to create portfolio snapshot: " + e.getMessage());
-        }
-
+        String details = etf != null ? String.format("%s (%s)", etf.getTicker(), etf.getName()) : "Unknown ETF";
+        createSnapshotSafely(userEmail, TriggerAction.ETF_DELETED, details);
         return ResponseEntity.noContent().build();
+    }
+
+    private void createSnapshotSafely(String userEmail, TriggerAction action, String details) {
+        try {
+            snapshotService.createSnapshot(userEmail, action, details);
+        } catch (Exception e) {
+            logger.warn("Failed to create portfolio snapshot for {}: {}", action, e.getMessage());
+        }
     }
 }

@@ -19,9 +19,9 @@ public class YahooFinanceService {
     private final WebClient webClient;
     private final YahooFinanceProperties properties;
 
-    public YahooFinanceService(YahooFinanceProperties properties) {
+    public YahooFinanceService(YahooFinanceProperties properties, WebClient.Builder webClientBuilder) {
         this.properties = properties;
-        this.webClient = WebClient.builder()
+        this.webClient = webClientBuilder
                 .baseUrl(YAHOO_FINANCE_BASE_URL)
                 .build();
     }

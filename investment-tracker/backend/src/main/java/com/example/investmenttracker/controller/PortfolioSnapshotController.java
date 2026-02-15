@@ -12,7 +12,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/portfolio-snapshots")
-@CrossOrigin(origins = "http://localhost:3000")
 public class PortfolioSnapshotController {
 
     private final PortfolioSnapshotService snapshotService;

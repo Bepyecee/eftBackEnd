@@ -117,17 +117,17 @@ function TaxManager() {
     const allTransactions = getSortedAllTransactions();
     // Prepare data for export
     const exportData = allTransactions.map(transaction => ({
-      'Date': formatDate(transaction.transactionDate),
-      'Ticker': transaction.etfTicker,
-      'ETF Name': transaction.etfName,
-      'Units': transaction.unitsPurchased,
-      'Price/Unit': transaction.unitsPurchased && transaction.transactionCost 
+      [messages.TAX.COL_DATE]: formatDate(transaction.transactionDate),
+      [messages.TAX.COL_TICKER]: transaction.etfTicker,
+      [messages.ETF.NAME]: transaction.etfName,
+      [messages.TAX.COL_UNITS]: transaction.unitsPurchased,
+      [messages.TAX.COL_PRICE_UNIT]: transaction.unitsPurchased && transaction.transactionCost 
         ? (parseFloat(transaction.transactionCost) / parseFloat(transaction.unitsPurchased)).toFixed(2)
         : '0.00',
-      'Cost': parseFloat(transaction.transactionCost || 0).toFixed(2),
-      'Fees': parseFloat(transaction.transactionFees || 0).toFixed(2),
-      'Total': ((parseFloat(transaction.transactionCost) || 0) + (parseFloat(transaction.transactionFees) || 0)).toFixed(2),
-      'Deemed Disposal Date': formatDate(transaction.deemedDisposalDate)
+      [messages.TAX.COL_COST]: parseFloat(transaction.transactionCost || 0).toFixed(2),
+      [messages.TAX.COL_FEES]: parseFloat(transaction.transactionFees || 0).toFixed(2),
+      [messages.TAX.COL_TOTAL]: ((parseFloat(transaction.transactionCost) || 0) + (parseFloat(transaction.transactionFees) || 0)).toFixed(2),
+      [messages.TAX.COL_DEEMED_DISPOSAL]: formatDate(transaction.deemedDisposalDate)
     }));
 
     // Add totals row
@@ -137,15 +137,15 @@ function TaxManager() {
     const grandTotal = totalCost + totalFees;
 
     exportData.push({
-      'Date': '',
-      'Ticker': '',
-      'ETF Name': 'TOTAL',
-      'Units': totalUnits.toFixed(3),
-      'Price/Unit': '',
-      'Cost': totalCost.toFixed(2),
-      'Fees': totalFees.toFixed(2),
-      'Total': grandTotal.toFixed(2),
-      'Deemed Disposal Date': ''
+      [messages.TAX.COL_DATE]: '',
+      [messages.TAX.COL_TICKER]: '',
+      [messages.ETF.NAME]: messages.TAX.ROW_TOTAL,
+      [messages.TAX.COL_UNITS]: totalUnits.toFixed(3),
+      [messages.TAX.COL_PRICE_UNIT]: '',
+      [messages.TAX.COL_COST]: totalCost.toFixed(2),
+      [messages.TAX.COL_FEES]: totalFees.toFixed(2),
+      [messages.TAX.COL_TOTAL]: grandTotal.toFixed(2),
+      [messages.TAX.COL_DEEMED_DISPOSAL]: ''
     });
 
     // Create worksheet and workbook
@@ -214,7 +214,7 @@ function TaxManager() {
         <div className="all-transactions-section">
           <div className="section-header">
             <div className="section-title-with-toggle">
-              <h3>ETF Transactions and Tax Deadlines</h3>
+              <h3>{messages.TAX.TITLE}</h3>
               <button 
                 className="section-toggle-button"
                 onClick={() => setAllTransactionsCollapsed(!allTransactionsCollapsed)}
@@ -236,7 +236,7 @@ function TaxManager() {
             <>
             <div className="transaction-filters">
               <div className="filter-group">
-                <label>Tickers:</label>
+                <label>{messages.TAX.FILTER_TICKERS}</label>
                 <div className="ticker-dropdown">
                   <button 
                     type="button"
@@ -244,8 +244,8 @@ function TaxManager() {
                     onClick={() => setTickerDropdownOpen(!tickerDropdownOpen)}
                   >
                     {transactionFilters.tickers.length === 0 
-                      ? 'Select tickers...' 
-                      : `${transactionFilters.tickers.length} selected`
+                      ? messages.TAX.FILTER_ALL_TICKERS
+                      : messages.TAX.FILTER_SELECTED(transactionFilters.tickers.length)
                     }
                     <span className="dropdown-arrow">{tickerDropdownOpen ? '▲' : '▼'}</span>
                   </button>
@@ -262,14 +262,14 @@ function TaxManager() {
                         </label>
                       ))}
                       {getUniqueTickers().length === 0 && (
-                        <div className="no-tickers">No tickers available</div>
+                        <div className="no-tickers">{messages.TAX.FILTER_NO_TICKERS}</div>
                       )}
                     </div>
                   )}
                 </div>
               </div>
               <div className="filter-group">
-                <label htmlFor="start-date-filter">From:</label>
+                <label htmlFor="start-date-filter">{messages.TAX.FILTER_FROM}</label>
                 <input
                   id="start-date-filter"
                   type="date"
@@ -279,7 +279,7 @@ function TaxManager() {
                 />
               </div>
               <div className="filter-group">
-                <label htmlFor="end-date-filter">To:</label>
+                <label htmlFor="end-date-filter">{messages.TAX.FILTER_TO}</label>
                 <input
                   id="end-date-filter"
                   type="date"
@@ -293,16 +293,16 @@ function TaxManager() {
                   className="clear-filters-button"
                   onClick={() => setTransactionFilters({ tickers: [], startDate: '', endDate: '' })}
                 >
-                  Clear Filters
+                  {messages.TAX.CLEAR_FILTERS}
                 </button>
               )}
               <button 
                 className="export-button"
                 onClick={exportToExcel}
                 disabled={allTransactions.length === 0}
-                title="Export visible transactions to Excel"
+                title={messages.TAX.EXPORT_TOOLTIP}
               >
-                Export to Excel
+                {messages.TAX.EXPORT_EXCEL}
               </button>
             </div>
             <div className="transactions-table-container">
@@ -310,29 +310,29 @@ function TaxManager() {
                 <thead>
                   <tr>
                     <th className="sortable" onClick={() => handleAllTransactionsSort('transactionDate')}>
-                      Date{getAllTransactionsSortIndicator('transactionDate')}
+                      {messages.TAX.COL_DATE}{getAllTransactionsSortIndicator('transactionDate')}
                     </th>
                     <th className="sortable" onClick={() => handleAllTransactionsSort('etfTicker')}>
-                      Ticker{getAllTransactionsSortIndicator('etfTicker')}
+                      {messages.TAX.COL_TICKER}{getAllTransactionsSortIndicator('etfTicker')}
                     </th>
                     <th className="sortable" onClick={() => handleAllTransactionsSort('etfName')}>
-                      ETF Name{getAllTransactionsSortIndicator('etfName')}
+                      {messages.ETF.NAME}{getAllTransactionsSortIndicator('etfName')}
                     </th>
                     <th className="sortable" onClick={() => handleAllTransactionsSort('unitsPurchased')}>
-                      Units{getAllTransactionsSortIndicator('unitsPurchased')}
+                      {messages.TAX.COL_UNITS}{getAllTransactionsSortIndicator('unitsPurchased')}
                     </th>
                     <th className="sortable" onClick={() => handleAllTransactionsSort('pricePerUnit')}>
-                      Price/Unit{getAllTransactionsSortIndicator('pricePerUnit')}
+                      {messages.TAX.COL_PRICE_UNIT}{getAllTransactionsSortIndicator('pricePerUnit')}
                     </th>
                     <th className="sortable" onClick={() => handleAllTransactionsSort('transactionCost')}>
-                      Cost{getAllTransactionsSortIndicator('transactionCost')}
+                      {messages.TAX.COL_COST}{getAllTransactionsSortIndicator('transactionCost')}
                     </th>
                     <th className="sortable" onClick={() => handleAllTransactionsSort('transactionFees')}>
-                      Fees{getAllTransactionsSortIndicator('transactionFees')}
+                      {messages.TAX.COL_FEES}{getAllTransactionsSortIndicator('transactionFees')}
                     </th>
-                    <th>Total</th>
+                    <th>{messages.TAX.COL_TOTAL}</th>
                     <th className="sortable" onClick={() => handleAllTransactionsSort('deemedDisposalDate')}>
-                      Deemed Disposal{getAllTransactionsSortIndicator('deemedDisposalDate')}
+                      {messages.TAX.COL_DEEMED_DISPOSAL}{getAllTransactionsSortIndicator('deemedDisposalDate')}
                     </th>
                   </tr>
                 </thead>
@@ -369,7 +369,7 @@ function TaxManager() {
                     </tr>
                   ))}
                   <tr className="total-row">
-                    <td colSpan="3"><strong>TOTAL</strong></td>
+                    <td colSpan="3"><strong>{messages.TAX.ROW_TOTAL}</strong></td>
                     <td><strong>{allTransactions.reduce((sum, t) => sum + (parseFloat(t.unitsPurchased) || 0), 0).toFixed(3)}</strong></td>
                     <td></td>
                     <td><strong>{formatCurrency(allTransactions.reduce((sum, t) => sum + (parseFloat(t.transactionCost) || 0), 0))}</strong></td>
@@ -387,7 +387,7 @@ function TaxManager() {
 
       {!loading && allTransactions.length === 0 && (
         <div className="empty-state">
-          <p>No transactions found. Add transactions to your ETFs to see tax calculations.</p>
+          <p>{messages.TAX.NO_TRANSACTIONS}</p>
         </div>
       )}
     </div>

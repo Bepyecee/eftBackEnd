@@ -1,15 +1,18 @@
 package com.example.investmenttracker.service;
 
 import com.example.investmenttracker.model.User;
+import com.example.investmenttracker.exception.ValidationException;
 import com.example.investmenttracker.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     public User findOrCreateUser(String email, String provider, String name) {
         return userRepository.findByEmail(email)
@@ -24,7 +27,7 @@ public class UserService {
 
     public User getCurrentUser(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found: " + email));
+                .orElseThrow(() -> new ValidationException("user.not.found", email));
     }
 
     public User getUserInfo(String email) {

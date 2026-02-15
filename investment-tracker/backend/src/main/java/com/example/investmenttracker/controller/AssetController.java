@@ -2,8 +2,8 @@ package com.example.investmenttracker.controller;
 
 import java.util.List;
 
-// constructor injection used; no @Autowired required
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -17,13 +17,14 @@ import com.example.investmenttracker.service.PortfolioSnapshotService;
 @RequestMapping("/api/assets")
 public class AssetController {
 
+    private static final Logger logger = LoggerFactory.getLogger(AssetController.class);
+
     private final AssetService assetService;
+    private final PortfolioSnapshotService snapshotService;
 
-    @Autowired
-    private PortfolioSnapshotService snapshotService;
-
-    public AssetController(AssetService assetService) {
+    public AssetController(AssetService assetService, PortfolioSnapshotService snapshotService) {
         this.assetService = assetService;
+        this.snapshotService = snapshotService;
     }
 
     @GetMapping
@@ -43,15 +44,8 @@ public class AssetController {
     public ResponseEntity<Asset> createAsset(@RequestBody Asset asset, Authentication authentication) {
         String userEmail = authentication.getName();
         Asset createdAsset = assetService.addAsset(asset, userEmail);
-
-        try {
-            String details = String.format("%s: %.1f%%", createdAsset.getName(),
-                    createdAsset.getAllocationPercentage());
-            snapshotService.createSnapshot(userEmail, TriggerAction.ASSET_CREATED, details);
-        } catch (Exception e) {
-            System.err.println("Failed to create portfolio snapshot: " + e.getMessage());
-        }
-
+        createSnapshotSafely(userEmail, TriggerAction.ASSET_CREATED,
+                String.format("%s: %.1f%%", createdAsset.getName(), createdAsset.getAllocationPercentage()));
         return ResponseEntity.status(201).body(createdAsset);
     }
 
@@ -60,17 +54,10 @@ public class AssetController {
             Authentication authentication) {
         String userEmail = authentication.getName();
         Asset updatedAsset = assetService.updateAsset(id, asset, userEmail);
-
         if (updatedAsset != null) {
-            try {
-                String details = String.format("%s: %.1f%%", updatedAsset.getName(),
-                        updatedAsset.getAllocationPercentage());
-                snapshotService.createSnapshot(userEmail, TriggerAction.ASSET_UPDATED, details);
-            } catch (Exception e) {
-                System.err.println("Failed to create portfolio snapshot: " + e.getMessage());
-            }
+            createSnapshotSafely(userEmail, TriggerAction.ASSET_UPDATED,
+                    String.format("%s: %.1f%%", updatedAsset.getName(), updatedAsset.getAllocationPercentage()));
         }
-
         return updatedAsset != null ? ResponseEntity.ok(updatedAsset) : ResponseEntity.notFound().build();
     }
 
@@ -79,16 +66,18 @@ public class AssetController {
         String userEmail = authentication.getName();
         Asset asset = assetService.getAssetById(id, userEmail);
         boolean isDeleted = assetService.deleteAsset(id, userEmail);
-
         if (isDeleted) {
-            try {
-                String details = asset != null ? String.format("%s", asset.getName()) : "Unknown asset";
-                snapshotService.createSnapshot(userEmail, TriggerAction.ASSET_DELETED, details);
-            } catch (Exception e) {
-                System.err.println("Failed to create portfolio snapshot: " + e.getMessage());
-            }
+            String details = asset != null ? asset.getName() : "Unknown asset";
+            createSnapshotSafely(userEmail, TriggerAction.ASSET_DELETED, details);
         }
-
         return isDeleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    }
+
+    private void createSnapshotSafely(String userEmail, TriggerAction action, String details) {
+        try {
+            snapshotService.createSnapshot(userEmail, action, details);
+        } catch (Exception e) {
+            logger.warn("Failed to create portfolio snapshot for {}: {}", action, e.getMessage());
+        }
     }
 }

@@ -4,7 +4,8 @@ import com.example.investmenttracker.model.EtfTransaction;
 import com.example.investmenttracker.model.TriggerAction;
 import com.example.investmenttracker.service.EtfTransactionService;
 import com.example.investmenttracker.service.PortfolioSnapshotService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -14,14 +15,18 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/etfs/{etfId}/transactions")
-@CrossOrigin(origins = "http://localhost:3000")
 public class EtfTransactionController {
 
-    @Autowired
-    private EtfTransactionService transactionService;
+    private static final Logger logger = LoggerFactory.getLogger(EtfTransactionController.class);
 
-    @Autowired
-    private PortfolioSnapshotService snapshotService;
+    private final EtfTransactionService transactionService;
+    private final PortfolioSnapshotService snapshotService;
+
+    public EtfTransactionController(EtfTransactionService transactionService,
+            PortfolioSnapshotService snapshotService) {
+        this.transactionService = transactionService;
+        this.snapshotService = snapshotService;
+    }
 
     @GetMapping
     public ResponseEntity<List<EtfTransaction>> getAllTransactionsForEtf(@PathVariable Long etfId) {
@@ -41,23 +46,10 @@ public class EtfTransactionController {
             @PathVariable Long etfId,
             @RequestBody EtfTransaction transaction,
             Authentication authentication) {
-        EtfTransaction createdTransaction = transactionService.createTransaction(etfId, transaction);
-
-        // Create portfolio snapshot
-        try {
-            String userEmail = authentication.getName();
-            String details = String.format("%s: %s %.3f units @ %s",
-                    createdTransaction.getEtf().getTicker(),
-                    createdTransaction.getTransactionType(),
-                    createdTransaction.getUnitsPurchased(),
-                    createdTransaction.getTransactionDate());
-            snapshotService.createSnapshot(userEmail, TriggerAction.TRANSACTION_ADDED, details);
-        } catch (Exception e) {
-            // Log but don't fail the transaction creation
-            System.err.println("Failed to create portfolio snapshot: " + e.getMessage());
-        }
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdTransaction);
+        EtfTransaction created = transactionService.createTransaction(etfId, transaction);
+        createSnapshotSafely(authentication.getName(), TriggerAction.TRANSACTION_ADDED,
+                formatTransactionDetails(created));
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @PutMapping("/{id}")
@@ -65,41 +57,35 @@ public class EtfTransactionController {
             @PathVariable Long id,
             @RequestBody EtfTransaction transactionDetails,
             Authentication authentication) {
-        EtfTransaction updatedTransaction = transactionService.updateTransaction(id, transactionDetails);
-
-        // Create portfolio snapshot
-        try {
-            String userEmail = authentication.getName();
-            String details = String.format("%s: %s %.3f units @ %s",
-                    updatedTransaction.getEtf().getTicker(),
-                    updatedTransaction.getTransactionType(),
-                    updatedTransaction.getUnitsPurchased(),
-                    updatedTransaction.getTransactionDate());
-            snapshotService.createSnapshot(userEmail, TriggerAction.TRANSACTION_UPDATED, details);
-        } catch (Exception e) {
-            System.err.println("Failed to create portfolio snapshot: " + e.getMessage());
-        }
-
-        return ResponseEntity.ok(updatedTransaction);
+        EtfTransaction updated = transactionService.updateTransaction(id, transactionDetails);
+        createSnapshotSafely(authentication.getName(), TriggerAction.TRANSACTION_UPDATED,
+                formatTransactionDetails(updated));
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTransaction(@PathVariable Long id, Authentication authentication) {
         EtfTransaction transaction = transactionService.getTransactionById(id).orElse(null);
         transactionService.deleteTransaction(id);
-
-        // Create portfolio snapshot
-        try {
-            String userEmail = authentication.getName();
-            String details = transaction != null ? String.format("%s: %s %.3f units",
-                    transaction.getEtf().getTicker(),
-                    transaction.getTransactionType(),
-                    transaction.getUnitsPurchased()) : "Unknown transaction";
-            snapshotService.createSnapshot(userEmail, TriggerAction.TRANSACTION_DELETED, details);
-        } catch (Exception e) {
-            System.err.println("Failed to create portfolio snapshot: " + e.getMessage());
-        }
-
+        String details = transaction != null
+                ? String.format("%s: %s %.3f units", transaction.getEtf().getTicker(),
+                        transaction.getTransactionType(), transaction.getUnitsPurchased())
+                : "Unknown transaction";
+        createSnapshotSafely(authentication.getName(), TriggerAction.TRANSACTION_DELETED, details);
         return ResponseEntity.noContent().build();
+    }
+
+    private String formatTransactionDetails(EtfTransaction tx) {
+        return String.format("%s: %s %.3f units @ %s",
+                tx.getEtf().getTicker(), tx.getTransactionType(),
+                tx.getUnitsPurchased(), tx.getTransactionDate());
+    }
+
+    private void createSnapshotSafely(String userEmail, TriggerAction action, String details) {
+        try {
+            snapshotService.createSnapshot(userEmail, action, details);
+        } catch (Exception e) {
+            logger.warn("Failed to create portfolio snapshot for {}: {}", action, e.getMessage());
+        }
     }
 }

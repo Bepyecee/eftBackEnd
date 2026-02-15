@@ -284,7 +284,7 @@ function EtfForm() {
       navigate('/etfs');
     } catch (err) {
       if (err.response && err.response.status === 409) {
-        setError(`An ETF with ticker "${formData.ticker}" already exists. Please use a different ticker.`);
+        setError(messages.ETF_FORM.DUPLICATE_TICKER(formData.ticker));
       } else if (err.response && err.response.data && err.response.data.message) {
         setError(err.response.data.message);
       } else {
@@ -354,14 +354,14 @@ function EtfForm() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="yahooFinanceTicker">Yahoo Finance Ticker</label>
+            <label htmlFor="yahooFinanceTicker">{messages.ETF_FORM.YAHOO_TICKER}</label>
             <input
               type="text"
               id="yahooFinanceTicker"
               name="yahooFinanceTicker"
               value={formData.yahooFinanceTicker}
               onChange={handleChange}
-              placeholder="Yahoo ETF url Symbol e.g. XXXX.DE"
+              placeholder={messages.ETF_FORM.YAHOO_TICKER_PLACEHOLDER}
             />
           </div>
 
@@ -557,7 +557,7 @@ function EtfForm() {
                   className="save-transaction-button"
                   onClick={handleSaveTransaction}
                 >
-                  {editingTransactionIndex !== null ? 'Update Transaction' : 'Save Transaction'}
+                  {editingTransactionIndex !== null ? messages.ETF_FORM.UPDATE_TRANSACTION : messages.ETF_FORM.SAVE_TRANSACTION}
                 </button>
               </div>
             </div>
@@ -584,7 +584,7 @@ function EtfForm() {
                     <th className="sortable" onClick={() => handleTransactionSort('transactionFees')}>
                       {messages.TRANSACTION.TRANSACTION_FEES}{getTransactionSortIndicator('transactionFees')}
                     </th>
-                    <th>Actions</th>
+                    <th>{messages.ETF_FORM.ACTIONS}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -622,7 +622,7 @@ function EtfForm() {
                     </tr>
                   ))}
                   <tr className="total-row">
-                    <td colSpan="2"><strong>TOTAL</strong></td>
+                    <td colSpan="2"><strong>{messages.ETF_FORM.TOTAL}</strong></td>
                     <td><strong>{transactions.reduce((sum, t) => sum + (parseFloat(t.unitsPurchased) || 0), 0).toFixed(3)}</strong></td>
                     <td><strong>€{transactions.reduce((sum, t) => sum + (parseFloat(t.transactionCost) || 0), 0).toFixed(2)}</strong></td>
                     <td><strong>€{transactions.reduce((sum, t) => sum + (parseFloat(t.transactionFees) || 0), 0).toFixed(2)}</strong></td>

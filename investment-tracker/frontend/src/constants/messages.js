@@ -39,8 +39,8 @@ const messages = {
 
   // Dashboard Messages
   DASHBOARD: {
-    TITLE: 'Pantaloons and Gav\s ETF Investment tracker ',
-    WELCOME: 'Welcome to Pantaloons and Gav\s ETF Investment tracker',
+    TITLE: "Pantaloons and Gav's ETF Investment tracker",
+    WELCOME: "Welcome to Pantaloons and Gav's ETF Investment tracker",
     OVERVIEW: 'Overview',
     ETF_CARD_TITLE: 'Exchange Traded Funds',
     ETF_CARD_DESCRIPTION: 'Manage your ETF portfolio',
@@ -233,6 +233,150 @@ const messages = {
   SETTINGS: {
     TITLE: 'Settings',
     DESCRIPTION: 'Configure your application preferences',
+    LOAD_ERROR: 'Failed to load settings',
+    SAVE_SUCCESS: 'Settings saved successfully',
+    SAVE_ERROR: 'Failed to save settings',
+    SAVING: 'Saving...',
+    RESET: 'Reset',
+    EXPAND_TOOLTIP: 'Click to expand',
+    COLLAPSE_TOOLTIP: 'Click to collapse',
+
+    // Appearance
+    APPEARANCE_TITLE: 'Appearance',
+    APPEARANCE_DESC: 'Customize the visual theme of the application.',
+    THEME: 'Theme',
+    THEME_LIGHT: 'Light',
+    THEME_DARK: 'Dark',
+
+    // Yahoo Finance
+    YAHOO_TITLE: 'Yahoo Finance Configuration',
+    YAHOO_DESC: 'Configure how the application fetches and caches stock prices from Yahoo Finance.',
+    YAHOO_TIMEOUT: 'API Timeout (seconds)',
+    YAHOO_CACHE_EXPIRY: 'Cache Expiration (minutes)',
+    YAHOO_CACHE_MAX: 'Cache Max Size',
+    YAHOO_SUFFIX: 'Default European Suffix',
+    YAHOO_SUFFIX_PLACEHOLDER: '.DE',
+
+    // Logging
+    LOGGING_TITLE: 'Logging Configuration',
+    LOGGING_DESC: 'Control the verbosity of application logging. Changes require application restart.',
+    LOGGING_ROOT: 'Root Logging Level',
+    LOGGING_SPRING: 'Spring Framework Level',
+    LOGGING_APP: 'Application Level',
+
+    // Cache
+    CACHE_TITLE: 'Cache Configuration',
+    CACHE_DESC: 'Configure caching behavior. Changes require application restart.',
+    CACHE_TYPE: 'Cache Type',
+    CACHE_CAFFEINE: 'Caffeine',
+    CACHE_SIMPLE: 'Simple',
+    CACHE_NONE: 'None',
+    CACHE_SPEC: 'Caffeine Specification',
+    CACHE_SPEC_PLACEHOLDER: 'maximumSize=100,expireAfterWrite=30m',
+    CACHE_SPEC_HELP: 'Format: maximumSize=X,expireAfterWrite=Ym',
+
+    // Tax
+    TAX_TITLE: 'Tax Configuration',
+    TAX_DESC: 'Configure tax calculation parameters.',
+    TAX_EXIT_PERCENTAGE: 'ETF Exit Tax Percentage (%)',
+    TAX_EXIT_HELP: 'Percentage applied to calculate exit tax on ETF deemed/actual disposal',
+  },
+
+  // Login extras
+  LOGIN: {
+    OR_DIVIDER: 'OR',
+    GOOGLE_SIGN_IN: 'Sign in with Google',
+    DEV_CREDENTIALS: 'Dev credentials: admin / abc123',
+  },
+
+  // Portfolio / Asset List
+  PORTFOLIO: {
+    EXPORT_FAILED: 'Failed to export portfolio. Please try again.',
+    DELETE_VERSION_CONFIRM: 'Are you sure you want to delete this portfolio version?',
+    DELETE_VERSION_FAILED: 'Failed to delete portfolio version.',
+    ALLOCATION_TITLE: 'Allocation Strategy',
+    ALLOCATION_DESC: 'Define your investment allocation strategy across different asset classes, risk profiles, and geographical regions.',
+    CONTENT_COMING_SOON: 'Content coming soon',
+    VERSIONS_TITLE: 'Portfolio Versions',
+    VERSIONS_DESC: (count) => `View and manage historical portfolio snapshots (${count} versions)`,
+    LOADING_VERSIONS: 'Loading versions...',
+    NO_VERSIONS: 'No portfolio versions found. Versions are created automatically when you make changes.',
+    VERSION_ID: 'Version ID',
+    CREATED: 'Created',
+    TRIGGER: 'Trigger',
+    DETAILS: 'Details',
+    ACTIONS: 'Actions',
+    DOWNLOAD: 'Download',
+    MANUAL_EXPORT: 'Manual portfolio export',
+    EXPORT_TOOLTIP: 'Export current portfolio to JSON',
+    IMPORT_TOOLTIP: 'Import portfolio from JSON file',
+    TRIGGER_ACTIONS: {
+      ETF_CREATED: 'ETF Created',
+      ETF_UPDATED: 'ETF Updated',
+      ETF_DELETED: 'ETF Deleted',
+      TRANSACTION_ADDED: 'Transaction Added',
+      TRANSACTION_UPDATED: 'Transaction Updated',
+      TRANSACTION_DELETED: 'Transaction Deleted',
+      ASSET_CREATED: 'Asset Created',
+      ASSET_UPDATED: 'Asset Updated',
+      ASSET_DELETED: 'Asset Deleted',
+      MANUAL_EXPORT: 'Manual Export',
+      UNKNOWN: 'Unknown',
+    },
+  },
+
+  // Tax Manager
+  TAX: {
+    TITLE: 'ETF Deemed Disposal Tracker',
+    SUMMARY: 'View all ETF transactions with deemed disposal dates for tax planning.',
+    FILTER_TICKERS: 'Tickers:',
+    FILTER_ALL_TICKERS: 'All tickers',
+    FILTER_SELECTED: (count) => `${count} selected`,
+    FILTER_NO_TICKERS: 'No tickers available',
+    FILTER_FROM: 'From:',
+    FILTER_TO: 'To:',
+    CLEAR_FILTERS: 'Clear Filters',
+    EXPORT_EXCEL: 'Export to Excel',
+    EXPORT_TOOLTIP: 'Export visible transactions to Excel',
+    NO_TRANSACTIONS: 'No transactions found. Add transactions to your ETFs to see tax calculations.',
+    COL_DATE: 'Date',
+    COL_TICKER: 'Ticker',
+    COL_TYPE: 'Type',
+    COL_UNITS: 'Units',
+    COL_PRICE_UNIT: 'Price/Unit',
+    COL_COST: 'Cost',
+    COL_FEES: 'Fees',
+    COL_TOTAL: 'Total',
+    COL_DEEMED_DISPOSAL: 'Deemed Disposal',
+    ROW_TOTAL: 'TOTAL',
+  },
+
+  // EtfForm extras
+  ETF_FORM: {
+    YAHOO_TICKER: 'Yahoo Finance Ticker',
+    YAHOO_TICKER_PLACEHOLDER: 'Yahoo ETF url Symbol e.g. XXXX.DE',
+    DUPLICATE_TICKER: (ticker) => `An ETF with ticker "${ticker}" already exists. Please use a different ticker.`,
+    UPDATE_TRANSACTION: 'Update Transaction',
+    SAVE_TRANSACTION: 'Save Transaction',
+    ACTIONS: 'Actions',
+    TOTAL: 'TOTAL',
+  },
+
+  // Navigation extras
+  NAV_EXTRA: {
+    USER_FALLBACK: 'User',
+    TOGGLE_THEME: 'Toggle theme',
+    LOGOUT_TOOLTIP: 'Logout',
+  },
+
+  // Dashboard extras
+  DASHBOARD_EXTRA: {
+    WELCOME_USER: (name) => `Welcome, ${name}!`,
+  },
+
+  // Asset form extras
+  ASSET_FORM: {
+    ALLOCATION_HELP: 'Enter a value between 0 and 100',
   },
 
   // Confirmation Messages

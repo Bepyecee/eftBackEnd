@@ -2,9 +2,9 @@ package com.example.investmenttracker.service;
 
 import com.example.investmenttracker.model.Etf;
 import com.example.investmenttracker.model.EtfTransaction;
+import com.example.investmenttracker.exception.ValidationException;
 import com.example.investmenttracker.persistence.EtfRepository;
 import com.example.investmenttracker.persistence.EtfTransactionRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,11 +15,13 @@ import java.util.Optional;
 @Transactional
 public class EtfTransactionService {
 
-    @Autowired
-    private EtfTransactionRepository transactionRepository;
+    private final EtfTransactionRepository transactionRepository;
+    private final EtfRepository etfRepository;
 
-    @Autowired
-    private EtfRepository etfRepository;
+    public EtfTransactionService(EtfTransactionRepository transactionRepository, EtfRepository etfRepository) {
+        this.transactionRepository = transactionRepository;
+        this.etfRepository = etfRepository;
+    }
 
     public List<EtfTransaction> getAllTransactionsForEtf(Long etfId) {
         return transactionRepository.findByEtfIdOrderByTransactionDateDesc(etfId);
@@ -31,15 +33,14 @@ public class EtfTransactionService {
 
     public EtfTransaction createTransaction(Long etfId, EtfTransaction transaction) {
         Etf etf = etfRepository.findById(etfId)
-                .orElseThrow(() -> new RuntimeException("ETF not found with id: " + etfId));
-
+                .orElseThrow(() -> new ValidationException("transaction.etf.not.found", etfId));
         transaction.setEtf(etf);
         return transactionRepository.save(transaction);
     }
 
     public EtfTransaction updateTransaction(Long id, EtfTransaction transactionDetails) {
         EtfTransaction transaction = transactionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Transaction not found with id: " + id));
+                .orElseThrow(() -> new ValidationException("transaction.not.found", id));
 
         transaction.setTransactionDate(transactionDetails.getTransactionDate());
         transaction.setTransactionType(transactionDetails.getTransactionType());
@@ -52,7 +53,7 @@ public class EtfTransactionService {
 
     public void deleteTransaction(Long id) {
         EtfTransaction transaction = transactionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Transaction not found with id: " + id));
+                .orElseThrow(() -> new ValidationException("transaction.not.found", id));
         transactionRepository.delete(transaction);
     }
 }
