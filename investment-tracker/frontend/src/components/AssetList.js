@@ -13,28 +13,26 @@ function AssetList() {
   const [versionsSortConfig, setVersionsSortConfig] = useState({ key: 'createdAt', direction: 'desc' });
 
   useEffect(() => {
-    loadPortfolioVersions();
+    loadPortfolioVersions(true);
     
-    // Poll for new versions every 5 seconds
+    // Silent background refresh every 10 minutes
     const interval = setInterval(() => {
-      loadPortfolioVersions();
-    }, 5000);
+      loadPortfolioVersions(false);
+    }, 600000);
     
     return () => clearInterval(interval);
   }, []);
 
-  const loadPortfolioVersions = async () => {
+  const loadPortfolioVersions = async (showLoading = false) => {
     try {
-      setLoadingVersions(true);
-      console.log('Loading portfolio versions...');
+      if (showLoading) setLoadingVersions(true);
       
       const response = await axiosInstance.get('/portfolio-snapshots');
-      console.log('Loaded versions:', response.data);
       setPortfolioVersions(response.data);
     } catch (error) {
       console.error('Error loading portfolio versions:', error);
     } finally {
-      setLoadingVersions(false);
+      if (showLoading) setLoadingVersions(false);
     }
   };
 
@@ -363,6 +361,18 @@ function AssetList() {
             <div className="section-summary-inline">
               <span>{messages.PORTFOLIO.VERSIONS_DESC(portfolioVersions.length)}</span>
             </div>
+            <button
+              className={`refresh-button-small${loadingVersions ? ' spinning' : ''}`}
+              onClick={() => loadPortfolioVersions(true)}
+              disabled={loadingVersions}
+              title={messages.PORTFOLIO.REFRESH_TOOLTIP}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="23 4 23 10 17 10"></polyline>
+                <polyline points="1 20 1 14 7 14"></polyline>
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+              </svg>
+            </button>
           </div>
         </div>
         {!portfolioVersionsCollapsed && (
