@@ -1,0 +1,64 @@
+2026.06.18 12:11:13 WARN  Using H2 2.4.240 which is newer than the version Flyway has been verified with. The latest verified version of H2 is 2.3.232.
+2026.06.18 12:11:13 INFO  no build target found for C:\Gav\workspaces\itr\investment-tracker\backend\src\main\java\com\example\investmenttracker\exception\ApiError.java. Using fallback presentation compiler.
+2026.06.18 12:11:14 INFO  no build target found for C:\Gav\workspaces\itr\investment-tracker\backend\src\main\java\com\example\investmenttracker\exception\ApiError.java. Using fallback presentation compiler.
+2026.06.18 12:11:15 WARN  no build tool detected in workspace 'C:\Gav\workspaces\itr'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 
+2026.06.18 12:11:15 WARN  Build server is not auto-connectable.
+2026.06.18 12:11:15 WARN  no build target for: C:\Gav\workspaces\itr\investment-tracker\backend\src\main\java\com\example\investmenttracker\exception\ApiError.java
+2026.06.18 12:11:17 INFO  time: code lens generation in 2.3s
+Jun 18, 2026 12:14:21 P.M. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+INFO: Unsupported notification method: $/setTrace
+2026.10.06 16:07:53 INFO  Started: Metals version 1.6.7 in folders 'C:\Gav\workspaces\itr' for client Visual Studio Code 1.111.0.
+2026.10.06 16:07:53 INFO  Memory monitor started
+2026.10.06 16:08:02 INFO  restarted 0 presentation compilers
+2026.10.06 16:08:02 WARN  Using H2 2.4.240 which is newer than the version Flyway has been verified with. The latest verified version of H2 is 2.3.232.
+2026.10.06 16:08:04 WARN  no build tool detected in workspace 'C:\Gav\workspaces\itr'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 
+2026.10.06 16:08:04 WARN  Build server is not auto-connectable.
+Oct 06, 2026 4:08:29 P.M. org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleNotification
+WARNING: Notification threw an exception: {
+  "jsonrpc": "2.0",
+  "method": "metals/didFocusTextDocument",
+  "params": [
+    "git:/c%3A/Gav/workspaces/itr/investment-tracker/backend/src/main/java/com/example/investmenttracker/exception/ApiError.java?%7B%22path%22%3A%22c%3A%5C%5CGav%5C%5Cworkspaces%5C%5Citr%5C%5Cinvestment-tracker%5C%5Cbackend%5C%5Csrc%5C%5Cmain%5C%5Cjava%5C%5Ccom%5C%5Cexample%5C%5Cinvestmenttracker%5C%5Cexception%5C%5CApiError.java%22%2C%22ref%22%3A%226fd8ea3612322250e475b4c4883ad498e2e7ef5c%22%7D"
+  ]
+}
+java.nio.file.FileSystemNotFoundException: Provider "git" not installed
+	at java.base/java.nio.file.Path.of(Path.java:213)
+	at java.base/java.nio.file.Paths.get(Paths.java:98)
+	at scala.meta.internal.mtags.MtagsEnrichments$XtensionURIMtags.toAbsolutePath(MtagsEnrichments.scala:149)
+	at scala.meta.internal.mtags.MtagsEnrichments$XtensionStringMtags.toAbsolutePath(MtagsEnrichments.scala:209)
+	at scala.meta.internal.metals.MetalsEnrichments$XtensionString.toAbsolutePath(MetalsEnrichments.scala:787)
+	at scala.meta.internal.metals.MetalsEnrichments$XtensionString.toAbsolutePath(MetalsEnrichments.scala:784)
+	at scala.meta.internal.metals.WorkspaceLspService.didFocus(WorkspaceLspService.scala:808)
+	at scala.meta.metals.lsp.DelegatingScalaService.didFocus(DelegatingScalaService.scala:42)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint.lambda$recursiveFindRpcMethods$0(GenericEndpoint.java:65)
+	at org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint.notify(GenericEndpoint.java:160)
+	at org.eclipse.lsp4j.jsonrpc.RemoteEndpoint.handleNotification(RemoteEndpoint.java:225)
+	at org.eclipse.lsp4j.jsonrpc.RemoteEndpoint.consume(RemoteEndpoint.java:192)
+	at org.eclipse.lsp4j.jsonrpc.json.StreamMessageProducer.handleMessage(StreamMessageProducer.java:189)
+	at org.eclipse.lsp4j.jsonrpc.json.StreamMessageProducer.listen(StreamMessageProducer.java:97)
+	at org.eclipse.lsp4j.jsonrpc.json.ConcurrentMessageProcessor.run(ConcurrentMessageProcessor.java:97)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1575)
+
+Oct 06, 2026 4:10:15 P.M. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+INFO: Unsupported notification method: $/setTrace
+2026.10.06 16:19:07 INFO  Shutting down server
+2026.10.06 16:19:07 INFO  Memory monitor stopped
+2026.10.06 16:19:07 INFO  shutting down Metals
+2026.10.06 16:19:07 INFO  Exiting server
+2026.10.06 16:22:56 INFO  Started: Metals version 1.6.9 in folders 'C:\Gav\workspaces\itr' for client Visual Studio Code 1.140.0.
+2026.10.06 16:22:56 INFO  Memory monitor started
+2026.10.06 16:23:01 WARN  Using H2 2.5.250 which is newer than the version Flyway has been verified with. The latest verified version of H2 is 2.3.232.
+2026.10.06 16:23:02 WARN  no build tool detected in workspace 'C:\Gav\workspaces\itr'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 
+2026.10.06 16:23:02 WARN  Build server is not auto-connectable.
+Oct 06, 2026 7:04:45 P.M. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+INFO: Unsupported notification method: $/setTrace
+Oct 06, 2026 7:07:58 P.M. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+INFO: Unsupported notification method: $/setTrace
+Oct 06, 2026 7:07:58 P.M. org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+INFO: Unsupported notification method: $/setTrace
